@@ -220,8 +220,8 @@ class ChildPNCHandler {
 
     @WithName("Weight Grade of Child")
     @WithStatusBuilder
-    bmi([programEncounter], statusBuilder) {
-        let weight = programEncounter.getObservationValue("Todays weight of infant?");
+    dummy10([programEncounter], statusBuilder) {
+        let weight = programEncounter.getObservationValue("Current Weight");
         const height = 0;
         const encounterDateTime = programEncounter.encounterDateTime;
         const individual = programEncounter.programEnrolment.individual;
@@ -269,7 +269,6 @@ class PncDecision {
         decisions.encounterDecisions.push(PncDecision.referToHospital(programEncounter));
         return decisions;
     }
-
 
     static counseling(programEncounter) {
         const decisionBuilder = new ComplicationsBuilder({

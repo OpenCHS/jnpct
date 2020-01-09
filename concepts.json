@@ -6175,7 +6175,8 @@
 }, {
   "name" : "Todays weight of infant?",
   "uuid" : "d2b5b24b-3c04-4dcb-b705-344fb1313380",
-  "dataType" : "Numeric"
+  "dataType" : "Numeric",
+  "voided" : true
 }, {
   "name" : "Toilet facility present",
   "uuid" : "54105452-1752-4661-9d30-2d99bd2d04fa",
