@@ -348,7 +348,7 @@ const getEarliestECFollowupDate = (eventDate) => {
             || programEncounter.getObservationReadableValue('Birth Weight');
            
             const ageOfChildInMonths = programEncounter.programEnrolment.individual.getAgeInMonths();   
-            const nutritionalStatus = programEncounter.getObservationReadableValue('Nutritional status of Child');
+            const nutritionalStatus = programEncounter.getObservationReadableValue('Nutritional status of child');
             // || programEncounter.programEnrolment.getObservationReadableValueInEntireEnrolment('Nutritional status of Child');
           
             console.log('ageOfChildInMonths',ageOfChildInMonths);

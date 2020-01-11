@@ -4494,6 +4494,7 @@
   "name" : "Nutritional status of Child",
   "uuid" : "22c77594-fb97-4ea4-8da3-ce5ee54b6d1b",
   "dataType" : "Text",
+  "voided" :true,
   "answers" : [ {
     "name" : "SAM",
     "uuid" : "bd16daeb-739b-4ed1-9a97-356ca363f8b3",
