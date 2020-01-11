@@ -6,6 +6,7 @@ import {
     FormElementStatus
 } from 'rules-config/rules';
 import _ from 'lodash';
+import lib from '../lib';
 
 const getGradeforZscore = (zScore) => {
     let grade;
@@ -46,7 +47,7 @@ const weightForHeightStatus = function (zScore) {
 
 const nutritionalStatusForChild = (individual, asOnDate, weight, height) => {
     const zScoresForChild = ruleServiceLibraryInterfaceForSharingModules.common.getZScore(individual, asOnDate, weight, height);
-    // console.log('zScoresForChild',zScoresForChild);
+    console.log('zScoresForChild',zScoresForChild);
     const wfaGrade = getGradeforZscore(zScoresForChild.wfa);
     const wfaStatus = zScoreGradeStatusMappingWeightForAge[wfaGrade];
     const wfh = zScoresForChild.wfh; //weightForHeightStatus(zScoresForChild.wfh);
@@ -101,9 +102,10 @@ class childFollowupHandler {
     }
 
     currentNutritionalStatusAccordingToWeightAndAge(programEncounter, formElement) {
+        const age = programEncounter.programEnrolment.individual.getAgeInMonths();
         const nutritionalStatus = getNutritionalStatusForChild(programEncounter);
-        // console.log('nutritionalStatus',nutritionalStatus.wfaStatus);
-        return new FormElementStatus(formElement.uuid, true, nutritionalStatus.wfaStatus);
+        console.log('nutritionalStatus',nutritionalStatus.wfaStatus);
+        return new FormElementStatus(formElement.uuid, age<= 60, nutritionalStatus.wfaStatus);
     }
 
     @WithName('Then write the problem')
