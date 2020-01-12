@@ -267,6 +267,8 @@ const getEarliestECFollowupDate = (eventDate) => {
             if(!_.isEmpty(encounter)){
                 const filteredEncounter = _.filter(encounter, 
                     e => (programEncounter.programEnrolment.hasEncounter('Child Followup', e.name))  === false);
+                
+                if(!_.isEmpty(filteredEncounter)){
                 schedule = filteredEncounter[0];
                 console.log('schedule',schedule.name);
                 scheduleBuilder.add({
@@ -275,6 +277,7 @@ const getEarliestECFollowupDate = (eventDate) => {
                     earliestDate: lib.C.addDays(birthDate, schedule.earliest),
                     maxDate: lib.C.addDays(birthDate, schedule.max)
                     }); 
+                }
             }
             return;
         }
@@ -312,7 +315,7 @@ const getEarliestECFollowupDate = (eventDate) => {
         const scheduleVisitsDuringChildFollowupSAM = (programEncounter, scheduleBuilder) => {
             // const birthDate = programEncounter.programEnrolment.individual.dateOfBirth;
             const ageOfChildInMonths = programEncounter.programEnrolment.individual.getAgeInMonths();   
-           
+           console.log('scheduleVisitsDuringChildFollowupSAM',ageOfChildInMonths);
             if (!hasExitedProgram(programEncounter)){                            
             if( ageOfChildInMonths <= 24){ //ageOfChildInMonths >= 7 &&
                 RuleHelper.addSchedule(scheduleBuilder, 'Child Followup','Child Followup', 
@@ -348,8 +351,8 @@ const getEarliestECFollowupDate = (eventDate) => {
             || programEncounter.getObservationReadableValue('Birth Weight');
            
             const ageOfChildInMonths = programEncounter.programEnrolment.individual.getAgeInMonths();   
-            const nutritionalStatus = programEncounter.getObservationReadableValue('Nutritional status of child');
-            // || programEncounter.programEnrolment.getObservationReadableValueInEntireEnrolment('Nutritional status of Child');
+            const nutritionalStatus = programEncounter.getObservationReadableValue('Nutritional status of child')
+             || programEncounter.getObservationReadableValue('Current nutritional status according to weight and age');
           
             console.log('ageOfChildInMonths',ageOfChildInMonths);
             console.log('currentWeight',currentWeight);
@@ -367,19 +370,25 @@ const getEarliestECFollowupDate = (eventDate) => {
                 scheduleFollowupVisitsDuringFollowup(programEncounter,scheduleBuilder);            
             }
             // else {            
-                    console.log('nutritionalStatus',nutritionalStatus);
+                    console.log('nutritionalStatus switch ',nutritionalStatus);
                 switch(nutritionalStatus) {
                     case 'Normal':
                         scheduleVisitsDuringChildFollowupNormal(programEncounter,scheduleBuilder);
                     break;
-                    case 'SAM':
+                    case 'SAM' : // || 'Severely Underweight'
                         scheduleVisitsDuringChildFollowupSAM(programEncounter,scheduleBuilder);
                     break;
-                    case 'MAM':
+                    case 'Severely Underweight': //
+                    scheduleVisitsDuringChildFollowupSAM(programEncounter,scheduleBuilder);
+                    break;
+                    case 'MAM' :  //
                         scheduleVisitsDuringChildFollowupMAM(programEncounter,scheduleBuilder);
                     break;
-            // }
-        }
+                    case 'Moderately Underweight':  //
+                    scheduleVisitsDuringChildFollowupMAM(programEncounter,scheduleBuilder);
+                    break;
+            }
+        // }
           return ;
     }
 
