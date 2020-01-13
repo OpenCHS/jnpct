@@ -292,7 +292,7 @@
       "type" : "SingleSelect",
       "mandatory" : true
     }, {
-      "name" : "what is the axillary temprature (in degree Centigrade)",
+      "name" : "what is the axillary temprature",
       "uuid" : "acab11ee-19ed-48d6-b62c-24ce979d2ca3",
       "keyValues" : [ ],
       "concept" : {

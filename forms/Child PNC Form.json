@@ -665,7 +665,7 @@
       },
       "displayOrder" : 19.0,
       "type" : "SingleSelect",
-      "mandatory" : true
+      "mandatory" : false
     }, {
       "name" : "Does child require to refer if morbidity found",
       "uuid" : "d35edaa9-3077-41d5-b3ff-3ff7b858d746",

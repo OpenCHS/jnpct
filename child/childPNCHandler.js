@@ -25,8 +25,11 @@ class ChildPNCHandler {
     dummy11([programEncounter], statusBuilder) {
         const birthPlace = programEncounter.programEnrolment.findLatestObservationInEntireEnrolment("Place of Birth");
         const condition1 = birthPlace && birthPlace.getReadableValue() === 'Home';
+        console.log('condition1',condition1);
         const formPreviouslyFilled = programEncounter.programEnrolment.findLatestObservationFromPreviousEncounters('Whether child breathing regularly?', programEncounter);
         const condition2 = _.isEmpty(formPreviouslyFilled) || _.isEmpty(formPreviouslyFilled.getReadableValue());
+       
+       console.log('condition2',condition2);       
         statusBuilder.show().whenItem(condition1 && condition2).is.truthy;
     }
 

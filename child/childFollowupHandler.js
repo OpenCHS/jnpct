@@ -118,7 +118,7 @@ class childFollowupHandler {
     @WithStatusBuilder
     cf2([], statusBuilder) {
         statusBuilder.show().when.valueInEncounter('Is the child able to drink or breastfeed').containsAnswerConceptName('No')
-            .and.when.valueInEncounter('Does the child vomits everything').containsAnswerConceptName('Yes')
+            .or.when.valueInEncounter('Does the child vomits everything').containsAnswerConceptName('Yes')
             .or.when.valueInEncounter('Has the child had convulsion').containsAnswerConceptName('Yes')
             .or.when.valueInEncounter('See the child is lethargic or unconsious').containsAnswerConceptName('Yes')
             .or.when.valueInEncounter('Is there general danger sign').containsAnswerConceptName('Yes')
@@ -151,7 +151,7 @@ class childFollowupHandler {
     }
 
     @WithName('does child feels hot by touch')
-    @WithName('what is the axillary temprature (in degree Centigrade)')
+    @WithName('what is the axillary temprature')
     @WithName('fever since how many days ')
     @WithName('if fever since more than 7 days then look for stiff neck')
     @WithName('does child has daily fever ')

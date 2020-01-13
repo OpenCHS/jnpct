@@ -816,6 +816,7 @@
   "answers" : [ {
     "name" : "Yes",
     "uuid" : "3a9fe9a1-a866-47ed-b75c-c0071ea22d97",
+    "abnormal" : true,
     "order" : 1.0
   }, {
     "name" : "No",
@@ -878,7 +879,7 @@
   "uuid" : "20401dea-a7ee-480a-8980-6cb419f732fe",
   "dataType" : "Numeric",
   "lowNormal" : 30.0,
-  "highNormal" : 60.0,
+  "highNormal" : 59.9,
   "unit" : "breaths/minute"
 }, {
   "name" : "Child Vomiting everything",
@@ -1428,7 +1429,8 @@
   "answers" : [ {
     "name" : "Yes",
     "uuid" : "3a9fe9a1-a866-47ed-b75c-c0071ea22d97",
-    "order" : 1.0
+    "abnormal" : true,
+     "order" : 1.0
   }, {
     "name" : "No",
     "uuid" : "16092a1e-4a02-4ffd-a3a9-47f07f147a12",
@@ -1454,6 +1456,7 @@
   "answers" : [ {
     "name" : "Yes",
     "uuid" : "3a9fe9a1-a866-47ed-b75c-c0071ea22d97",
+    "abnormal" : true,
     "order" : 1.0
   }, {
     "name" : "No",
@@ -1481,6 +1484,7 @@
   "answers" : [ {
     "name" : "Yes",
     "uuid" : "3a9fe9a1-a866-47ed-b75c-c0071ea22d97",
+    "abnormal" : true,
     "order" : 1.0
   }, {
     "name" : "No",
@@ -1494,6 +1498,7 @@
   "answers" : [ {
     "name" : "Yes",
     "uuid" : "3a9fe9a1-a866-47ed-b75c-c0071ea22d97",
+    "abnormal" : true,
     "order" : 1.0
   }, {
     "name" : "No",
@@ -1796,6 +1801,7 @@
   "answers" : [ {
     "name" : "Yes",
     "uuid" : "3a9fe9a1-a866-47ed-b75c-c0071ea22d97",
+    "abnormal" : true,
     "order" : 1.0
   }, {
     "name" : "No",
@@ -1809,6 +1815,7 @@
   "answers" : [ {
     "name" : "Yes",
     "uuid" : "3a9fe9a1-a866-47ed-b75c-c0071ea22d97",
+    "abnormal" : true,
     "order" : 1.0
   }, {
     "name" : "No",
@@ -3021,6 +3028,7 @@
   "answers" : [ {
     "name" : "Yes",
     "uuid" : "3a9fe9a1-a866-47ed-b75c-c0071ea22d97",
+    "abnormal" :true,
     "order" : 1.0
   }, {
     "name" : "No",
@@ -3601,6 +3609,7 @@
   "answers" : [ {
     "name" : "Yes",
     "uuid" : "3a9fe9a1-a866-47ed-b75c-c0071ea22d97",
+    "abnormal" :true,
     "order" : 1.0
   }, {
     "name" : "No",
@@ -3791,6 +3800,7 @@
   "answers" : [ {
     "name" : "Yes",
     "uuid" : "3a9fe9a1-a866-47ed-b75c-c0071ea22d97",
+    "abnormal" : true,
     "order" : 1.0
   }, {
     "name" : "No",
@@ -4018,6 +4028,7 @@
   "answers" : [ {
     "name" : "Yes",
     "uuid" : "3a9fe9a1-a866-47ed-b75c-c0071ea22d97",
+    "abnormal" :true,
     "order" : 1.0
   }, {
     "name" : "No",
@@ -4031,10 +4042,12 @@
   "answers" : [ {
     "name" : "severe palmer pallor",
     "uuid" : "d0f7fb2d-c611-4655-9d71-a1de701ce850",
+    "abnormal" :true,
     "order" : 1.0
   }, {
     "name" : "some palmer pallor",
     "uuid" : "6354ef85-9ce1-473a-8656-b68aff12d4d6",
+    "abnormal" :true,
     "order" : 2.0
   }, {
     "name" : "no palmer pallor",
@@ -4048,6 +4061,7 @@
   "answers" : [ {
     "name" : "Yes",
     "uuid" : "3a9fe9a1-a866-47ed-b75c-c0071ea22d97",
+    "abnormal" :true,
     "order" : 1.0
   }, {
     "name" : "No",
@@ -4577,6 +4591,7 @@
   "answers" : [ {
     "name" : "Yes",
     "uuid" : "3a9fe9a1-a866-47ed-b75c-c0071ea22d97",
+    "abnormal" : true,
     "order" : 1.0
   }, {
     "name" : "No",
@@ -5741,6 +5756,7 @@
   "answers" : [ {
     "name" : "Yes",
     "uuid" : "3a9fe9a1-a866-47ed-b75c-c0071ea22d97",
+    "abnormal" : true,
     "order" : 1.0
   }, {
     "name" : "No",
@@ -6081,8 +6097,8 @@
   "name" : "Temperature of infant",
   "uuid" : "b0b2e912-5433-4594-8d86-2098c57d671a",
   "dataType" : "Numeric",
-  "lowNormal" : 36.11,
-  "highNormal" : 37.2,
+  "lowNormal" : 35.5,
+  "highNormal" : 37.5,
   "unit" : "°C"
 }, {
   "name" : "Term (37-38 weeks)",
@@ -6766,9 +6782,12 @@
   "uuid" : "de4b5bc6-942d-43ca-b79e-c6ba255e2cd9",
   "dataType" : "NA"
 }, {
-  "name" : "what is the axillary temprature (in degree Centigrade)",
+  "name" : "what is the axillary temprature",
   "uuid" : "22a24aab-b2f1-4fbd-9835-30b8d9843cf4",
-  "dataType" : "Numeric"
+  "dataType" : "Numeric",
+  "lowNormal" : 35.5,
+  "highNormal" : 37.5,
+  "unit" : "°C"
 }, {
   "name" : "what kind of risk occurred",
   "uuid" : "9f8e78d6-72fc-4f03-9dd9-3ec7f28639df",
