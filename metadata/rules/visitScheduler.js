@@ -290,15 +290,16 @@ const getEarliestECFollowupDate = (eventDate) => {
                
             if (!hasExitedProgram(programEncounter)){                            
             if( ageOfChildInMonths <= 24){ //ageOfChildInMonths >= 7 &&
-                let earliestOffset = 0;
+                let earliestOffset = 135;
                 let visitCount = 0;
                 do {
                     visitCount = visitCount + 90;
-                    earliestOffset = visitCount + 135;
+                    earliestOffset = earliestOffset + visitCount ;
                 } while (!(moment(programEncounter.earliestVisitDateTime).
                 isSameOrBefore(lib.C.addDays(birthDate, (earliestOffset+15)),'date')));
                 
-                console.log('earliestOffset',lib.C.addDays(birthDate, earliestOffset));
+                console.log('earliestOffset',earliestOffset);
+                console.log('earliestOffset',lib.C.addDays(birthDate, earliestOffset+15));
                 console.log('moment(programEncounter.earliestVisitDateTime)',programEncounter.earliestVisitDateTime);
  
                     RuleHelper.addSchedule(scheduleBuilder, 'Child Followup','Child Followup', 
