@@ -244,7 +244,7 @@
         "regex" : "^[0-9]{12}$",
         "descriptionKey" : "Required12Digits"
       },
-      "mandatory" : true
+      "mandatory" : false
     } ]
   } ]
 }
