@@ -1,40 +1,37 @@
-[
-  {
-    "uuid": "c487771e-738b-41f2-852e-d60c25d8afea",
-    "name": "Eligible Couple Followup"
-  },
-  {
-    "uuid": "0a0504d7-a420-4b00-ab03-c620071efa41",
-    "name": "ANC"
-  },
-  {
-    "uuid": "f1dbb45f-ed4a-4696-a68d-23cce75afc6f",
-    "name": "Delivery Form"
-  },
-  {
-    "uuid": "7101cfc3-1e1c-4535-adbb-871179f9ddd8",
-    "name": "Birth Form" 
-  },
-  {
-    "uuid": "9de58542-d280-4041-b879-5e7a5ff83fc2",
-    "name": "Child PNC" 
-  },
-  {
-    "uuid": "ec4af29e-049d-4e3a-aef1-b660b74706ff",
-    "name": "Abortion Form"
-  },
-  {
-    "uuid": "d029ef9a-04ca-4364-b447-9a2c1f0e2fa9",
-    "name": "Abortion Followup"
-  },
-  {
-    "uuid": "a2e2aee7-5226-4a94-9cec-00e5bfa137a4",
-    "name": "PNC"
-  },
-  {
-    "uuid": "3348db59-a01d-447e-a4b6-0d369023152d",
-    "name": "Child Followup"
-  }
-
-
-]
+[ {
+  "name" : "Eligible Couple Followup",
+  "uuid" : "c487771e-738b-41f2-852e-d60c25d8afea"
+}, {
+  "name" : "ANC Cluster Incharge",
+  "uuid" : "f883c6c3-3ced-415e-a1cb-750ddd57f18a"
+}, {
+  "name" : "Delivery Form",
+  "uuid" : "f1dbb45f-ed4a-4696-a68d-23cce75afc6f"
+}, {
+  "name" : "Birth Form",
+  "uuid" : "7101cfc3-1e1c-4535-adbb-871179f9ddd8"
+}, {
+  "name" : "Abortion Form",
+  "uuid" : "ec4af29e-049d-4e3a-aef1-b660b74706ff"
+}, {
+  "name" : "Child PNC",
+  "uuid" : "9de58542-d280-4041-b879-5e7a5ff83fc2"
+}, {
+  "name" : "ANC",
+  "uuid" : "0a0504d7-a420-4b00-ab03-c620071efa41"
+}, {
+  "name" : "Abortion Followup",
+  "uuid" : "d029ef9a-04ca-4364-b447-9a2c1f0e2fa9"
+}, {
+  "name" : "PNC",
+  "uuid" : "a2e2aee7-5226-4a94-9cec-00e5bfa137a4"
+}, {
+  "name" : "Child Followup",
+  "uuid" : "3348db59-a01d-447e-a4b6-0d369023152d"
+}, {
+  "name" : "Child PNC Cluster Incharge",
+  "uuid" : "95dedf71-5709-46f0-b4e8-b6d91b9b05e0"
+}, {
+  "name" : "Child Followup Cluster Incharge",
+  "uuid" : "3310a91d-a1b2-4e09-9caf-af25346bf1f5"
+} ]

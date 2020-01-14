@@ -28,7 +28,10 @@ module.exports = IDI.configure(
         "forms/Child Followup Form.json",
         "forms/checklistForm.json",
         "forms/Program Exit Form.json",
-        "forms/Program Cancel Form.json"
+        "forms/Program Cancel Form.json",
+        "forms/ANC Cluster Incharge.json",
+        "forms/Child Followup Cluster Incharge.json",
+        "forms/Child PNC Cluster Incahrge.json"
       ],
       formMappings: ["metadata/formMappings.json"],
       formDeletions: [],
