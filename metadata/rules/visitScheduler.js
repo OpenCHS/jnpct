@@ -39,12 +39,19 @@ const getEarliestECFollowupDate = (eventDate) => {
             "ANC 2": {earliest: 112, max: 123},
             "ANC 3": {earliest: 168, max: 179},
             "ANC 4": {earliest: 196, max: 207},
-            "ANC 5": {earliest: 224, max: 235}            
+            "ANC 5": {earliest: 224, max: 235},
+            "ANC Cluster Incharge-1": {earliest: 148, max: 169},
+            "ANC Cluster Incharge-2": {earliest: 204, max: 225},    
         };
 
         const encounterScheduleChildFollowup =[
             {"name" : "Child Followup-1","earliest": 110,"max" : 10},
             {"name" : "Child Followup-2","earliest": 160,"max" : 8}
+        ];
+
+        const encounterScheduleANCClusterIncharge =[
+            {"name" : "ANC Cluster Incharge-1","earliest": 148,"max" : 169},
+            {"name" : "ANC Cluster Incharge-2","earliest": 204,"max" : 225}
         ];
 
         const encounterScheduleChildPNC =[
@@ -144,17 +151,63 @@ const getEarliestECFollowupDate = (eventDate) => {
             };
 
             if (!hasExitedProgram(programEncounter)){             
-            if (lmpDate) {
+           
                 if (programEncounter.name === 'ANC 1') 
-                addEncounter(lmpDate, 'ANC', 'ANC 2');
+                    addEncounter(lmpDate, 'ANC', 'ANC 2');
                 else if (programEncounter.name === 'ANC 2') 
-                addEncounter(lmpDate, 'ANC', 'ANC 3'); 
+                    addEncounter(lmpDate, 'ANC', 'ANC 3'); 
                 else if (programEncounter.name === 'ANC 3' && highRiskANC)
-                addEncounter(lmpDate, 'ANC', 'ANC 4'); 
+                    addEncounter(lmpDate, 'ANC', 'ANC 4'); 
                 else if (programEncounter.name === 'ANC 4' && highRiskANC)
-                        addEncounter(lmpDate, 'ANC', 'ANC 5');            
-            }    
+                    addEncounter(lmpDate, 'ANC', 'ANC 5');            
+            
+                if (highRiskANC){
+                    const encounter = _.forEach(encounterScheduleANCClusterIncharge, 
+                        e => moment(programEncounter.earliestVisitDateTime).isSameOrBefore(moment(lib.C.addDays(lmpDate, e.earliest)),'date'));
+                        
+                        if(!_.isEmpty(encounter)){
+                            const filteredEncounter = _.filter(encounter, 
+                                e => (programEncounter.programEnrolment.hasEncounter('ANC Cluster Incharge', e.name))  === false);
+                            
+                        if(!_.isEmpty(filteredEncounter)){
+                            schedule = filteredEncounter[0];
+                            addEncounter(lmpDate, 'ANC Cluster Incharge' ,schedule.name);
+                }
             }
+        }
+    }
+
+        return ;
+        }
+
+        const scheduleVisitsDuringANCClusterIncharge = (programEncounter, scheduleBuilder) => {
+            const lmpDate = programEncounter.programEnrolment.getObservationValue('Last menstrual period');
+            const highRiskANC = programEncounter.programEnrolment.getObservationReadableValueInEntireEnrolment('High Risk Conditions');
+            var schedule = [];
+
+            if (!hasExitedProgram(programEncounter)){
+            
+                if (highRiskANC){
+                    const encounter = _.forEach(encounterScheduleANCClusterIncharge, 
+                        e => moment(programEncounter.earliestVisitDateTime).isSameOrBefore(moment(lib.C.addDays(lmpDate, e.earliest)),'date'));
+                        
+                        if(!_.isEmpty(encounter)){
+                            const filteredEncounter = _.filter(encounter, 
+                                e => (programEncounter.programEnrolment.hasEncounter('ANC Cluster Incharge', e.name))  === false);
+                            
+                        if(!_.isEmpty(filteredEncounter)){
+                            schedule = filteredEncounter[0];
+                            console.log('schedule',schedule.name);
+                            scheduleBuilder.add({
+                                name: schedule.name,
+                                encounterType: 'ANC Cluster Incharge',
+                                earliestDate: lib.C.addDays(lmpDate, schedule.earliest),
+                                maxDate: lib.C.addDays(lmpDate, schedule.max)
+                                }); 
+                }
+            }
+        }
+    }
 
         return ;
         }
@@ -275,8 +328,8 @@ const getEarliestECFollowupDate = (eventDate) => {
         const scheduleVisitsDuringChildFollowupNormal = (programEncounter, scheduleBuilder) => {
             const birthDate = programEncounter.programEnrolment.individual.dateOfBirth;
             const ageOfChildInMonths = programEncounter.programEnrolment.individual.getAgeInMonths();   
-            console.log('birthDate',birthDate);
-            console.log('ageOfChildInMonths Normal',ageOfChildInMonths);
+            // console.log('birthDate',birthDate);
+            // console.log('ageOfChildInMonths Normal',ageOfChildInMonths);
                
             if (!hasExitedProgram(programEncounter)){                            
             if( ageOfChildInMonths <= 24){ //ageOfChildInMonths >= 7 &&
@@ -288,9 +341,9 @@ const getEarliestECFollowupDate = (eventDate) => {
                 } while (!(moment(programEncounter.earliestVisitDateTime).
                 isSameOrBefore(lib.C.addDays(birthDate, (earliestOffset+15)),'date')));
                 
-                console.log('earliestOffset',earliestOffset);
-                console.log('earliestOffset',lib.C.addDays(birthDate, earliestOffset+15));
-                console.log('moment(programEncounter.earliestVisitDateTime)',programEncounter.earliestVisitDateTime);
+                // console.log('earliestOffset',earliestOffset);
+                // console.log('earliestOffset',lib.C.addDays(birthDate, earliestOffset+15));
+                // console.log('moment(programEncounter.earliestVisitDateTime)',programEncounter.earliestVisitDateTime);
  
                     RuleHelper.addSchedule(scheduleBuilder, 'Child Followup','Child Followup', 
                     lib.C.addDays(birthDate, earliestOffset) ,15);
@@ -344,9 +397,9 @@ const getEarliestECFollowupDate = (eventDate) => {
             const nutritionalStatus = programEncounter.getObservationReadableValue('Nutritional status of child')
              || programEncounter.getObservationReadableValue('Current nutritional status according to weight and age');
           
-            console.log('ageOfChildInMonths',ageOfChildInMonths);
-            console.log('currentWeight',currentWeight);
-            console.log('nutritionalStatus',nutritionalStatus);
+            // console.log('ageOfChildInMonths',ageOfChildInMonths);
+            // console.log('currentWeight',currentWeight);
+            // console.log('nutritionalStatus',nutritionalStatus);
         
             if(birthWeight<2 && currentWeight < 3 && ageOfChildInMonths < 2){
                 
@@ -442,6 +495,31 @@ const getEarliestECFollowupDate = (eventDate) => {
       return ;
   }
 
+  const scheduleANCClusterInchargeVisits = (programEnrolment,scheduleBuilder) =>{
+    const lmpDate = programEnrolment.getObservationValue('Last menstrual period');
+    var schedule = [];
+
+            const encounter = _.forEach(encounterScheduleANCClusterIncharge, 
+                e => moment(getEarliestDate(programEnrolment)).isSameOrBefore(moment(lib.C.addDays(lmpDate, e.earliest)),'date'));
+            
+            if(!_.isEmpty(encounter)){
+                const filteredEncounter = _.filter(encounter, 
+                    e => (programEnrolment.hasEncounter('ANC Cluster Incharge', e.name))  === false);
+                
+                if(!_.isEmpty(filteredEncounter)){
+                schedule = filteredEncounter[0];
+                console.log('schedule',schedule.name);
+                scheduleBuilder.add({
+                    name: schedule.name,
+                    encounterType: 'ANC Cluster Incharge',
+                    earliestDate: lib.C.addDays(lmpDate, schedule.earliest),
+                    maxDate: lib.C.addDays(lmpDate, schedule.max)
+                    }); 
+                }
+            }
+      return;
+  }
+
 
 @RuleFactory("d40e8aa2-8cae-4b09-ad30-2da6c1690206", "VisitSchedule")
 ("3d13cc9a-c1fe-49e9-8980-360378f8199d", "JNPCT Pregnant Woman Enrolment Visit schedule", 100.0)
@@ -450,8 +528,10 @@ class ScheduleVisitDuringPregnantWomanEnrolment {
         let scheduleBuilder = RuleHelper.createEnrolmentScheduleBuilder(programEnrolment, visitSchedule);
         let enrolmentHighRisk = programEnrolment.getObservationValue('High Risk');
         let maxDateOffset = 15;
-        if (enrolmentHighRisk) 
+        if (enrolmentHighRisk){ 
             maxDateOffset = 8;
+            scheduleANCClusterInchargeVisits(programEnrolment,scheduleBuilder);  
+        }
       
         RuleHelper.addSchedule(scheduleBuilder, 'ANC 1','ANC', getEarliestDate(programEnrolment), maxDateOffset);
         // .enrolmentDateTime
@@ -498,6 +578,16 @@ class ScheduleVisitsDuringANC {
     static exec(programEncounter, visitSchedule = [], scheduleConfig) { 
         let scheduleBuilder = RuleHelper.createProgramEncounterVisitScheduleBuilder(programEncounter, visitSchedule);          
         scheduleVisitsDuringANC(programEncounter,scheduleBuilder);
+        return scheduleBuilder.getAllUnique("encounterType");
+    }
+}
+
+@RuleFactory("ac8f3477-6841-4a22-99fe-8467b0e311d0", "VisitSchedule")
+("da4ef295-1b64-4b22-91e5-8ad78652bef0", "ScheduleVisitsDuringANCClusterIncharge", 10.0)
+class ScheduleVisitsDuringANCClusterIncharge {
+    static exec(programEncounter, visitSchedule = [], scheduleConfig) { 
+        let scheduleBuilder = RuleHelper.createProgramEncounterVisitScheduleBuilder(programEncounter, visitSchedule);          
+        scheduleVisitsDuringANCClusterIncharge(programEncounter,scheduleBuilder);
         return scheduleBuilder.getAllUnique("encounterType");
     }
 }
@@ -598,6 +688,9 @@ class ScheduleVisitsOnCancel {
                 case 'ANC':
                     scheduleVisitsDuringANC(programEncounter, scheduleBuilder);
                     break;
+                case 'ANC Cluster Incharge':
+                    scheduleVisitsDuringANCClusterIncharge(programEncounter, scheduleBuilder);
+                    break;    
                 case 'PNC':
                     scheduleVisitsDuringPNC(programEncounter, scheduleBuilder);
                     break; ;
@@ -620,6 +713,7 @@ export {
     ScheduleVisitDuringPregnantWomanEnrolment,
     ScheduleVisitDuringEligibleCoupleEnrolment,
     ScheduleVisitsDuringANC,
+    ScheduleVisitsDuringANCClusterIncharge,
     ScheduleVisitDuringDelivery,
     ScheduleVisitsDuringPNC,
     ScheduleVisitDuringAbortion,

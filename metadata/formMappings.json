@@ -52,6 +52,13 @@
     "comment": "Pregnant Woman ANC Cancel"
   },
   {
+    "uuid": "480603ba-c69f-4132-b944-bd6de1102717",
+    "formUUID": "406738d4-c96c-498c-99e7-4389cb454d5c",
+    "encounterTypeUUID": "f883c6c3-3ced-415e-a1cb-750ddd57f18a",
+    "programUUID": "26d3e45e-7174-433f-b4a7-db1524648252",
+    "comment": "Pregnant Woman ANC Cluster Incharge Cancel"
+  },
+  {
     "uuid": "900c2641-e546-485d-ba06-ae893a435219",
     "formUUID": "cbe0f44c-580a-4311-ae34-cef2e4b35330",
     "encounterTypeUUID": "f1dbb45f-ed4a-4696-a68d-23cce75afc6f",
