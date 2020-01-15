@@ -207,7 +207,7 @@ class ChildPNCHandler {
     @WithName("Weight of infant at time to stoped to do KMC")
     @WithStatusBuilder
     dummy8([programEncounter], statusBuilder) {
-        statusBuilder.show().when.valueInEncounter('Todays weight of infant?').is.lessThan(2.5);
+        statusBuilder.show().when.valueInEncounter('Current Weight').is.lessThan(2.5);
     }
 
 
