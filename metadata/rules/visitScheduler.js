@@ -380,8 +380,6 @@ const getEarliestECFollowupDate = (eventDate) => {
                 do {
                     visitCount = visitCount + 90;
                     earliestOffset = earliestOffset + visitCount ;
-                    console.log('normal followup',moment(programEncounter.earliestVisitDateTime).
-                    isSameOrBefore(lib.C.addDays(birthDate, earliestOffset),'date'));
                 } while (!(moment(programEncounter.earliestVisitDateTime).
                 isSameOrBefore(lib.C.addDays(birthDate, earliestOffset),'date')));
                
@@ -455,9 +453,9 @@ const getEarliestECFollowupDate = (eventDate) => {
             || programEncounter.programEnrolment.getObservationReadableValueInEntireEnrolment('Nutritional status of child')
             || programEncounter.getObservationReadableValue('Current nutritional status according to weight and age');
             
-            if( ageOfChildInMonths < 6) {             
+             if( ageOfChildInMonths < 6) {             
                 scheduleFollowupVisitsDuringFollowup(programEncounter,scheduleBuilder); 
-                if(!nutritionalStatus.isEqual('Normal') )
+                if(!_.isEqual(nutritionalStatus,'Normal'))
                    scheduleChildFollowupClusterInchargeVisits(programEncounter, scheduleBuilder);            
             } 
             // else {            
@@ -515,8 +513,7 @@ const getEarliestECFollowupDate = (eventDate) => {
                     RuleHelper.addSchedule(scheduleBuilder, 'Child PNC Cluster Incharge-1','Child PNC Cluster Incharge', 
                     getEarliestEncounterDate(programEncounter),8);
     
-         } else{ 
-                schedulePNCVisitsDuringBirth(programEncounter, scheduleBuilder);
+         } else schedulePNCVisitsDuringBirth(programEncounter, scheduleBuilder);
         }
    
       return ;
