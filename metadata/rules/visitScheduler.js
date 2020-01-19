@@ -265,8 +265,8 @@ const getEarliestECFollowupDate = (eventDate) => {
             } else if(birthWeight < 2 && ageOfChildInMonths < 2)
                   scheduleChildPNCVisitsLowBirthWeight(programEncounter, scheduleBuilder);
           
-            // if ( !_.isEqual(nutritionalStatus,'Normal') && ageOfChildInMonths >= 2 && ageOfChildInMonths <= 6)
-            //     scheduleChildFollowupClusterInchargeVisits(programEncounter, scheduleBuilder);            
+            if ( !_.isEqual(nutritionalStatus,'Normal') && ageOfChildInMonths >= 2 && ageOfChildInMonths <= 6)
+                scheduleChildFollowupClusterInchargeVisits(programEncounter, scheduleBuilder);            
           }
             return ;
         }
@@ -292,32 +292,29 @@ const getEarliestECFollowupDate = (eventDate) => {
 
         const scheduleChildPNCVisitsNormal = (programEncounter, scheduleBuilder) =>{
             const birthDate = programEncounter.programEnrolment.individual.dateOfBirth;
+            const ageOfChildInMonths = programEncounter.programEnrolment.individual.getAgeInMonths();   
             var schedule = [];        
 
-            const addEncounter = function (baseDate, encounterType, name) {        
-                if (programEncounter.programEnrolment.hasEncounter(encounterType, name)) return; 
-                schedule = encounterSchedule[name === undefined ? encounterType : name];
-                console.log('schedule',schedule);
-                    scheduleBuilder.add({
-                        name: name,
-                        encounterType: encounterType,
-                        earliestDate: lib.C.addDays(baseDate, schedule.earliest),
-                        maxDate:lib.C.addDays(baseDate, schedule.max)
-                        });      
-            };
-
-                if (programEncounter.name === 'Child PNC 1') 
-                addEncounter(birthDate, 'Child PNC', 'Child PNC 2');
-                else if (programEncounter.name === 'Child PNC 2') {
-                addEncounter(birthDate, 'Child PNC', 'Child PNC 3'); 
-                console.log('Child PNC 3',birthDate);
-                } 
-                else if (programEncounter.name === 'Child PNC 3') {
-                    if(ageOfChildInMonths <= 6){
-                        if (programEncounter.programEnrolment.hasEncounter('Child Followup', 'Child Followup-1')) return; 
-                        else 
-                        RuleHelper.addSchedule(scheduleBuilder, 'Child Followup-1','Child Followup',lib.C.addDays(birthDate, 110),10);
-                     }
+            const encounter = _.forEach(encounterScheduleChildPNC, 
+                e => moment(programEncounter.earliestVisitDateTime).isSameOrBefore(moment(lib.C.addDays(birthDate, e.earliest)),'date'));
+            
+            if(!_.isEmpty(encounter)){
+                const filteredEncounter = _.filter(encounter, 
+                    e => (programEncounter.programEnrolment.hasEncounter('Child PNC', e.name))  === false);
+                
+                if(!_.isEmpty(filteredEncounter)){
+                schedule = filteredEncounter[0];
+                console.log('schedule',schedule.name);
+                scheduleBuilder.add({
+                    name: schedule.name,
+                    encounterType: 'Child PNC',
+                    earliestDate: lib.C.addDays(birthDate, schedule.earliest),
+                    maxDate: lib.C.addDays(birthDate, schedule.max)
+                    }); 
+                }
+            }else if (programEncounter.name === 'Child PNC 3' && ageOfChildInMonths <= 6) {
+                    if (programEncounter.programEnrolment.hasEncounter('Child Followup', 'Child Followup-1')) return; 
+                    else RuleHelper.addSchedule(scheduleBuilder, 'Child Followup-1','Child Followup',lib.C.addDays(birthDate, 110),10);
                 } 
             return;
         }
@@ -352,7 +349,7 @@ const getEarliestECFollowupDate = (eventDate) => {
             var schedule = [];
 
             const encounter = _.forEach(encounterScheduleChildFollowup, 
-                e => moment(programEncounter.earliestVisitDateTime).isSameOrBefore(moment(lib.C.addDays(birthDate, e.max)),'date'));
+                e => moment(programEncounter.earliestVisitDateTime).isSameOrBefore(moment(lib.C.addDays(birthDate, e.earliest)),'date'));
             
             if(!_.isEmpty(encounter)){
                 const filteredEncounter = _.filter(encounter, 
@@ -383,8 +380,10 @@ const getEarliestECFollowupDate = (eventDate) => {
                 do {
                     visitCount = visitCount + 90;
                     earliestOffset = earliestOffset + visitCount ;
+                    console.log('normal followup',moment(programEncounter.earliestVisitDateTime).
+                    isSameOrBefore(lib.C.addDays(birthDate, earliestOffset),'date'));
                 } while (!(moment(programEncounter.earliestVisitDateTime).
-                isSameOrBefore(lib.C.addDays(birthDate, (earliestOffset)),'date')));
+                isSameOrBefore(lib.C.addDays(birthDate, earliestOffset),'date')));
                
                 RuleHelper.addSchedule(scheduleBuilder, 'Child Followup','Child Followup', 
                     lib.C.addDays(birthDate, earliestOffset) ,15);
@@ -409,10 +408,10 @@ const getEarliestECFollowupDate = (eventDate) => {
                 lib.C.addMonths(getEarliestEncounterDate(programEncounter), 1) ,15);   
              }
            
-            //  if(!programEncounter.programEnrolment.hasEncounter('Child Followup Cluster Incharge','Child Followup Cluster Incharge')
-            //     && ageOfChildInMonths >= 7 && ageOfChildInMonths <= 60)
-            //     RuleHelper.addSchedule(scheduleBuilder, 'Child Followup Cluster Incharge-1','Child Followup Cluster Incharge', 
-            //         lib.C.addMonths(getEarliestEncounterDate(programEncounter), 1) ,8);   
+             if(!programEncounter.programEnrolment.hasEncounter('Child Followup Cluster Incharge','Child Followup Cluster Incharge-1')
+                && ageOfChildInMonths >= 7 && ageOfChildInMonths <= 60)
+                RuleHelper.addSchedule(scheduleBuilder, 'Child Followup Cluster Incharge-1','Child Followup Cluster Incharge', 
+                    lib.C.addMonths(getEarliestEncounterDate(programEncounter), 1) ,8);   
            }
             return ;
         }
@@ -429,30 +428,37 @@ const getEarliestECFollowupDate = (eventDate) => {
                 lib.C.addMonths(getEarliestEncounterDate(programEncounter), 2) ,15);   
              }
             
-            //  if(!programEncounter.programEnrolment.hasEncounter('Child Followup Cluster Incharge','Child Followup Cluster Incharge')
-            //    && ageOfChildInMonths >= 7 && ageOfChildInMonths <= 60)
-            //     RuleHelper.addSchedule(scheduleBuilder, 'Child Followup Cluster Incharge','Child Followup Cluster Incharge', 
-            //         lib.C.addMonths(getEarliestEncounterDate(programEncounter), 4) ,8);   
+             if(!programEncounter.programEnrolment.hasEncounter('Child Followup Cluster Incharge','Child Followup Cluster Incharge-1')
+               && ageOfChildInMonths >= 7 && ageOfChildInMonths <= 60)
+                RuleHelper.addSchedule(scheduleBuilder, 'Child Followup Cluster Incharge-1','Child Followup Cluster Incharge', 
+                    lib.C.addMonths(getEarliestEncounterDate(programEncounter), 4) ,8);   
             }
             return ;
         }
 
-        const scheduleVisitsDuringChildFollowup = (programEncounter, scheduleBuilder) => {
-            const currentWeight = programEncounter.getObservationReadableValue('Current Weight') ||
-            programEncounter.programEnrolment.getObservationReadableValueInEntireEnrolment('Current Weight');
+        const scheduleVisitsDuringChildPNCClusterIncharge = (programEncounter, scheduleBuilder) => {
+            const birthDate = programEncounter.programEnrolment.individual.dateOfBirth;
+           
+            if(programEncounter.programEnrolment.hasEncounter('Child PNC Cluster Incharge','Child PNC Cluster Incharge-1')
+               && (moment(programEncounter.earliestVisitDateTime).isSameOrBefore(lib.C.addDays(birthDate, 61)),'date'));               
+                RuleHelper.addSchedule(scheduleBuilder, 'Child PNC Cluster Incharge-2','Child PNC Cluster Incharge', 
+                    lib.C.addDays(birthDate, 47) ,14);   
             
-            const ageOfChildInMonths = programEncounter.programEnrolment.individual.getAgeInMonths();   
+
+            return;
+        }
+
+        const scheduleVisitsDuringChildFollowup = (programEncounter, scheduleBuilder) => {
+            const ageOfChildInMonths = programEncounter.programEnrolment.individual.getAgeInMonths();
+           
             const nutritionalStatus = programEncounter.getObservationReadableValue('Nutritional status of child')
-             || programEncounter.getObservationReadableValue('Current nutritional status according to weight and age');
-          
-            console.log('ageOfChildInMonths',ageOfChildInMonths);
-            console.log('currentWeight',currentWeight);
-            console.log('nutritionalStatus',nutritionalStatus);
-        
-            if( ageOfChildInMonths < 6) {//ageOfChildInMonths >= 2 &&               
+            || programEncounter.programEnrolment.getObservationReadableValueInEntireEnrolment('Nutritional status of child')
+            || programEncounter.getObservationReadableValue('Current nutritional status according to weight and age');
+            
+            if( ageOfChildInMonths < 6) {             
                 scheduleFollowupVisitsDuringFollowup(programEncounter,scheduleBuilder); 
-                // if(!nutritionalStatus.isEqual('Normal') )
-                // scheduleChildFollowupClusterInchargeVisits(programEncounter, scheduleBuilder);            
+                if(!nutritionalStatus.isEqual('Normal') )
+                   scheduleChildFollowupClusterInchargeVisits(programEncounter, scheduleBuilder);            
             } 
             // else {            
                     console.log('nutritionalStatus switch ',nutritionalStatus);
@@ -460,7 +466,7 @@ const getEarliestECFollowupDate = (eventDate) => {
                     case 'Normal':
                         scheduleVisitsDuringChildFollowupNormal(programEncounter,scheduleBuilder);
                     break;
-                    case 'SAM' : // || 'Severely Underweight'
+                    case 'SAM' : 
                         scheduleVisitsDuringChildFollowupSAM(programEncounter,scheduleBuilder);
                     break;
                     case 'Severely Underweight': //
@@ -480,34 +486,18 @@ const getEarliestECFollowupDate = (eventDate) => {
       const schedulePNCVisitsDuringBirth = (programEncounter, scheduleBuilder) =>{
         const birthDate = programEncounter.programEnrolment.individual.dateOfBirth; 
  
-        if(moment(programEncounter.earliestVisitDateTime).isSameOrBefore(moment(lib.C.addDays(birthDate, 0)),'date')
+        if(moment(programEncounter.earliestVisitDateTime).isSameOrBefore(moment(lib.C.addDays(birthDate, 8)),'date')
             && !(programEncounter.programEnrolment.hasEncounter('Child PNC', 'Child PNC 1'))){ 
                 console.log('getEarliestEncounterDate(programEncounter)',getEarliestEncounterDate(programEncounter));
             scheduleBuilder.add({
                 name: 'Child PNC 1',
                 encounterType: 'Child PNC',
                 earliestDate: getEarliestEncounterDate(programEncounter),
-                maxDate:lib.C.addDays(birthDate, maxOffset)
+                maxDate:lib.C.addDays(birthDate, 8)
                 });  
-        }else {            
-            const encounter = _.filter(encounterScheduleChildPNC, 
-                    e => moment(programEncounter.earliestVisitDateTime).isSameOrBefore(moment(lib.C.addDays(birthDate, e.earliest)),'date'));
-           
-            if(!_.isEmpty(encounter)){
-                const filteredEncounter = _.filter(encounter, 
-                    e => (programEncounter.programEnrolment.hasEncounter('Child PNC', e.name))  === false);
-                   
-            if(!_.isEmpty(filteredEncounter)){
-              var schedule = filteredEncounter[0];
-              scheduleBuilder.add({
-                name: schedule.name,
-                encounterType: 'Child PNC',
-                earliestDate: lib.C.addDays(birthDate, schedule.earliest),
-                maxDate:lib.C.addDays(birthDate, schedule.max)
-                });  
-            }
-        }
-    }
+        }else        
+              scheduleChildPNCVisitsNormal(programEncounter, scheduleBuilder);
+    
         return ;
       }
 
@@ -517,16 +507,14 @@ const getEarliestECFollowupDate = (eventDate) => {
         || programEncounter.getObservationReadableValue('Birth Weight');
         const ageOfChildInMonths = programEncounter.programEnrolment.individual.getAgeInMonths();   
          
-        if (ageOfChildInMonths < 2 && birthWeight < 2 ){            
-                let earliestOffset = 7;
-                let visitCount = 1;
-                do {
-                    visitCount ++;
-                    earliestOffset = 7* visitCount;
-                } while (!(moment(programEncounter.earliestVisitDateTime).isSameOrBefore(lib.C.addDays(getEarliestEncounterDate(programEncounter), earliestOffset)),'date'));
-
-                    RuleHelper.addSchedule(scheduleBuilder, 'Child PNC 1','Child PNC', 
-                    lib.C.addDays(getEarliestEncounterDate(programEncounter), earliestOffset) ,4);
+        if (birthWeight < 2 ){  
+            if (ageOfChildInMonths < 2) {         
+                    RuleHelper.addSchedule(scheduleBuilder, 'Child PNC','Child PNC', 
+                    getEarliestEncounterDate(programEncounter) ,4);
+           
+                    RuleHelper.addSchedule(scheduleBuilder, 'Child PNC Cluster Incharge-1','Child PNC Cluster Incharge', 
+                    getEarliestEncounterDate(programEncounter),8);
+    
          } else{ 
                 schedulePNCVisitsDuringBirth(programEncounter, scheduleBuilder);
         }
@@ -564,21 +552,22 @@ const scheduleVisitsDuringChildFollowupClusterIncharge = (programEncounter,sched
     const ageOfChildInMonths = programEncounter.programEnrolment.individual.getAgeInMonths();   
           
        console.log('nutritionalStatus switch ',nutritionalStatus);
-       if(!hasExitedProgram(programEncounter))
-       if ( !nutritionalStatus.isEqual('Normal') &&  ageOfChildInMonths > 2 && ageOfChildInMonths < 6)
+       if(!hasExitedProgram(programEncounter) && !nutritionalStatus.isEqual('Normal')){
+       if ( ageOfChildInMonths > 2 && ageOfChildInMonths < 6)
             scheduleChildFollowupClusterInchargeVisits(programEncounter, scheduleBuilder);
        else if(ageOfChildInMonths <= 60 )
        switch(nutritionalStatus) {
            case 'SAM' : 
-                RuleHelper.addSchedule(scheduleBuilder, 'Child Followup Cluster Incharge','Child Followup Cluster Incharge', 
+                RuleHelper.addSchedule(scheduleBuilder, 'Child Followup Cluster Incharge-2','Child Followup Cluster Incharge', 
                  lib.C.addMonths(getEarliestEncounterDate(programEncounter), 1) ,8);   
           break;
            case 'MAM' :
-                RuleHelper.addSchedule(scheduleBuilder, 'Child Followup Cluster Incharge','Child Followup Cluster Incharge', 
+                RuleHelper.addSchedule(scheduleBuilder, 'Child Followup Cluster Incharge-2','Child Followup Cluster Incharge', 
                    lib.C.addMonths(getEarliestEncounterDate(programEncounter), 4) ,8);   
           break;
         
    }
+}
     return;
 }
 
@@ -723,6 +712,16 @@ class ScheduleVisitsDuringChildPNC {
    }
 }
 
+@RuleFactory("cd1c6c33-1f90-41dc-aa97-dc2ba3ae65b7", "VisitSchedule")
+("fce4418e-18dc-48b1-b1b3-8aaa52280241", "ScheduleVisitsDuringChildPNCClusterIncharge", 10.0)
+class ScheduleVisitsDuringChildPNCClusterIncharge {
+    static exec(programEncounter, visitSchedule = [], scheduleConfig) {       
+        let scheduleBuilder = RuleHelper.createProgramEncounterVisitScheduleBuilder(programEncounter, visitSchedule);
+        scheduleVisitsDuringChildPNCClusterIncharge(programEncounter,scheduleBuilder);
+        return scheduleBuilder.getAllUnique("encounterType");
+   }
+}
+
 @RuleFactory("4548364c-ff22-447b-baec-3c63935a7e00", "VisitSchedule")
 ("bd87c77a-e202-4b9d-a756-caacc1f6bf86", "ScheduleVisitsDuringChildFollowup", 10.0)
 class ScheduleVisitsDuringChildFollowup {
@@ -772,12 +771,15 @@ class ScheduleVisitsOnCancel {
                 case 'Child PNC':
                     scheduleVisitsDuringChildPNC(programEncounter,scheduleBuilder);     
                     break;
+                case 'Child PNC Cluster Incharge':
+                    scheduleVisitsDuringChildPNCClusterIncharge(programEncounter,scheduleBuilder);     
+                    break;
                 case 'Child Followup':
                     scheduleVisitsDuringChildFollowup(programEncounter,scheduleBuilder);
                     break;
-                // case 'Child Followup Cluster Incharge':
-                //     scheduleVisitsDuringChildFollowupClusterIncharge(programEncounter,scheduleBuilder);
-                //     break;       
+                case 'Child Followup Cluster Incharge':
+                    scheduleVisitsDuringChildFollowupClusterIncharge(programEncounter,scheduleBuilder);
+                    break;       
             }
         }
         return scheduleBuilder.getAllUnique("encounterType", true);
@@ -797,7 +799,8 @@ export {
     ScheduleVisitsOnCancel,
     ScheduleVisitDuringChildEnrolment,
     ScheduleVisitsDuringChildFollowup,
-    // ScheduleVisitsDuringChildFollowupClusterIncharge,
+    ScheduleVisitsDuringChildFollowupClusterIncharge,
     ScheduleVisitsDuringBirth,
-    ScheduleVisitsDuringChildPNC
+    ScheduleVisitsDuringChildPNC,
+    ScheduleVisitsDuringChildPNCClusterIncharge
 }
