@@ -547,9 +547,7 @@ const getEarliestECFollowupDate = (eventDate) => {
 const scheduleVisitsDuringChildFollowupClusterIncharge = (programEncounter,scheduleBuilder) =>{
     const nutritionalStatus = programEncounter.getObservationReadableValue('Nutritional status of child');
     const ageOfChildInMonths = programEncounter.programEnrolment.individual.getAgeInMonths();   
-          
-       console.log('nutritionalStatus switch ',nutritionalStatus);
-       if(!hasExitedProgram(programEncounter) && !nutritionalStatus.isEqual('Normal')){
+       if(!hasExitedProgram(programEncounter) && nutritionalStatus && !nutritionalStatus.isEqual('Normal')){
        if ( ageOfChildInMonths > 2 && ageOfChildInMonths < 6)
             scheduleChildFollowupClusterInchargeVisits(programEncounter, scheduleBuilder);
        else if(ageOfChildInMonths <= 60 )
@@ -678,8 +676,7 @@ class ScheduleVisitDuringChildEnrolment {
        
         const dob = programEnrolment.individual.dateOfBirth;
         const ageOfChildInDays = lib.C.getDays(dob,programEnrolment.enrolmentDateTime); 
-        console.log('ageOfChildInDays',ageOfChildInDays);      
-        if (ageOfChildInDays < 90) 
+        if (ageOfChildInDays < 90)
         RuleHelper.addSchedule(scheduleBuilder, 'Birth Form','Birth Form', getEarliestDate(programEnrolment), 0);
         else {
             RuleHelper.addSchedule(scheduleBuilder, 'Child Followup','Child Followup', 

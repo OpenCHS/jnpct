@@ -25,22 +25,28 @@ class eligibleCoupleProgramSummary {
             summaries.push({name: 'Height', value: heightCount});
         }
 
-        const weight = programEnrolment.findLatestObservationFromEncounters("Weight");
-        const weightCount = weight.getReadableValue();
-        if (!_.isNil(weightCount)) {
-            summaries.push({name: 'Weight', value: weightCount});
+
+        const we = programEnrolment.getObservationsForConceptName('Weight');
+        if (!_.isEmpty(we)) {
+            const value = we.map(({encounterDateTime, obs}) => (`${moment(encounterDateTime).format("DD-MM-YYYY")}: ${obs}`))
+                .join(", ");
+            summaries.push({name: "weight", value: value})
         }
 
 
-        const muac = programEnrolment.findLatestObservationFromEncounters("MUAC (in cms)");
-        const muacCount = muac.getReadableValue();
-        if (!_.isNil(muacCount)) {
-            summaries.push({name: 'MUAC', value: muacCount});
+        const muac = programEnrolment.getObservationsForConceptName('MUAC (in cms)');
+        if (!_.isEmpty(muac)) {
+            const value = muac.map(({encounterDateTime, obs}) => (`${moment(encounterDateTime).format("DD-MM-YYYY")}: ${obs}`))
+                .join(", ");
+            summaries.push({name: "MUAC", value: value})
         }
 
-        const lmp = programEnrolment.findLatestObservationInEntireEnrolment("LMP Date").getReadableValue();
-        const lmpDate=moment(lmp).format('M-D-YYYY');
-        if (!_.isNil(lmpDate)) {
+        const allEnc = _.filter(programEnrolment.nonVoidedEncounters(), enc => !_.isNil(enc.encounterDateTime));
+
+        const latestEnc = _.last(_.sortBy(allEnc, encounter => encounter.encounterDateTime));
+        const obs = _.find(latestEnc.observations, obs => obs.concept.name === 'LMP Date');
+        if (!_.isNil(obs)) {
+            const lmpDate=moment(obs.getReadableValue()).format('M-D-YYYY');
             summaries.push({name: 'LMP', value: lmpDate});
         }
 

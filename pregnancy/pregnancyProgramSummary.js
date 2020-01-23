@@ -116,16 +116,20 @@ class ProgramSummary {
         }
 
 
-        const ironTab = programEnrolment.findLatestObservationFromEncounters("IF YES THEN WRITE NUMBER OF TABLET SWALLOWED");
-        const ironTabCount = ironTab.getReadableValue();
-        if (!_.isNil(ironTab)) {
-            summaries.push({name: 'Iron Tablet Consumed', value: ironTabCount});
+            const ironTab = programEnrolment.getObservationsForConceptName('IF YES THEN WRITE NUMBER OF TABLET SWALLOWED');
+        if (!_.isEmpty(ironTab)) {
+            const value = ironTab.map(({encounterDateTime, obs}) => (`${moment(encounterDateTime).format("DD-MM-YYYY")}: ${obs}`))
+                .join(", ");
+            summaries.push({name: "Iron Tablet Consumed", value: value})
         }
 
-        const calciumTab = programEnrolment.findLatestObservationFromEncounters("IF YES THEN WRITE NUMBER OF CALCIUM TABLET SWALLOWED");
-        const calciumTabCount = calciumTab.getReadableValue();
-        if (!_.isNil(calciumTabCount)) {
-            summaries.push({name: 'Calcium Tablet Consumed', value: calciumTabCount});
+
+
+        const calciumTab = programEnrolment.getObservationsForConceptName('IF YES THEN WRITE NUMBER OF CALCIUM TABLET SWALLOWED');
+        if (!_.isEmpty(calciumTab)) {
+            const value = calciumTab.map(({encounterDateTime, obs}) => (`${moment(encounterDateTime).format("DD-MM-YYYY")}: ${obs}`))
+                .join(", ");
+            summaries.push({name: "Calcium Tablet Consumed", value: value})
         }
 
         const sickleCellTest = programEnrolment.findLatestObservationFromEncounters("IF YES, result of sickle cell test");
@@ -134,10 +138,13 @@ class ProgramSummary {
             summaries.push({name: 'Sickle Cell Result', value: sickleCellTestResult});
         }
 
-        const hb = programEnrolment.findLatestObservationFromEncounters("H.B");
-        const hbCount = hb.getReadableValue();
-        if (!_.isNil(hbCount)) {
-            summaries.push({name: 'HB', value: hbCount});
+
+
+        const hb = programEnrolment.getObservationsForConceptName('H.B');
+        if (!_.isEmpty(hb)) {
+            const value = hb.map(({encounterDateTime, obs}) => (`${moment(encounterDateTime).format("DD-MM-YYYY")}: ${obs}`))
+                .join(", ");
+            summaries.push({name: "HB", value: value})
         }
 
         const bpsys = programEnrolment.findLatestObservationFromEncounters("B.P - Systolic").getReadableValue();
