@@ -45,6 +45,13 @@
     "comment": "ANC Cluster Incharge"
   },
   {
+    "uuid": "de1a8b24-bf28-4ae4-b73a-238041057f5e",
+    "formUUID": "406738d4-c96c-498c-99e7-4389cb454d5c",
+    "encounterTypeUUID": "f883c6c3-3ced-415e-a1cb-750ddd57f18a",
+    "programUUID": "26d3e45e-7174-433f-b4a7-db1524648252",
+    "comment": "ANC Cluster Incharge Cancel"
+  },
+  {
     "uuid": "d6a20ecc-3582-42d0-9dd2-1ba5a02c19fb",
     "formUUID": "406738d4-c96c-498c-99e7-4389cb454d5c",
     "encounterTypeUUID": "0a0504d7-a420-4b00-ab03-c620071efa41",
@@ -100,6 +107,13 @@
     "comment": "Child PNC Cluster Incharge"
   },
   {
+    "uuid": "59b5ab2c-939e-4551-b988-1c7d827b4c4f",
+    "formUUID": "406738d4-c96c-498c-99e7-4389cb454d5c",
+    "encounterTypeUUID": "95dedf71-5709-46f0-b4e8-b6d91b9b05e0",
+    "programUUID": "b54328b6-3e9a-4df7-915e-5b54cd772d43",
+    "comment": "Child PNC Cluster Incharge Cancel"
+  },
+  {
     "uuid": "1fe813d7-4923-4029-b2c8-314050f6909e",
     "formUUID": "406738d4-c96c-498c-99e7-4389cb454d5c",
     "encounterTypeUUID": "9de58542-d280-4041-b879-5e7a5ff83fc2",
@@ -119,6 +133,13 @@
     "encounterTypeUUID": "3310a91d-a1b2-4e09-9caf-af25346bf1f5",
     "programUUID": "b54328b6-3e9a-4df7-915e-5b54cd772d43",
     "comment": "Child Followup Cluster Incharge"
+  },
+  {
+    "uuid": "57974760-21ba-48f4-a9e1-4dab31baa8c1",
+    "formUUID": "406738d4-c96c-498c-99e7-4389cb454d5c",
+    "encounterTypeUUID": "3310a91d-a1b2-4e09-9caf-af25346bf1f5",
+    "programUUID": "b54328b6-3e9a-4df7-915e-5b54cd772d43",
+    "comment": "Child Followup Cluster Incharge Cancel"
   },
   {
     "uuid": "402c03cd-272a-4c8b-86f4-d55571fe15ab",
