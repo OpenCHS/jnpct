@@ -62,7 +62,7 @@ const getEarliestECFollowupDate = (eventDate) => {
 
         const encounterScheduleHighRiskANC =[
             {"name" : "ANC 2","earliest": 112,"max" : 123},
-            {"name" : "ANC 3","earliest": 168,"max" : 179},
+            {"name" : "ANC 3","earliest": 169,"max" : 179},
             {"name" : "ANC 4","earliest": 196,"max" : 207},
             {"name" : "ANC 5","earliest": 224,"max" : 235},
         ];
@@ -210,13 +210,18 @@ const getEarliestECFollowupDate = (eventDate) => {
         const scheduleVisitsDuringChildPNC = (programEncounter, scheduleBuilder) => {
             const birthWeight = programEncounter.programEnrolment.getObservationReadableValueInEntireEnrolment('Birth Weight')
             || programEncounter.getObservationReadableValue('Birth Weight');
+
+            const currentWeight = programEncounter.programEnrolment.getObservationReadableValueInEntireEnrolment('Current Weight')
+            || programEncounter.getObservationReadableValue('Current Weight');
+
             const ageOfChildInMonths = programEncounter.programEnrolment.individual.getAgeInMonths(); 
             const nutritionalStatus = programEncounter.getObservationReadableValue('Nutritional status of child')
             || programEncounter.getObservationReadableValue('Current nutritional status according to weight and age');
          
             if (!hasExitedProgram(programEncounter)){                  
                 console.log('birthWeight',birthWeight);
-            if(birthWeight >= 2){
+                console.log('currentWeight',currentWeight);
+            if(birthWeight >= 2 || currentWeight >= 2){
                  scheduleChildPNCVisitsNormal(programEncounter, scheduleBuilder);
             } else if(birthWeight < 2 && ageOfChildInMonths < 2)
                   scheduleChildPNCVisitsLowBirthWeight(programEncounter, scheduleBuilder);
@@ -406,8 +411,8 @@ const getEarliestECFollowupDate = (eventDate) => {
             const ageOfChildInMonths = programEncounter.programEnrolment.individual.getAgeInMonths();
            
             const nutritionalStatus = programEncounter.getObservationReadableValue('Nutritional status of child')
-             || programEncounter.getObservationReadableValue('Current nutritional status according to weight and age')
-             || programEncounter.programEnrolment.getObservationReadableValueInEntireEnrolment('Nutritional status of child');
+            || programEncounter.programEnrolment.findLatestObservationFromEncounters('Nutritional status of child').getReadableValue()
+             ||  programEncounter.programEnrolment.findLatestObservationFromEncounters('Current nutritional status according to weight and age').getReadableValue();
             
              if( ageOfChildInMonths < 6) {             
                 scheduleFollowupVisitsDuringFollowup(programEncounter,scheduleBuilder); 
@@ -501,14 +506,14 @@ const getEarliestECFollowupDate = (eventDate) => {
 
 const scheduleVisitsDuringChildFollowupClusterIncharge = (programEncounter,scheduleBuilder) =>{
     const nutritionalStatus = programEncounter.getObservationReadableValue('Nutritional status of child')
-    || programEncounter.programEnrolment.getObservationReadableValueInEntireEnrolment('Nutritional status of child')
+    || programEncounter.programEnrolment.findLatestObservationFromEncounters('Nutritional status of child').getReadableValue()
     || programEncounter.getObservationReadableValue('Current nutritional status according to weight and age');
          
     const birthDate = programEncounter.programEnrolment.individual.dateOfBirth;
             
     const ageOfChildInMonths = programEncounter.programEnrolment.individual.getAgeInMonths();   
-    // console.log('nutritionalStatus  Cluster Incharge',nutritionalStatus);
-    // console.log('ageOfChildInMonths',ageOfChildInMonths);
+    console.log('nutritionalStatus  Cluster Incharge',nutritionalStatus);
+    console.log('ageOfChildInMonths',ageOfChildInMonths);
           
        if(!hasExitedProgram(programEncounter) && !_.isEqual(nutritionalStatus,'Normal')
         && !programEncounter.programEnrolment.hasEncounter('Child Followup Cluster Incharge','Child Followup Cluster Incharge-2')){
