@@ -566,6 +566,20 @@ const scheduleVisitsDuringChildFollowupClusterIncharge = (programEncounter,sched
     return;
 }
 
+const resumeECFollowUp = (programEncounter, scheduleBuilder) => {
+    const allEnrolments = _.filter(programEncounter.programEnrolment.individual.nonVoidedEnrolments(), enl => _.isNil(enl.programExitDateTime));
+    const ecEnrolment = _.find(allEnrolments, enl => enl.program.name === 'Eligible couple' && enl.voided === false && _.isNil(enl.programExitDateTime));
+    const nextDate = moment(programEncounter.encounterDateTime).date(moment(ecEnrolment.enrolmentDateTime).date());
+    const earliestDate = nextDate.isSameOrAfter(moment()) ? nextDate.toDate() : nextDate.add(1, 'month').toDate();
+    ecEnrolment && scheduleBuilder.add({
+        name: "Eligible Couple Followup",
+        encounterType: "Eligible Couple Followup",
+        earliestDate: earliestDate,
+        maxDate: lib.C.addDays(earliestDate, 15),
+        programEnrolment: ecEnrolment
+    });
+};
+
 
 @RuleFactory("d40e8aa2-8cae-4b09-ad30-2da6c1690206", "VisitSchedule")
 ("3d13cc9a-c1fe-49e9-8980-360378f8199d", "JNPCT Pregnant Woman Enrolment Visit schedule", 100.0)
@@ -644,6 +658,7 @@ class ScheduleVisitsDuringPNC {
     static exec(programEncounter, visitSchedule = [], scheduleConfig) {    
         let scheduleBuilder = RuleHelper.createProgramEncounterVisitScheduleBuilder(programEncounter, visitSchedule);          
         scheduleVisitsDuringPNC(programEncounter,scheduleBuilder);
+        resumeECFollowUp(programEncounter,scheduleBuilder);
         return scheduleBuilder.getAllUnique("encounterType");
     }
 }
@@ -654,6 +669,7 @@ class ScheduleVisitsDuringAbortionFollowup {
     static exec(programEncounter, visitSchedule = [], scheduleConfig) {   
         let scheduleBuilder = RuleHelper.createProgramEncounterVisitScheduleBuilder(programEncounter, visitSchedule);          
         scheduleVisitsDuringAbortionFollowup(programEncounter,scheduleBuilder);
+        resumeECFollowUp(programEncounter,scheduleBuilder);
         return scheduleBuilder.getAllUnique("encounterType");
     }
 }
