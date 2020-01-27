@@ -19,27 +19,26 @@ class childProgramSummary {
     static exec(programEnrolment, summaries, context, today) {
 
 
-        const muac= programEnrolment.findLatestObservationFromEncounters("Nutritional status of child").getReadableValue();
+        const muac = programEnrolment.findLatestObservationFromEncounters("Nutritional status of child");
 
-        if (!_.isNil(muac)) {
-            summaries.push({name: 'MUAC', value: muac});
+        if (muac && muac.getReadableValue()) {
+            summaries.push({name: 'MUAC', value: muac.getReadableValue()});
         }
 
 
-
-        const weight = programEnrolment.findLatestObservationFromEncounters("Current Weight").getReadableValue();
-        if (!_.isNil(weight)) {
-            summaries.push({name: 'Weight', value: weight});
+        const weight = programEnrolment.findLatestObservationFromEncounters("Current Weight");
+        if (weight && weight.getReadableValue()) {
+            summaries.push({name: 'Weight', value: weight.getReadableValue()});
         }
 
-        const height = programEnrolment.findLatestObservationInEntireEnrolment("Height").getReadableValue();
-        if (!_.isNil(height)) {
-            summaries.push({name: 'Height', value: height});
+        const height = programEnrolment.findLatestObservationInEntireEnrolment("Height");
+        if (height && height.getReadableValue()) {
+            summaries.push({name: 'Height', value: height.getReadableValue()});
         }
 
-        const nutriStatus = programEnrolment.findLatestObservationFromEncounters("Current nutritional status according to weight and age").getReadableValue();
-        if (!_.isNil(nutriStatus)) {
-            summaries.push({name: 'Current Nutritional Status', value: nutriStatus});
+        const nutriStatus = programEnrolment.findLatestObservationFromEncounters("Current nutritional status according to weight and age");
+        if (nutriStatus && nutriStatus.getReadableValue()) {
+            summaries.push({name: 'Current Nutritional Status', value: nutriStatus.getReadableValue()});
         }
 
 

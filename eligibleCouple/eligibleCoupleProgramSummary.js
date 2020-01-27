@@ -20,9 +20,8 @@ class eligibleCoupleProgramSummary {
 
 
         const height = programEnrolment.findLatestObservationFromEncounters("Height");
-        const heightCount = height.getReadableValue();
-        if (!_.isNil(heightCount)) {
-            summaries.push({name: 'Height', value: heightCount});
+        if (height && height.getReadableValue()) {
+            summaries.push({name: 'Height', value: height.getReadableValue()});
         }
 
 
@@ -44,7 +43,7 @@ class eligibleCoupleProgramSummary {
         const allEnc = _.filter(programEnrolment.nonVoidedEncounters(), enc => !_.isNil(enc.encounterDateTime));
 
         const latestEnc = _.last(_.sortBy(allEnc, encounter => encounter.encounterDateTime));
-        const obs = _.find(latestEnc.observations, obs => obs.concept.name === 'LMP Date');
+        const obs = latestEnc && _.find(latestEnc.observations, obs => obs.concept.name === 'LMP Date');
         if (!_.isNil(obs)) {
             const lmpDate=moment(obs.getReadableValue()).format('M-D-YYYY');
             summaries.push({name: 'LMP', value: lmpDate});

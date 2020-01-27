@@ -102,9 +102,9 @@ class ProgramSummary {
 
     static exec(programEnrolment, summaries, context, today) {
         const edd = programEnrolment.findLatestObservationInEntireEnrolment("Estimated Date of Delivery");
-        const edDate = edd.getReadableValue();
-        const pregnancyMonth = moment(edDate).format('MMMM');
-        if (!_.isNil(pregnancyMonth)) {
+        const edDate = edd && edd.getReadableValue();
+        if (!_.isNil(edDate)) {
+            const pregnancyMonth = moment(edDate).format('MMMM');
             summaries.push({name: 'Pregnancy Month', value: pregnancyMonth});
         }
 
@@ -133,7 +133,7 @@ class ProgramSummary {
         }
 
         const sickleCellTest = programEnrolment.findLatestObservationFromEncounters("IF YES, result of sickle cell test");
-        const sickleCellTestResult = sickleCellTest.getReadableValue();
+        const sickleCellTestResult = sickleCellTest && sickleCellTest.getReadableValue();
         if (!_.isNil(sickleCellTestResult)) {
             summaries.push({name: 'Sickle Cell Result', value: sickleCellTestResult});
         }
@@ -147,19 +147,19 @@ class ProgramSummary {
             summaries.push({name: "HB", value: value})
         }
 
-        const bpsys = programEnrolment.findLatestObservationFromEncounters("B.P - Systolic").getReadableValue();
+        const bpsys = programEnrolment.findLatestObservationFromEncounters("B.P - Systolic");
 
-        const bpdia = programEnrolment.findLatestObservationFromEncounters("B.P - Diastolic").getReadableValue();
+        const bpdia = programEnrolment.findLatestObservationFromEncounters("B.P - Diastolic");
 
-        if (!_.isNil(bpdia && bpdia)) {
-            summaries.push({name: 'Blood Pressure', value: bpsys + '/' + bpdia});
+        if (!_.isEmpty(bpsys) && !_.isEmpty(bpdia)) {
+            summaries.push({name: 'Blood Pressure', value: bpsys.getReadableValue() + '/' + bpdia.getReadableValue()});
         }
 
 
-        const muacCount = programEnrolment.findLatestObservationFromEncounters("MUAC (in cms)").getReadableValue();
+        const muacCount = programEnrolment.findLatestObservationFromEncounters("MUAC (in cms)");
 
-        if (!_.isNil(muacCount)) {
-            summaries.push({name: 'MUAC', value: muacCount});
+        if (!_.isEmpty(muacCount)) {
+            summaries.push({name: 'MUAC', value: muacCount.getReadableValue()});
         }
 
 
