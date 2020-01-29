@@ -120,6 +120,8 @@ const getEarliestECFollowupDate = (eventDate) => {
             const lmpDate = programEncounter.programEnrolment.getObservationValue('Last menstrual period');
             const highRiskANC = programEncounter.programEnrolment.getObservationReadableValueInEntireEnrolment('High Risk Conditions');
 
+            let visitDate = programEncounter.encounterDateTime || getEarliestEncounterDate(programEncounter);
+
             if (!hasExitedProgram(programEncounter)){  
 
                 var encounterSchedule = encounterScheduleANC;
@@ -128,7 +130,7 @@ const getEarliestECFollowupDate = (eventDate) => {
                     encounterSchedule = encounterScheduleHighRiskANC;
                 }
                     var schedule = _.chain(encounterSchedule)
-                            .filter(e => moment(programEncounter.earliestVisitDateTime).isSameOrBefore(moment(lib.C.addDays(lmpDate, e.earliest)),'date') === true)   
+                            .filter(e => moment(visitDate).isSameOrBefore(moment(lib.C.addDays(lmpDate, e.earliest)),'date') === true)   
                             .filter(e => (programEncounter.programEnrolment.hasEncounter('ANC', e.name))  === false)
                             .first()
                             .value();
@@ -149,28 +151,10 @@ const getEarliestECFollowupDate = (eventDate) => {
         const scheduleVisitsDuringANCClusterIncharge = (programEncounter, scheduleBuilder) => {
             const lmpDate = programEncounter.programEnrolment.getObservationValue('Last menstrual period');
             const highRiskANC = programEncounter.programEnrolment.getObservationReadableValueInEntireEnrolment('High Risk Conditions');
-            var schedule = [];
-            let visitDate = programEncounter.encounterDateTime || getEarliestEncounterDate(programEncounter);
-
-
-            if (!hasExitedProgram(programEncounter)){            
-                if (highRiskANC){
-                    var schedule = _.chain(encounterScheduleANCClusterIncharge)
-                            .filter(e => moment(visitDate).isSameOrBefore(moment(lib.C.addDays(lmpDate, e.earliest)),'date') === true)   
-                            .filter(e => (programEncounter.programEnrolment.hasEncounter('ANC Cluster Incharge', e.name))  === false)
-                            .first()
-                            .value();
-
-                        if(!_.isEmpty(schedule)){
-                        console.log('schedule',schedule);
-                        scheduleBuilder.add({
-                                name: schedule.name,
-                                encounterType: 'ANC Cluster Incharge',
-                                earliestDate: lib.C.addDays(lmpDate, schedule.earliest),
-                                maxDate: lib.C.addDays(lmpDate, schedule.max)
-                            }); 
-                        }
-                    }
+           
+            if (!hasExitedProgram(programEncounter) && highRiskANC && 
+            !programEncounter.programEnrolment.hasEncounter('ANC Cluster Incharge','ANC Cluster Incharge-2')){            
+                RuleHelper.addSchedule(scheduleBuilder, 'ANC Cluster Incharge-2','ANC Cluster Incharge',lib.C.addDays(lmpDate, 204) ,21); 
                 }
         return ;
         }
@@ -196,15 +180,13 @@ const getEarliestECFollowupDate = (eventDate) => {
                         });      
             };
 
-            if (!hasExitedProgram(programEncounter)){             
-          
+            if (!hasExitedProgram(programEncounter)){   
                 if (programEncounter.name === 'PNC 1') 
                 addEncounter(deliveryDate, 'PNC', 'PNC 2');
                 else if (programEncounter.name === 'PNC 2') 
                 addEncounter(deliveryDate, 'PNC', 'PNC 3');   
                 // else if (programEncounter.name === 'PNC 3' && lib.C.contains(programNames,'Eligible couple')) 
-                // resumeECFollowUp(programEncounter,scheduleBuilder);
-                
+                // resumeECFollowUp(programEncounter,scheduleBuilder);    
             }
             return ;
         }
@@ -353,7 +335,7 @@ const getEarliestECFollowupDate = (eventDate) => {
                 const followupDate =  lib.C.addMonths(visitDate, 4);
 
                 const scheduledFollowupVisits = programEncounter.programEnrolment.scheduledEncountersOfType('Child Followup');
-                const visitAlreadyScheduled = _.find(scheduledFollowupVisits, (enc) => moment(enc.earliestVisitDateTime).isSame(moment(followupDate), 'day'));
+                const visitAlreadyScheduled = _.find(scheduledFollowupVisits, (enc) => moment(visitDate).isSame(moment(followupDate), 'day'));
          
                 if (!visitAlreadyScheduled) 
                 RuleHelper.addSchedule(scheduleBuilder, 'Child Followup','Child Followup', 
