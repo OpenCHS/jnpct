@@ -58,7 +58,7 @@ const getEarliestECFollowupDate = (eventDate) => {
 
         const encounterScheduleHighRiskANC =[
             {"name" : "ANC 2","earliest": 112,"max" : 123},
-            {"name" : "ANC 3","earliest": 169,"max" : 179},
+            {"name" : "ANC 3","earliest": 168,"max" : 179},
             {"name" : "ANC 4","earliest": 196,"max" : 207},
             {"name" : "ANC 5","earliest": 224,"max" : 235},
         ];
@@ -120,12 +120,8 @@ const getEarliestECFollowupDate = (eventDate) => {
 
                         if(!_.isEmpty(schedule)){
                         console.log('schedule',schedule);
-                        scheduleBuilder.add({
-                            name: schedule.name,
-                            encounterType: 'ANC',
-                            earliestDate: lib.C.addDays(lmpDate, schedule.earliest),
-                            maxDate: lib.C.addDays(lmpDate, schedule.max)
-                            }); 
+                        RuleHelper.addSchedule(scheduleBuilder,  schedule.name,'ANC', 
+                                lib.C.addDays(lmpDate, schedule.earliest) ,11);
                     }        
             }
         return ;
@@ -144,13 +140,9 @@ const getEarliestECFollowupDate = (eventDate) => {
                 .value();   
             
                 if(!_.isEmpty(schedule)){
-                    console.log('schedule',schedule);
-                    scheduleBuilder.add({
-                        name: schedule.name,
-                        encounterType: 'ANC Cluster Incharge',
-                        earliestDate: lib.C.addDays(lmpDate, schedule.earliest),
-                        maxDate: lib.C.addDays(lmpDate, schedule.max)
-                        }); 
+                    // console.log('schedule',schedule);
+                    RuleHelper.addSchedule(scheduleBuilder,  schedule.name,'ANC Cluster Incharge', 
+                                lib.C.addDays(lmpDate, schedule.earliest) ,21);
                 }        
             }
         return ;
@@ -167,7 +159,7 @@ const getEarliestECFollowupDate = (eventDate) => {
                 .first()
                 .value();   
             
-                console.log('schedule',schedule);
+                // console.log('schedule',schedule);
                 if(!_.isEmpty(schedule)){
                     console.log('schedule',schedule);
                     scheduleBuilder.add({
@@ -292,12 +284,8 @@ const getEarliestECFollowupDate = (eventDate) => {
    
                 if(!_.isEmpty(schedule)){
                 console.log('schedule',schedule.name);
-                scheduleBuilder.add({
-                    name: schedule.name,
-                    encounterType: 'Child Followup',
-                    earliestDate: lib.C.addDays(birthDate, schedule.earliest),
-                    maxDate: lib.C.addDays(birthDate, schedule.max)
-                    }); 
+                RuleHelper.addSchedule(scheduleBuilder,  schedule.name,'Child Followup', 
+                                lib.C.addDays(birthDate, schedule.earliest) ,schedule.max);
                 }
             return;
         }
@@ -309,14 +297,20 @@ const getEarliestECFollowupDate = (eventDate) => {
 
             if (!hasExitedProgram(programEncounter)){                            
             if( ageOfChildInMonths <= 24){ //ageOfChildInMonths >= 7 &&
+                const earliest = [225, 315,405,495,585,705];
                
-                let earliestOffset = 135;
-                let visitCount = 0;
-                do {
-                    visitCount = visitCount + 90;
-                    earliestOffset = earliestOffset + visitCount ;
-                } while (!(moment(visitDate).
-                isSameOrBefore(lib.C.addDays(birthDate, earliestOffset),'date')));
+                // let earliestOffset = 135;
+                // let visitCount = 0;
+                // do {
+                //     visitCount = visitCount + 90;
+                //     earliestOffset = earliestOffset + visitCount ;
+                // } while (!(moment(visitDate).
+                // isSameOrBefore(lib.C.addDays(birthDate, earliestOffset),'date')));
+
+                let earliestOffset = _.chain(earliest)
+                .filter(e => (moment(visitDate).isSameOrBefore(lib.C.addDays(birthDate, earliestOffset),'date') === true))
+                .first()
+                .value();
                
                 RuleHelper.addSchedule(scheduleBuilder, 'Child Followup','Child Followup', 
                     lib.C.addDays(birthDate, earliestOffset) ,15);
@@ -481,12 +475,8 @@ const getEarliestECFollowupDate = (eventDate) => {
 
         if(!_.isEmpty(schedule)){
                 console.log('schedule',schedule.name);
-                scheduleBuilder.add({
-                    name: schedule.name,
-                    encounterType: 'ANC Cluster Incharge',
-                    earliestDate: lib.C.addDays(lmpDate, schedule.earliest),
-                    maxDate: lib.C.addDays(lmpDate, schedule.max)
-                    }); 
+                RuleHelper.addSchedule(scheduleBuilder,  schedule.name,'ANC Cluster Incharge', 
+                                lib.C.addDays(lmpDate, schedule.earliest) ,21);
         }   
       return;
   }
