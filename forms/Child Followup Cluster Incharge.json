@@ -296,7 +296,19 @@
       "displayOrder" : 2.0,
       "type" : "SingleSelect",
       "mandatory" : true
-    }, {
+    }, 
+    {
+      "name" : "Is temperature recorded?",
+      "uuid" : "97d4adb4-d199-4749-9718-476df73177af",
+      "keyValues" : [ ],
+      "concept" : {
+        "uuid" : "cdf5f2b6-ec61-4dc3-8260-61960d1239ce"
+      },
+      "displayOrder" : 2.1,
+      "type" : "SingleSelect",
+      "mandatory" : true
+    }, 
+    {
       "name" : "what is the axillary temprature",
       "uuid" : "4694689f-095e-4c39-86a2-b05dbed61529",
       "keyValues" : [ ],
@@ -306,7 +318,18 @@
       "displayOrder" : 3.0,
       "type" : "SingleSelect",
       "mandatory" : true
-    }, {
+    },
+    {
+      "name" : "Reason for not recording temperature",
+      "uuid" : "2813433e-d686-466d-bbc1-b0827a2af7ac",
+      "keyValues" : [ ],
+      "concept" : {
+        "uuid" : "9a5019fa-cd87-441c-8b8c-f2373987178f"
+      },
+      "displayOrder" : 3.1,
+      "type" : "SingleSelect",
+      "mandatory" : true
+    },  {
       "name" : "fever since how many days",
       "uuid" : "a9f27981-58b0-4973-96bd-0eadb5d12e8f",
       "keyValues" : [ ],

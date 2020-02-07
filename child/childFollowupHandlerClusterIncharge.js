@@ -151,8 +151,8 @@ class childFollowupHandlerClusterIncharge {
     }
 
     @WithName('does child feels hot by touch')
-    @WithName('what is the axillary temprature')
     @WithName('fever since how many days ')
+    @WithName('Is temperature recorded? ')
     @WithName('if fever since more than 7 days then look for stiff neck')
     @WithName('does child has daily fever ')
     @WithStatusBuilder
@@ -160,20 +160,20 @@ class childFollowupHandlerClusterIncharge {
         statusBuilder.show().when.valueInEncounter('does child has history of fever')
             .containsAnswerConceptName('Yes')
     }
-    // @WithName('weight of child')
-    // @WithName('if child age is 2-6 month then according to age and weight in which grade')
-    // @WithStatusBuilder
-    // cf6([programEncounter], statusBuilder) {
-    //     const age = programEncounter.programEnrolment.individual.getAgeInMonths();
+    
+    @WithName('what is the axillary temprature')
+    @WithStatusBuilder
+    cf6([], statusBuilder) {
+        statusBuilder.show().when.valueInEncounter('Is temperature recorded?')
+            .containsAnswerConceptName('Yes');
+    }
 
-    //         statusBuilder.show().whenItem(age < 6).is.truthy
-    //             .and.whenItem(age > 2).is.truthy;
-    // }
-
-    // @WithName('Weight')      
-    // @WithName('Current nutritional status according to weight and age')
-    // @WithName('ACOORDING TO OEDEMA ON BOTH FEET CHILD IS IN WHICH GRADE')
-    // @WithName('Grade')
+    @WithName('Reason for not recording temperature')
+    @WithStatusBuilder
+    cf7([], statusBuilder) {
+        statusBuilder.show().when.valueInEncounter('Is temperature recorded?')
+            .containsAnswerConceptName('No');
+    }
 
     @WithName('Height')
     @WithName('Does child have visible severe wasting')

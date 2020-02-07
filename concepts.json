@@ -1498,6 +1498,10 @@
         "name": "Auxiliary Nurse Midwife",
         "uuid": "83be23a8-1aab-4a5c-8de3-1ff7123de5cf",
         "order": 4.0
+      },
+      {
+        "name": "Other",
+        "uuid": "c802a91a-7b34-4416-be89-4197227ded2b"
       }
     ]
   },

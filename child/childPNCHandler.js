@@ -212,12 +212,17 @@ class ChildPNCHandler {
 
 
     @WithName('If yes, then refered?')
+    @WithStatusBuilder
+    dummy9([], statusBuilder) {
+        statusBuilder.show().when.valueInEncounter('Does child require to refer if morbidity found').containsAnswerConceptName('Yes');
+    }
+
     @WithName('Date of refer')
     @WithName('Who refered?')
     @WithName('Place of refer')
     @WithStatusBuilder
-    dummy9([], statusBuilder) {
-        statusBuilder.show().when.valueInEncounter('Does child require to refer if morbidity found').containsAnswerConceptName('Yes')
+    dummy91([], statusBuilder) {
+        statusBuilder.show().when.valueInEncounter('If yes then refered?').containsAnswerConceptName('Yes');
     }
 
     @WithName("Weight Grade of Child")
