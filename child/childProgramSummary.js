@@ -19,7 +19,7 @@ class childProgramSummary {
     static exec(programEnrolment, summaries, context, today) {
 
 
-        const muac = programEnrolment.findLatestObservationFromEncounters("Nutritional status of child");
+        const muac = programEnrolment.findLatestObservationFromEncounters("MUAC of child");
 
         if (muac && muac.getReadableValue()) {
             summaries.push({name: 'MUAC', value: muac.getReadableValue()});

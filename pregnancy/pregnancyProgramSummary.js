@@ -101,11 +101,15 @@ class ProgramSummary {
     }
 
     static exec(programEnrolment, summaries, context, today) {
-        const edd = programEnrolment.findLatestObservationInEntireEnrolment("Estimated Date of Delivery");
-        const edDate = edd && edd.getReadableValue();
-        if (!_.isNil(edDate)) {
-            const pregnancyMonth = moment(edDate).format('MMMM');
-            summaries.push({name: 'Pregnancy Month', value: pregnancyMonth});
+        const lmp = programEnrolment.findLatestObservationInEntireEnrolment("Last menstrual period").getReadableValue();
+
+        var lmpDate = moment(lmp);
+        var currentDate = moment();
+        var months=currentDate.diff(lmpDate, 'months');
+
+        if (!_.isNil(months)) {
+
+            summaries.push({name: 'Pregnancy Month', value: months});
         }
 
         const highRisks = ProgramSummary.getHighRisks(programEnrolment, today);
@@ -147,19 +151,34 @@ class ProgramSummary {
             summaries.push({name: "HB", value: value})
         }
 
-        const bpsys = programEnrolment.findLatestObservationFromEncounters("B.P - Systolic");
+        const bpsys = programEnrolment.getObservationsForConceptName("B.P - Systolic");
+        console.log('+=====>sys',bpsys);
 
-        const bpdia = programEnrolment.findLatestObservationFromEncounters("B.P - Diastolic");
-
-        if (!_.isEmpty(bpsys) && !_.isEmpty(bpdia)) {
-            summaries.push({name: 'Blood Pressure', value: bpsys.getReadableValue() + '/' + bpdia.getReadableValue()});
-        }
+        const bpdia = programEnrolment.getObservationsForConceptName("B.P - Diastolic");
+        console.log('+=====>diq',bpdia);
 
 
-        const muacCount = programEnrolment.findLatestObservationFromEncounters("MUAC (in cms)");
+
+
+        // if (!_.isEmpty(bpsys) && !_.isEmpty(bpdia)) {
+        //     const value1=bpsys.map(({ obs}) => (`${obs}`));
+        //     // const value2=bpsys.map(({ encounterDateTime,obs}) => (` ${moment(encounterDateTime).format("DD-MM-YYYY")}:${obs}`));
+        //
+        //         const value = bpdia.map(({encounterDateTime, obs}) => (`${moment(encounterDateTime).format("DD-MM-YYYY")}: ${obs}/ ${value1[i]}`))
+        //             .join(", ");
+        //
+        //
+        //     summaries.push({name: "Blood Pressure", value: value})
+        // }
+
+
+        const muacCount = programEnrolment.getObservationsForConceptName('MUAC (in cms)');
 
         if (!_.isEmpty(muacCount)) {
-            summaries.push({name: 'MUAC', value: muacCount.getReadableValue()});
+            const value = muacCount.map(({encounterDateTime, obs}) => (`${moment(encounterDateTime).format("DD-MM-YYYY")}: ${obs}`))
+                .join(", ");
+            summaries.push({name: "MUAC", value: value})
+
         }
 
 
