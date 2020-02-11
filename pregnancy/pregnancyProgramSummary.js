@@ -2,6 +2,7 @@ import {complicationsBuilder as ComplicationsBuilder, ProgramRule} from 'rules-c
 import moment from 'moment';
 import _ from "lodash";
 
+
 const has = 'containsAnyAnswerConceptName',
     inEnrolment = 'valueInEnrolment',
     latest = 'latestValueInAllEncounters',
@@ -108,7 +109,6 @@ class ProgramSummary {
         var months=currentDate.diff(lmpDate, 'months');
 
         if (!_.isNil(months)) {
-
             summaries.push({name: 'Pregnancy Month', value: months});
         }
 
@@ -142,8 +142,6 @@ class ProgramSummary {
             summaries.push({name: 'Sickle Cell Result', value: sickleCellTestResult});
         }
 
-
-
         const hb = programEnrolment.getObservationsForConceptName('H.B');
         if (!_.isEmpty(hb)) {
             const value = hb.map(({encounterDateTime, obs}) => (`${moment(encounterDateTime).format("DD-MM-YYYY")}: ${obs}`))
@@ -157,23 +155,26 @@ class ProgramSummary {
         const bpdia = programEnrolment.getObservationsForConceptName("B.P - Diastolic");
         console.log('+=====>diq',bpdia);
 
+        if (!_.isEmpty(bpsys) && !_.isEmpty(bpdia)) {
+            
+            var value = [];
+            bpsys.forEach(element => {
+                let display = moment(element.encounterDateTime).format("DD-MM-YYYY") + ': ' + element.obs; 
+                value.push(display);
+            });
 
-
-
-        // if (!_.isEmpty(bpsys) && !_.isEmpty(bpdia)) {
-        //     const value1=bpsys.map(({ obs}) => (`${obs}`));
-        //     // const value2=bpsys.map(({ encounterDateTime,obs}) => (` ${moment(encounterDateTime).format("DD-MM-YYYY")}:${obs}`));
-        //
-        //         const value = bpdia.map(({encounterDateTime, obs}) => (`${moment(encounterDateTime).format("DD-MM-YYYY")}: ${obs}/ ${value1[i]}`))
-        //             .join(", ");
-        //
-        //
-        //     summaries.push({name: "Blood Pressure", value: value})
-        // }
-
+            bpdia.forEach(element => {
+                for (var i = 0; i < bpsys.length; i++) {                    
+                    if(_.isEqual(bpsys[i].encounterDateTime, element.encounterDateTime)){
+                    let display =  value[i] + '|' + element.obs;
+                    value[i] = display;
+                    }
+                }               
+            });
+            summaries.push({name: "Blood Pressure", value: value})
+        }
 
         const muacCount = programEnrolment.getObservationsForConceptName('MUAC (in cms)');
-
         if (!_.isEmpty(muacCount)) {
             const value = muacCount.map(({encounterDateTime, obs}) => (`${moment(encounterDateTime).format("DD-MM-YYYY")}: ${obs}`))
                 .join(", ");
