@@ -60,7 +60,7 @@ const nutritionalStatusForChild = (individual, asOnDate, weight, height) => {
 
 const getNutritionalStatusForChild = (programEncounter) => {
     const height = programEncounter.getObservationValue("Height");
-    const weight = programEncounter.getObservationValue("Current Weight");
+    const weight = programEncounter.getObservationValue("Weight");
     const encounterDateTime = programEncounter.encounterDateTime;
     const individual = programEncounter.programEnrolment.individual;
 

@@ -26,7 +26,7 @@ class childProgramSummary {
         }
 
 
-        const weight = programEnrolment.findLatestObservationFromEncounters("Current Weight");
+        const weight = programEnrolment.findLatestObservationFromEncounters("Weight");
         if (weight && weight.getReadableValue()) {
             summaries.push({name: 'Weight', value: weight.getReadableValue()});
         }

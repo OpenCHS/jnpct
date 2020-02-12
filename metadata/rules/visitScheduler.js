@@ -177,8 +177,8 @@ const getEarliestECFollowupDate = (eventDate) => {
             const birthWeight = programEncounter.programEnrolment.getObservationReadableValueInEntireEnrolment('Birth Weight')
             || programEncounter.getObservationReadableValue('Birth Weight');
 
-            const currentWeight = programEncounter.programEnrolment.getObservationReadableValueInEntireEnrolment('Current Weight')
-            || programEncounter.getObservationReadableValue('Current Weight');
+            const currentWeight = programEncounter.programEnrolment.getObservationReadableValueInEntireEnrolment('Weight')
+            || programEncounter.getObservationReadableValue('Weight');
 
             const ageOfChildInMonths = programEncounter.programEnrolment.individual.getAgeInMonths(); 
             const nutritionalStatus = programEncounter.getObservationReadableValue('Nutritional status of child')

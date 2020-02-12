@@ -93,7 +93,7 @@ class FollowDecisions {
         return decisions;
     }
     static followupDecisions = (programEncounter, decisions, context, today) => {
-        const weight = programEncounter.getObservationValue("Current Weight");
+        const weight = programEncounter.getObservationValue("Weight");
         const height = programEncounter.getObservationValue("Height");
         const encounterDateTime = programEncounter.encounterDateTime;
         const individual = programEncounter.programEnrolment.individual;
@@ -149,7 +149,7 @@ class FollowDecisionsClusterIncharge {
     }
 
     static followupDecisions = (programEncounter, decisions, context, today) => {
-        const weight = programEncounter.getObservationValue("Current Weight");
+        const weight = programEncounter.getObservationValue("Weight");
         const height = programEncounter.getObservationValue("Height");
         const encounterDateTime = programEncounter.encounterDateTime;
         const individual = programEncounter.programEnrolment.individual;

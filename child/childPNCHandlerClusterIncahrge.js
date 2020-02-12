@@ -207,7 +207,7 @@ class ChildPNCHandlerClusterIncharge {
     @WithName("Weight of infant at time to stoped to do KMC")
     @WithStatusBuilder
     dummy8([programEncounter], statusBuilder) {
-        statusBuilder.show().when.valueInEncounter('Current Weight').is.lessThan(2.5);
+        statusBuilder.show().when.valueInEncounter('Weight').is.lessThan(2.5);
     }
 
     @WithName('If yes, then refered?')
@@ -227,7 +227,7 @@ class ChildPNCHandlerClusterIncharge {
     @WithName("Weight Grade of Child")
     @WithStatusBuilder
     dummy10([programEncounter], statusBuilder) {
-        let weight = programEncounter.getObservationValue("Current Weight");
+        let weight = programEncounter.getObservationValue("Weight");
         const height = 0;
         const encounterDateTime = programEncounter.encounterDateTime;
         const individual = programEncounter.programEnrolment.individual;
