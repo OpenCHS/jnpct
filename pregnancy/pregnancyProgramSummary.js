@@ -149,28 +149,40 @@ class ProgramSummary {
             summaries.push({name: "HB", value: value})
         }
 
-        const bpsys = programEnrolment.getObservationsForConceptName("B.P - Systolic");
-        console.log('+=====>sys',bpsys);
+        const bpSystolic = programEnrolment.getObservationsForConceptName("B.P - Systolic");
+        console.log('+=====>sys',bpSystolic);
 
-        const bpdia = programEnrolment.getObservationsForConceptName("B.P - Diastolic");
-        console.log('+=====>diq',bpdia);
+        const bpDiastolic = programEnrolment.getObservationsForConceptName("B.P - Diastolic"); 
+        console.log('+=====>diq',bpDiastolic);
 
-        if (!_.isEmpty(bpsys) && !_.isEmpty(bpdia)) {
-            
+        if (!_.isEmpty(bpSystolic) && !_.isEmpty(bpDiastolic)) {            
             var value = [];
-            bpsys.forEach(element => {
+            bpSystolic.forEach(element => {
                 let display = moment(element.encounterDateTime).format("DD-MM-YYYY") + ': ' + element.obs; 
                 value.push(display);
             });
-
-            bpdia.forEach(element => {
-                for (var i = 0; i < bpsys.length; i++) {                    
-                    if(_.isEqual(bpsys[i].encounterDateTime, element.encounterDateTime)){
-                    let display =  value[i] + '|' + element.obs;
-                    value[i] = display;
-                    }
+            bpDiastolic.forEach(element => {
+                for (var i = 0; i < bpSystolic.length ; i++) {                    
+                    if(_.isEqual(bpSystolic[i].encounterDateTime, element.encounterDateTime)){
+                        let display =  value[i] + '|' + element.obs;
+                        value[i] = display;
+                    } 
+                    // else {        
+                        // const e = _.find(bpDiastolic, function(e) { return !_.isEqual(bpSystolic[i].encounterDateTime, e.encounterDateTime); });       
+                        // if(!_.isEmpty(e)){
+                        // let display = moment(e.encounterDateTime).format("DD-MM-YYYY") + ': -- | ' + e.obs; 
+                        // if(!value.includes(display)) value.push(display);
+                        // }
+                        
+                        // const e1 = _.find(bpSystolic, function(e) { return !_.isEqual(bpDiastolic[i].encounterDateTime, e.encounterDateTime); });       
+                        // if(!_.isEmpty(e1)){
+                        // let display =  value[i] + '| --'; 
+                        // value[i] = display;
+                        // }
+                    // }
                 }               
             });
+
             summaries.push({name: "Blood Pressure", value: value})
         }
 
