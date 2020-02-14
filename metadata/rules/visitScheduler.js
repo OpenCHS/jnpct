@@ -181,9 +181,16 @@ const getEarliestECFollowupDate = (eventDate) => {
             || programEncounter.getObservationReadableValue('Weight');
 
             const ageOfChildInMonths = programEncounter.programEnrolment.individual.getAgeInMonths(); 
-            const nutritionalStatus = programEncounter.getObservationReadableValue('Nutritional status of child')
+            
+            var nutritionalStatus = programEncounter.getObservationReadableValue('Nutritional status of child')
             || programEncounter.getObservationReadableValue('Current nutritional status according to weight and age');
-         
+            
+            if(_.isEqual(nutritionalStatus,undefined)){
+              const nutritionalStatusValue = programEncounter.findLatestObservationInEntireEnrolment("Nutritional status of child")
+               || programEncounter.findLatestObservationInEntireEnrolment("Current nutritional status according to weight and age");
+               nutritionalStatus = nutritionalStatusValue.getReadableValue();
+            }
+            
             if (!hasExitedProgram(programEncounter)){                  
                 console.log('birthWeight',birthWeight);
                 console.log('currentWeight',currentWeight);
@@ -373,13 +380,18 @@ const getEarliestECFollowupDate = (eventDate) => {
         const scheduleVisitsDuringChildFollowup = (programEncounter, scheduleBuilder) => {
             const ageOfChildInMonths = programEncounter.programEnrolment.individual.getAgeInMonths();
            
-            const nutritionalStatus = programEncounter.getObservationReadableValue('Nutritional status of child')
-            || programEncounter.programEnrolment.findLatestObservationFromEncounters('Nutritional status of child').getReadableValue()
-             ||  programEncounter.programEnrolment.findLatestObservationFromEncounters('Current nutritional status according to weight and age').getReadableValue();
+            var nutritionalStatus = programEncounter.getObservationReadableValue('Nutritional status of child')
+            || programEncounter.getObservationReadableValue('Current nutritional status according to weight and age');
             
+            if(_.isEqual(nutritionalStatus,undefined)){
+              const nutritionalStatusValue = programEncounter.findLatestObservationInEntireEnrolment("Nutritional status of child")
+               || programEncounter.findLatestObservationInEntireEnrolment("Current nutritional status according to weight and age");
+               nutritionalStatus = nutritionalStatusValue.getReadableValue();
+            }
+
              if( ageOfChildInMonths < 6) {             
                 scheduleFollowupVisitsDuringFollowup(programEncounter,scheduleBuilder); 
-                if(!_.isEqual(nutritionalStatus,'Normal'))
+                if(!_.isEqual(nutritionalStatus,'Normal') && !_.isEqual(nutritionalStatus,undefined))
                    scheduleChildFollowupClusterInchargeVisits(programEncounter, scheduleBuilder);            
             } 
             // else {            
@@ -469,16 +481,20 @@ const getEarliestECFollowupDate = (eventDate) => {
   }
 
 const scheduleVisitsDuringChildFollowupClusterIncharge = (programEncounter,scheduleBuilder) =>{
-    const nutritionalStatus = programEncounter.getObservationReadableValue('Nutritional status of child')
-    || programEncounter.programEnrolment.findLatestObservationFromEncounters('Nutritional status of child').getReadableValue()
-    || programEncounter.getObservationReadableValue('Current nutritional status according to weight and age');
-         
+    var nutritionalStatus = programEncounter.getObservationReadableValue('Nutritional status of child')
+     || programEncounter.getObservationReadableValue('Current nutritional status according to weight and age');
+     
+     if(_.isEqual(nutritionalStatus,undefined)){
+       const nutritionalStatusValue = programEncounter.findLatestObservationInEntireEnrolment("Nutritional status of child")
+        || programEncounter.findLatestObservationInEntireEnrolment("Current nutritional status according to weight and age");
+        nutritionalStatus = nutritionalStatusValue.getReadableValue();
+     }
+    
     let visitDate = programEncounter.encounterDateTime || getEarliestEncounterDate(programEncounter);
-
     const birthDate = programEncounter.programEnrolment.individual.dateOfBirth;
             
     const ageOfChildInMonths = programEncounter.programEnrolment.individual.getAgeInMonths();   
-    console.log('nutritionalStatus  Cluster Incharge',nutritionalStatus);
+    console.log('nutritionalStatus Cluster Incharge',nutritionalStatus);
     console.log('ageOfChildInMonths',ageOfChildInMonths);
           
        if(!hasExitedProgram(programEncounter) && !_.isEqual(nutritionalStatus,'Normal')
