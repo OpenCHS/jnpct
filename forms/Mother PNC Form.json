@@ -164,6 +164,7 @@
       },
       "displayOrder" : 8.0,
       "type" : "MultiSelect",
+      "rule" : "'use strict';\n({params, imports}) => {\n  const programEncounter = params.entity;\n  const formElement = params.formElement;\n  const statusBuilder = new \n  imports.rulesConfig.FormElementStatusBuilder({programEncounter, formElement});\n  statusBuilder.show().when.valueInEncounter('Episiotomy done?').containsAnswerConceptName('Yes');\n  \nreturn statusBuilder.build();\n};",
       "mandatory" : true
     }, {
       "name" : "Does feel hot or have the chills?",
@@ -241,6 +242,7 @@
       },
       "displayOrder" : 15.0,
       "type" : "SingleSelect",
+      "rule" : "'use strict';\n({params, imports}) => {\n  const programEncounter = params.entity;\n  const formElement = params.formElement;\n  const statusBuilder = new \n  imports.rulesConfig.FormElementStatusBuilder({programEncounter, formElement});\n  statusBuilder.show().when.valueInEncounter('Does she has bleeding now?').containsAnswerConceptName('Yes');\n  \nreturn statusBuilder.build();\n};",
       "mandatory" : true
     }, {
       "name" : "Does she taking iron tablet?",
