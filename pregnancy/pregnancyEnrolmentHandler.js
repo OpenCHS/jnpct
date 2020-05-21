@@ -124,7 +124,7 @@ class PregnancyEnrolmentViewFilterHandlerJNPCT {
         complicationsBuilder
             .addComplication("Gravida")
             .when.valueInEnrolment('Gravida')
-            .containsAnyAnswerConceptName("2","3","4","5","6 AND ABOVE");
+            .containsAnswerConceptName("5 and more");
 
         complicationsBuilder
             .addComplication("Result of last delivery")
