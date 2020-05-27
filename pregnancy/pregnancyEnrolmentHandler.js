@@ -40,19 +40,19 @@ class PregnancyEnrolmentViewFilterHandlerJNPCT {
     @WithName('Parity')
     @WithStatusBuilder
     p2([], statusBuilder) {
-        statusBuilder.show().when.valueInEnrolment("Gravida").containsAnyAnswerConceptName("2","3","4","5","6 AND ABOVE");
+        statusBuilder.show().when.valueInEnrolment("Gravida").containsAnswerConceptNameOtherThan("1");
     }
 
     @WithName('Number of Abortion')
     @WithStatusBuilder
     p3([], statusBuilder) {
-        statusBuilder.show().when.valueInEnrolment("Gravida").containsAnyAnswerConceptName("2","3","4","5","6 AND ABOVE");
+        statusBuilder.show().when.valueInEnrolment("Gravida").containsAnswerConceptNameOtherThan("1");
     }
 
     @WithName('Number of live childrens')
     @WithStatusBuilder
     p4([], statusBuilder) {
-        statusBuilder.show().when.valueInEnrolment("Gravida").containsAnyAnswerConceptName("2","3","4","5","6 AND ABOVE");
+        statusBuilder.show().when.valueInEnrolment("Gravida").containsAnswerConceptNameOtherThan("1");
     }
 
     @WithName('MALE')
@@ -70,7 +70,7 @@ class PregnancyEnrolmentViewFilterHandlerJNPCT {
     @WithName('Result of last delivery')
     @WithStatusBuilder
     p7([], statusBuilder) {
-        statusBuilder.show().when.valueInEnrolment("Gravida").containsAnyAnswerConceptName("2","3","4","5","6 AND ABOVE");
+        statusBuilder.show().when.valueInEnrolment("Gravida").containsAnswerConceptNameOtherThan("1");
     }
 
     @WithName('Age of Youngest child')
@@ -82,13 +82,13 @@ class PregnancyEnrolmentViewFilterHandlerJNPCT {
     @WithName('Place of last delivery')
     @WithStatusBuilder
     p9([], statusBuilder) {
-        statusBuilder.show().when.valueInEnrolment("Gravida").containsAnyAnswerConceptName("2","3","4","5","6 AND ABOVE");
+        statusBuilder.show().when.valueInEnrolment("Gravida").containsAnswerConceptNameOtherThan("1");
     }
 
     @WithName('Risk in the last pregnancy')
     @WithStatusBuilder
     p10([], statusBuilder) {
-        statusBuilder.show().when.valueInEnrolment("Gravida").containsAnyAnswerConceptName("2","3","4","5","6 AND ABOVE");
+        statusBuilder.show().when.valueInEnrolment("Gravida").containsAnswerConceptNameOtherThan("1");
     }
 
     @WithName("what kind of risk occurred")
@@ -132,10 +132,56 @@ class PregnancyEnrolmentViewFilterHandlerJNPCT {
             .containsAnyAnswerConceptName("Still Birth","MTP","Abortion");
 
         complicationsBuilder
-            .addComplication("what kind of risk occurred")
+            .addComplication("Prolong labour")
             .when.valueInEnrolment('what kind of risk occurred')
-            .containsAnyAnswerConceptName("Prolong labour","LSCS",
-             "ANEMIA","ECLAMPSIA","PIH","SICKLE CELL","APH","MALPRESENTATION","TWINS","BURNING MICTURATION");
+            .containsAnswerConceptName("Prolong labour");
+
+        complicationsBuilder
+             .addComplication("LSCS")
+             .when.valueInEnrolment('what kind of risk occurred')
+             .containsAnswerConceptName("LSCS");
+
+        complicationsBuilder
+             .addComplication("ANEMIA")
+             .when.valueInEnrolment('what kind of risk occurred')
+             .containsAnswerConceptName("ANEMIA");
+        
+        complicationsBuilder
+             .addComplication("ECLAMPSIA")
+             .when.valueInEnrolment('what kind of risk occurred')
+             .containsAnswerConceptName("ECLAMPSIA");
+ 
+        complicationsBuilder
+             .addComplication("PIH")
+             .when.valueInEnrolment('what kind of risk occurred')
+             .containsAnswerConceptName("PIH");
+ 
+        complicationsBuilder
+             .addComplication("SICKLE CELL")
+             .when.valueInEnrolment('what kind of risk occurred')
+             .containsAnswerConceptName("SICKLE CELL");
+ 
+        complicationsBuilder
+             .addComplication("APH")
+             .when.valueInEnrolment('what kind of risk occurred')
+             .containsAnswerConceptName("APH");
+         
+        complicationsBuilder
+             .addComplication("MALPRESENTATION")
+             .when.valueInEnrolment('what kind of risk occurred')
+             .containsAnswerConceptName("MALPRESENTATION");
+ 
+        complicationsBuilder
+             .addComplication("TWINS")
+             .when.valueInEnrolment('what kind of risk occurred')
+             .containsAnswerConceptName("TWINS");
+ 
+        complicationsBuilder
+             .addComplication("BURNING MICTURATION")
+             .when.valueInEnrolment('what kind of risk occurred')
+             .containsAnswerConceptName("BURNING MICTURATION");
+ 
+
 
         return complicationsBuilder.getComplications();
 
