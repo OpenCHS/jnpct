@@ -52,6 +52,21 @@ class PncFormViewFilterHandlerJNPCT {
          statusBuilder.show().when.valueInEncounter("Does she taking calcium tablet?").is.yes;
     }
 
+    @WithName("How is the incision area?")
+    @WithStatusBuilder
+    p5([], statusBuilder) {
+        statusBuilder.show().when.valueInEncounter('Episiotomy done?').containsAnswerConceptName('Yes');
+    }
+
+    @WithName("How many pads changed?")
+    @WithStatusBuilder
+    p6([], statusBuilder) {
+        statusBuilder.show().when.valueInEncounter('Does she has bleeding now?').containsAnswerConceptName('Yes');
+      }
+
+   
+ 
+
 }
 
 @motherDecision('78a5405e-c490-4a07-9eee-d88dd0a93217', 'PregnancyMotherPncDecision', 100.0, {})
