@@ -109,11 +109,11 @@ class PregnancyEnrolmentViewFilterHandlerJNPCT {
 
          complicationsBuilder
              .addComplication("Underage Pregnancy")
-             .when.ageInYears.is.lessThanOrEqualTo(18)
+             .when.ageInYears.is.lessThanOrEqualTo(18);
 
          complicationsBuilder
              .addComplication("Old age Pregnancy")
-             .when.ageInYears.is.greaterThanOrEqualTo(30)
+             .when.ageInYears.is.greaterThanOrEqualTo(35);
 
         complicationsBuilder
             .addComplication("Previous history of disease")
