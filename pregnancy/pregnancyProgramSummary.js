@@ -75,7 +75,7 @@ class ProgramSummary {
             .when[latest]("USG Scanning Report - Number of foetus").containsAnyAnswerConceptName("Two", "Three", "More than three");
 
         add("Liquour is not at normal level")
-            .when[latest]("USG Scanning Report - Liquour").containsAnyAnswerConceptName("Increased", "Decreased");
+            .when[latest]("USG Scanning Report - Amniotic fluid").containsAnyAnswerConceptName("Increased", "Decreased");
 
         add("Placenta Previa present")
             .when[latest]("USG Scanning Report - Placenta Previa").containsAnyAnswerConceptName("Previa");

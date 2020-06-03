@@ -109,11 +109,11 @@ class PregnancyAncFormViewFilterHandlerClusterIncharge {
     return statusBuilder.build();
     }
 
-    @WithName("USG Scanning Report - Liquour")
+    @WithName("USG Scanning Report - Amniotic fluid")
     @WithStatusBuilder
     a11([programEncounter], statusBuilder) {
-    statusBuilder.show().when.valueInEncounter("USG Scanning Report - Liquour").is.defined
-    .or.when.latestValueInPreviousEncounters("USG Scanning Report - Liquour").is.notDefined
+    statusBuilder.show().when.valueInEncounter("USG Scanning Report - Amniotic fluid").is.defined
+    .or.when.latestValueInPreviousEncounters("USG Scanning Report - Amniotic fluid").is.notDefined
     return statusBuilder.build();
     }
 
@@ -538,7 +538,7 @@ class PregnancyAncFormViewFilterHandlerClusterIncharge {
            .when.valueInEncounter("USG Scanning Report - Number of foetus").containsAnyAnswerConceptName("Two", "Three", "More than three");
 
        complicationsBuilder.addComplication("Liquour is not at normal level")
-          .when.valueInEncounter("USG Scanning Report - Liquour").containsAnyAnswerConceptName("Increased", "Decreased");
+          .when.valueInEncounter("USG Scanning Report - Amniotic fluid").containsAnyAnswerConceptName("Increased", "Decreased");
 
        complicationsBuilder.addComplication("Placenta Previa present")
           .when.valueInEncounter("USG Scanning Report - Placenta Previa").containsAnyAnswerConceptName("Previa");
