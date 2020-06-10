@@ -101,11 +101,22 @@ class PregnancyAncFormViewFilterHandlerClusterIncharge {
          statusBuilder.show().when.valueInEncounter("Sickle cell test  done").is.yes;
     }
 
+    @WithName("H.B")
+    @WithName("Blood Sugar")
+    @WithName("VDRL")
+    @WithName("HIV/AIDS Test")
+    @WithName("HbsAg")
+    @WithStatusBuilder
+    a8888([], statusBuilder) {
+         statusBuilder.show().when.valueInEncounter("Is laboratory test done?").is.yes;
+    }
+
     @WithName("USG Scanning Report - Number of foetus")
     @WithStatusBuilder
     a10([], statusBuilder) {
     statusBuilder.show().when.valueInEncounter("USG Scanning Report - Number of foetus").is.defined
     .or.when.latestValueInPreviousEncounters("USG Scanning Report - Number of foetus").is.notDefined
+    .and.when.valueInEncounter("Complete hospital checkup done").is.yes;
     return statusBuilder.build();
     }
 
@@ -114,6 +125,7 @@ class PregnancyAncFormViewFilterHandlerClusterIncharge {
     a11([programEncounter], statusBuilder) {
     statusBuilder.show().when.valueInEncounter("USG Scanning Report - Amniotic fluid").is.defined
     .or.when.latestValueInPreviousEncounters("USG Scanning Report - Amniotic fluid").is.notDefined
+    .and.when.valueInEncounter("Complete hospital checkup done").is.yes;
     return statusBuilder.build();
     }
 
@@ -122,6 +134,7 @@ class PregnancyAncFormViewFilterHandlerClusterIncharge {
     a12([programEncounter], statusBuilder) {
     statusBuilder.show().when.valueInEncounter("USG Scanning Report - Placenta Previa").is.defined
     .or.when.latestValueInPreviousEncounters("USG Scanning Report - Placenta Previa").is.notDefined
+    .and.when.valueInEncounter("Complete hospital checkup done").is.yes; 
     return statusBuilder.build();
     }
 
@@ -130,8 +143,10 @@ class PregnancyAncFormViewFilterHandlerClusterIncharge {
     a13([programEncounter], statusBuilder) {
     statusBuilder.show().when.valueInEncounter("Foetal presentation").is.defined
     .or.when.latestValueInPreviousEncounters("Foetal presentation").is.notDefined
+    .and.when.valueInEncounter("Complete hospital checkup done").is.yes;
     return statusBuilder.build();
     }
+
 
     @WithName("TT 1")
     a15(programEncounter, formElement) {
@@ -468,7 +483,11 @@ class PregnancyAncFormViewFilterHandlerClusterIncharge {
              complicationsConcept: "High Risk Conditions"
          });
 
-         complicationsBuilder.addComplication("Irregular weight gain")
+         //Height is less than 145
+        complicationsBuilder.addComplication("Height is less than 145")
+              .when.valueInEncounter("Height").lessThanOrEqualTo(145);
+
+        complicationsBuilder.addComplication("Irregular weight gain")
               .when.valueInEncounter("Weight").lessThanOrEqualTo(35);
 
         complicationsBuilder.addComplication("Irregular weight gain")

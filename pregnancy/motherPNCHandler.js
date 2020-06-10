@@ -134,8 +134,8 @@ class PregnancyMotherPncDecision {
     referralBuilder.addComplication("Pain in hypogastrium")
              .when.valueInEncounter("Pain in hypogastrium?").is.yes;
 
-    referralBuilder.addComplication("Burning micturation")
-              .when.valueInEncounter("Burning micturation?").is.yes;
+    //referralBuilder.addComplication("Burning micturation")
+      //        .when.valueInEncounter("Burning micturation?").is.yes;
 
     referralBuilder.addComplication("PPH")
            .when.valueInEncounter("How many pads changed?")

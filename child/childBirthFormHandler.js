@@ -100,7 +100,7 @@ class BirthFormDecisions {
 
         referralBuilder.addComplication("High respiratory rate")
         .when.valueInEncounter('Child Respiratory Rate')
-        .is.greaterThan(60);
+        .is.greaterThan(50);
 
         return referralBuilder.getComplications();
     }

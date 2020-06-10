@@ -45,7 +45,7 @@ class eligibleCoupleProgramSummary {
         const latestEnc = _.last(_.sortBy(allEnc, encounter => encounter.encounterDateTime));
         const obs = latestEnc && _.find(latestEnc.observations, obs => obs.concept.name === 'LMP Date');
         if (!_.isNil(obs)) {
-            const lmpDate=moment(obs.getReadableValue()).format('M-D-YYYY');
+            const lmpDate=moment(obs.getReadableValue()).format('DD-MM-YYYY');
             summaries.push({name: 'LMP', value: lmpDate});
         }
 

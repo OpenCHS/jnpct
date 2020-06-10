@@ -386,6 +386,10 @@ class PncDecisionClusterIncharge {
             programEncounter: programEncounter,
             complicationsConcept: "Refer to the hospital for"
         });
+
+        const age = programEncounter.programEnrolment.individual.getAgeInMonths();
+       
+
         decisionBuilder.addComplication("Not breathing properly")
             .when.valueInEncounter("Whether child breathing regularly?")
             .is.no;
@@ -416,7 +420,12 @@ class PncDecisionClusterIncharge {
 
         decisionBuilder.addComplication("High respiratory rate")
             .when.valueInEncounter("Child Respiratory Rate")
-            .is.greaterThan(59);
+            .is.greaterThan(50).and.whenItem(age < 13).is.truthy;
+
+        decisionBuilder.addComplication("High respiratory rate")
+            .when.valueInEncounter("Child Respiratory Rate")
+            .is.greaterThan(40).and.whenItem(age > 12).is.truthy;
+
 
         decisionBuilder.addComplication("There is grunting sound")
             .when.valueInEncounter("Is there any grunting sound?")

@@ -106,6 +106,7 @@ class PregnancyAncFormViewFilterHandlerJNPCT {
     a10([], statusBuilder) {
     statusBuilder.show().when.valueInEncounter("USG Scanning Report - Number of foetus").is.defined
     .or.when.latestValueInPreviousEncounters("USG Scanning Report - Number of foetus").is.notDefined
+    .and.when.valueInEncounter("Complete hospital checkup done").is.yes;
     return statusBuilder.build();
     }
 
@@ -114,6 +115,8 @@ class PregnancyAncFormViewFilterHandlerJNPCT {
     a11([programEncounter], statusBuilder) {
     statusBuilder.show().when.valueInEncounter("USG Scanning Report - Amniotic fluid").is.defined
     .or.when.latestValueInPreviousEncounters("USG Scanning Report - Amniotic fluid").is.notDefined
+    .and.when.valueInEncounter("Complete hospital checkup done").is.yes;
+   
     return statusBuilder.build();
     }
 
@@ -122,6 +125,8 @@ class PregnancyAncFormViewFilterHandlerJNPCT {
     a12([programEncounter], statusBuilder) {
     statusBuilder.show().when.valueInEncounter("USG Scanning Report - Placenta Previa").is.defined
     .or.when.latestValueInPreviousEncounters("USG Scanning Report - Placenta Previa").is.notDefined
+    .and.when.valueInEncounter("Complete hospital checkup done").is.yes;
+   
     return statusBuilder.build();
     }
 
@@ -130,6 +135,8 @@ class PregnancyAncFormViewFilterHandlerJNPCT {
     a13([programEncounter], statusBuilder) {
     statusBuilder.show().when.valueInEncounter("Foetal presentation").is.defined
     .or.when.latestValueInPreviousEncounters("Foetal presentation").is.notDefined
+    .and.when.valueInEncounter("Complete hospital checkup done").is.yes;
+   
     return statusBuilder.build();
     }
 
@@ -458,6 +465,17 @@ class PregnancyAncFormViewFilterHandlerJNPCT {
             return new FormElementStatus(formElement.uuid, false);
     }
 
+    
+    @WithName("H.B")
+    @WithName("Blood Sugar")
+    @WithName("VDRL")
+    @WithName("HIV/AIDS Test")
+    @WithName("HbsAg")
+    @WithStatusBuilder
+    a8888([], statusBuilder) {
+         statusBuilder.show().when.valueInEncounter("Is laboratory test done?").is.yes;
+    }
+
 }
 
 @ancDecision("efcef7fd-fa11-4ed9-b389-d977755c883d", "Anc Form Decision", 100.0, {})
@@ -467,6 +485,11 @@ class PregnancyAncFormViewFilterHandlerJNPCT {
              programEncounter: programEncounter,
              complicationsConcept: "High Risk Conditions"
          });
+
+          //Height is less than 145
+        complicationsBuilder.addComplication("Height is less than 145")
+        .when.valueInEncounter("Height").lessThanOrEqualTo(145);
+
 
          complicationsBuilder.addComplication("Irregular weight gain")
               .when.valueInEncounter("Weight").lessThanOrEqualTo(35);
