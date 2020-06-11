@@ -153,6 +153,19 @@ class ChildPNCHandler {
         statusBuilder.show().whenItem(condition1 && condition2).is.truthy;
     }
 
+    //If yes, then since how many does infant has watery diarrhoea?
+    @WithName('If yes, then since how many does infant has watery diarrhoea?')
+    @WithStatusBuilder
+    dummy101([], statusBuilder) {
+        statusBuilder.show().when.valueInEncounter('Does infant has watery diarrhoea?').containsAnswerConceptName('Yes')
+    }
+
+    //If yes, then since how many does infant has visible pustules on body?
+    @WithName('If yes, then since how many does infant has visible pustules on body?')
+    @WithStatusBuilder
+    dummy102([], statusBuilder) {
+        statusBuilder.show().when.valueInEncounter('Is there visible pustules on body of infant?').containsAnswerConceptName('Yes')
+    }
 
     @WithName('Specify the problem')
     @WithStatusBuilder

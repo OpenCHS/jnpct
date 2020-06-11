@@ -471,6 +471,7 @@ class PregnancyAncFormViewFilterHandlerJNPCT {
     @WithName("VDRL")
     @WithName("HIV/AIDS Test")
     @WithName("HbsAg")
+    @WithName("Blood Examination Date")
     @WithStatusBuilder
     a8888([], statusBuilder) {
          statusBuilder.show().when.valueInEncounter("Is laboratory test done?").is.yes;

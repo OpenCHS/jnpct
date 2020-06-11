@@ -118,7 +118,7 @@ class PregnancyDeliveryFormViewFilterJNPCT {
             formElement: formElement
         });
         statusBuilder.show().when.valueInEncounter("Delivery outcome")
-            .containsAnyAnswerConceptName("Live Birth", "Still Birth");
+            .containsAnswerConceptName("Still Birth");
         const status = statusBuilder.build();
         // status.value = this._getNoOfStillBornBabies(programEncounter);
         return status;
@@ -130,7 +130,7 @@ class PregnancyDeliveryFormViewFilterJNPCT {
             formElement: formElement
         });
         statusBuilder.show().when.valueInEncounter("Delivery outcome")
-            .containsAnyAnswerConceptName("Live Birth", "Still Birth");
+            .containsAnswerConceptName("Still Birth");
         const status = statusBuilder.build();
         // status.value = this._getNoOfStillBornBabies(programEncounter);
         return status;
@@ -142,7 +142,7 @@ class PregnancyDeliveryFormViewFilterJNPCT {
             formElement: formElement
         });
         statusBuilder.show().when.valueInEncounter("Delivery outcome")
-            .containsAnyAnswerConceptName("Live Birth", "Still Birth");
+            .containsAnswerConceptName("Still Birth");
         const status = statusBuilder.build();
         // status.value = this._getNoOfStillBornBabies(programEncounter);
         return status;

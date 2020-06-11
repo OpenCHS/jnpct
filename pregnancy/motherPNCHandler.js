@@ -64,7 +64,11 @@ class PncFormViewFilterHandlerJNPCT {
         statusBuilder.show().when.valueInEncounter('Does she has bleeding now?').containsAnswerConceptName('Yes');
       }
 
-   
+    @WithName("Burning micturation?")
+    @WithStatusBuilder
+      p8([], statusBuilder) {
+        statusBuilder.show().whenItem(false).is.truthy;
+    }
  
 
 }

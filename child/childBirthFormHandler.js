@@ -53,7 +53,7 @@ class BirthFormDecisions {
 
        complicationsBuilder.addComplication("Gestational age at birth is not in term")
         .when.valueInEncounter("Gestational age category at birth")
-        .containsAnyAnswerConceptName("Preterm (<28 Weeks)","Very Preterm");
+        .containsAnyAnswerConceptName("Preterm (28 - 36 Weeks)","Very preterm (less than 28 weeks)");
 
         complicationsBuilder.addComplication("Baby did not cry soon after birth")
         .when.valueInEncounter("Did the baby cry soon after birth?")
