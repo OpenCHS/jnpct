@@ -107,9 +107,18 @@ class PregnancyAncFormViewFilterHandlerClusterIncharge {
     @WithName("HIV/AIDS Test")
     @WithName("HbsAg")
     @WithName("Blood Examination Date")
+    @WithName("Urine Albumin")
+    @WithName("Urine Sugar")
     @WithStatusBuilder
     a8888([], statusBuilder) {
          statusBuilder.show().when.valueInEncounter("Is laboratory test done?").is.yes;
+    }
+
+    @WithName("If YES then write E.D.D as per USG")
+    @WithStatusBuilder
+    a8([], statusBuilder) {
+         statusBuilder.show().when.valueInEncounter("Complete hospital checkup done").is.yes
+         .and.when.latestValueInPreviousEncounters("If YES then write E.D.D as per USG").is.notDefined;
     }
 
     @WithName("USG Scanning Report - Number of foetus")
@@ -245,12 +254,7 @@ class PregnancyAncFormViewFilterHandlerClusterIncharge {
         //  return new FormElementStatus(formElement.uuid, false);
     }
 
-    @WithName("If YES then write E.D.D as per USG")
-    @WithStatusBuilder
-    a8([], statusBuilder) {
-         statusBuilder.show().when.valueInEncounter("Complete hospital checkup done").is.yes
-         .and.when.latestValueInPreviousEncounters("If YES then write E.D.D as per USG").is.notDefined;
-    }
+    
 
     @WithName("Plan to do delivery?")
     a19(programEncounter,formElement) {
