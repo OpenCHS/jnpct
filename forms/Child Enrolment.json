@@ -12,6 +12,7 @@
       "uuid" : "bde7552d-a2ba-4b6b-95e8-a6e49404d213",
       "keyValues" : [ ],
       "concept" : {
+        "name" : "Is child getting registered at Birth",
         "uuid" : "f1a9ede3-1b9b-4b1a-a8fb-6a3bb8f1cc19"
       },
       "displayOrder" : 1.0,
@@ -22,6 +23,7 @@
       "uuid" : "eba270f1-8496-49a6-a876-a6b6c9f6fe5c",
       "keyValues" : [ ],
       "concept" : {
+        "name" : "Weight",
         "uuid" : "bab98eac-14a5-43c4-80ff-ccdb8c3ddf1b"
       },
       "displayOrder" : 2.0,
@@ -32,6 +34,7 @@
       "uuid" : "34fbf867-e97b-4c14-ba62-5a4d1bb80dfe",
       "keyValues" : [ ],
       "concept" : {
+        "name" : "Birth Weight",
         "uuid" : "c82cd1c8-d0a9-4237-b791-8d64e52b6c4a"
       },
       "displayOrder" : 3.0,

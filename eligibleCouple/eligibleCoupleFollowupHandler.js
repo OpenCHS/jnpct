@@ -1,3 +1,5 @@
+import {EnrolmentEligibilityCheck} from "rules-config";
+
 const moment = require("moment");
 const _ = require("lodash");
 import {
@@ -16,6 +18,20 @@ import lib from '../lib';
 const EligibleCoupleFollowupViewFilter = RuleFactory("1c8bd246-f46e-4250-88bc-1ca567ba03ce", "ViewFilter");
 const WithStatusBuilder = StatusBuilderAnnotationFactory('programEncounter', 'formElement');
 const ecDecision = RuleFactory("1c8bd246-f46e-4250-88bc-1ca567ba03ce", "Decision");
+
+
+@EnrolmentEligibilityCheck({
+    name: 'EligibleCoupleEligibility',
+    uuid: '82611d82-e178-4c30-a5d7-764e5edd8d22',
+    programUUID: '4d56583f-76a7-4027-9d3d-6adc5a34a4b3',
+    executionOrder: 100.0,
+    metadata: {}
+})
+class EligibleCoupleEligibility {
+    static exec({individual}) {
+        return individual.isFemale() && individual.getAgeInYears() > 15;
+    }
+}
 
 
 @EligibleCoupleFollowupViewFilter("f4ddfc09-bfcb-4039-ba7d-7511a316802c", "JNPCT Eligible Couple Followup View Filter", 100.0, {})
@@ -86,4 +102,4 @@ class EligibleCoupleFollowupViewFilterHandlerJNPCT {
 
 }
 
-module.exports = {EligibleCoupleFollowupViewFilterHandlerJNPCT,EligibleCoupleFormDecisionHandler};
+module.exports = {EligibleCoupleFollowupViewFilterHandlerJNPCT,EligibleCoupleFormDecisionHandler,EligibleCoupleEligibility};

@@ -1,0 +1,45 @@
+{
+  "name" : "Vaccination Checklist Form",
+  "uuid" : "9222dd4c-1d80-40f0-8ca7-5637ad7ceb6b",
+  "formType" : "ChecklistItem",
+  "formElementGroups" : [ {
+    "uuid" : "ad496f31-fc01-4214-9058-b66e24631b83",
+    "name" : "Vaccination details",
+    "displayOrder" : 1.0,
+    "display" : "Vaccination details",
+    "formElements" : [ {
+      "name" : "Whether Vaccination applicable",
+      "uuid" : "91893eb5-61c9-44e3-9f60-01103a8abfc7",
+      "keyValues" : [ ],
+      "concept" : {
+        "name" : "Whether Vaccination applicable",
+        "uuid" : "2a131802-7135-45b2-9068-0b24826cce76"
+      },
+      "displayOrder" : 1.0,
+      "type" : "SingleSelect",
+      "mandatory" : true
+    }, {
+      "name" : "Place of Vaccination",
+      "uuid" : "2272d688-9230-4e70-beca-837e0a6abac8",
+      "keyValues" : [ ],
+      "concept" : {
+        "name" : "Place of Vaccination",
+        "uuid" : "dbabdd03-ec18-4968-96c9-aede646a7192"
+      },
+      "displayOrder" : 2.0,
+      "type" : "SingleSelect",
+      "mandatory" : true
+    }, {
+      "name" : "Specify Other",
+      "uuid" : "04c650c2-eea0-4c66-9d32-9c78e46a195e",
+      "keyValues" : [ ],
+      "concept" : {
+        "name" : "Other place of vaccination",
+        "uuid" : "94bbf2d1-7334-454e-8e42-3a81fcda8959"
+      },
+      "displayOrder" : 3.0,
+      "type" : "SingleSelect",
+      "mandatory" : true
+    } ]
+  } ]
+}

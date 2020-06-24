@@ -31,7 +31,15 @@ module.exports = IDI.configure(
         "forms/Program Cancel Form.json",
         "forms/ANC Cluster Incharge.json",
         "forms/Child Followup Cluster Incharge.json",
-        "forms/Child PNC Cluster Incahrge.json"
+        "forms/Child PNC Cluster Incahrge.json",
+        "forms/Abortion Followup.json",
+        "forms/ANC.json",
+        "forms/Child Followup.json",
+        "forms/Eligible Couple Program Exit.json",
+        "forms/PNC.json",
+        "forms/Program Encounter Cancellation Form.json",
+        "forms/Program Exit.json",
+        "forms/Vaccination Checklist Form.json"
       ],
       formMappings: ["metadata/formMappings.json"],
       formDeletions: [],

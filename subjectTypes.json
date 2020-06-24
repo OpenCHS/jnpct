@@ -1,6 +1,9 @@
-[
-  {
-    "uuid": "2eaf9457-4cb5-4027-a9dc-6027948a30ba",
-    "name": "Individual"
-  }
-]
+[ {
+  "name" : "Individual",
+  "uuid" : "2eaf9457-4cb5-4027-a9dc-6027948a30ba",
+  "active" : true,
+  "type" : "Person",
+  "household" : false,
+  "group" : false,
+  "voided" : false
+} ]

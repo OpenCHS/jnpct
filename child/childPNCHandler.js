@@ -25,11 +25,11 @@ class ChildPNCHandler {
     dummy11([programEncounter], statusBuilder) {
         const birthPlace = programEncounter.programEnrolment.findLatestObservationInEntireEnrolment("Place of Birth");
         const condition1 = birthPlace && birthPlace.getReadableValue() === 'Home';
-        console.log('condition1',condition1);
+        console.log('condition1', condition1);
         const formPreviouslyFilled = programEncounter.programEnrolment.findLatestObservationFromPreviousEncounters('Whether child breathing regularly?', programEncounter);
         const condition2 = _.isEmpty(formPreviouslyFilled) || _.isEmpty(formPreviouslyFilled.getReadableValue());
-       
-       console.log('condition2',condition2);       
+
+        console.log('condition2', condition2);
         statusBuilder.show().whenItem(condition1 && condition2).is.truthy;
     }
 
@@ -402,7 +402,7 @@ class PncDecision {
         });
 
         const age = programEncounter.programEnrolment.individual.getAgeInMonths();
-       
+
         decisionBuilder.addComplication("Not breathing properly")
             .when.valueInEncounter("Whether child breathing regularly?")
             .is.no;
@@ -433,11 +433,15 @@ class PncDecision {
 
         decisionBuilder.addComplication("High respiratory rate")
             .when.valueInEncounter("Child Respiratory Rate")
-            .is.greaterThan(50).and.whenItem(age < 13).is.truthy;
+            .is.greaterThan(50).and.whenItem(age < 13).is.truthy.and.whenItem(age > 2).is.truthy;
 
         decisionBuilder.addComplication("High respiratory rate")
             .when.valueInEncounter("Child Respiratory Rate")
             .is.greaterThan(40).and.whenItem(age > 12).is.truthy;
+
+        decisionBuilder.addComplication("High respiratory rate")
+            .when.valueInEncounter("Child Respiratory Rate")
+            .is.greaterThan(60).and.whenItem(age < 2).is.truthy;
 
         decisionBuilder.addComplication("There is grunting sound")
             .when.valueInEncounter("Is there any grunting sound?")

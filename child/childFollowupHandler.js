@@ -12,11 +12,9 @@ const getGradeforZscore = (zScore) => {
     let grade;
     if (zScore <= -3) {
         grade = 3;
-    }
-    else if (zScore > -3 && zScore < -2) {
+    } else if (zScore > -3 && zScore < -2) {
         grade = 2;
-    }
-    else if (zScore >= -2) {
+    } else if (zScore >= -2) {
         grade = 1;
     }
     return grade;
@@ -47,7 +45,7 @@ const weightForHeightStatus = function (zScore) {
 
 const nutritionalStatusForChild = (individual, asOnDate, weight, height) => {
     const zScoresForChild = ruleServiceLibraryInterfaceForSharingModules.common.getZScore(individual, asOnDate, weight, height);
-    console.log('zScoresForChild',zScoresForChild);
+    console.log('zScoresForChild', zScoresForChild);
     const wfaGrade = getGradeforZscore(zScoresForChild.wfa);
     const wfaStatus = zScoreGradeStatusMappingWeightForAge[wfaGrade];
     const wfh = zScoresForChild.wfh; //weightForHeightStatus(zScoresForChild.wfh);
@@ -65,7 +63,7 @@ const getNutritionalStatusForChild = (programEncounter) => {
     const individual = programEncounter.programEnrolment.individual;
 
     const nutritionalStatus = nutritionalStatusForChild(individual, encounterDateTime, weight, height);
-   
+
     return nutritionalStatus;
 };
 
@@ -84,17 +82,17 @@ class childFollowupHandler {
     nutritionalStatusOfChild(programEncounter, formElement) {
         const age = programEncounter.programEnrolment.individual.getAgeInMonths();
         var value = '';
-        const muac = programEncounter.getObservationValue("MUAC of child");  
-        const isOedema = programEncounter.getObservationReadableValue("Is there oedema on both feet");  
+        const muac = programEncounter.getObservationValue("MUAC of child");
+        const isOedema = programEncounter.getObservationReadableValue("Is there oedema on both feet");
         const nutritionalStatus = getNutritionalStatusForChild(programEncounter);
-        
-        console.log("muac",muac);
-        console.log('isOedema',isOedema);
-        console.log('nutritionalStatus weight for height',nutritionalStatus.wfh);
-      
-        if(muac <= 11.5 || _.isEqual(isOedema,'Yes'))
+
+        console.log("muac", muac);
+        console.log('isOedema', isOedema);
+        console.log('nutritionalStatus weight for height', nutritionalStatus.wfh);
+
+        if (muac <= 11.5 || _.isEqual(isOedema, 'Yes'))
             value = 'SAM';
-        else if(muac >= 11.6 && muac <= 12.5 && nutritionalStatus.wfh < 3)
+        else if (muac >= 11.6 && muac <= 12.5 && nutritionalStatus.wfh < 3)
             value = 'MAM';
         else value = 'Normal';
 
@@ -104,8 +102,8 @@ class childFollowupHandler {
     currentNutritionalStatusAccordingToWeightAndAge(programEncounter, formElement) {
         const age = programEncounter.programEnrolment.individual.getAgeInMonths();
         const nutritionalStatus = getNutritionalStatusForChild(programEncounter);
-        console.log('nutritionalStatus',nutritionalStatus.wfaStatus);
-        return new FormElementStatus(formElement.uuid, age<= 60, nutritionalStatus.wfaStatus);
+        console.log('nutritionalStatus', nutritionalStatus.wfaStatus);
+        return new FormElementStatus(formElement.uuid, age <= 60, nutritionalStatus.wfaStatus);
     }
 
     @WithName('Then write the problem')
@@ -175,17 +173,25 @@ class childFollowupHandler {
             .containsAnswerConceptName('No');
     }
 
+    @WithName('If child is in SAM then refered to CMTC?')
+    @WithStatusBuilder
+    cf612([], statusBuilder) {
+        statusBuilder.show().when.valueInEncounter('Nutritional status of child')
+            .containsAnswerConceptName('SAM');
+    }
+
     @WithName('Height')
     @WithName('Does child have visible severe wasting')
-    @WithName('Is there oedema on both feet')       
-    @WithName('MUAC of child')  
-    @WithName('If child is in SAM then refered to CMTC?')
+    @WithName('Is there oedema on both feet')
+    @WithName('MUAC of child')
+
     @WithName('refer date')
     @WithStatusBuilder
     cf61([programEncounter], statusBuilder) {
         const age = programEncounter.programEnrolment.individual.getAgeInMonths();
-            statusBuilder.show().whenItem(age > 6).is.truthy;
+        statusBuilder.show().whenItem(age > 6).is.truthy;
     }
+
 
     @WithName('refer date')
     @WithStatusBuilder
@@ -238,6 +244,7 @@ class childFollowupHandler {
         statusBuilder.show().when.valueInEncounter('does child require to refer')
             .containsAnswerConceptName('Yes')
     }
+
     @WithName('who refered ?')
     @WithName('Place of referral')
     @WithStatusBuilder
@@ -248,4 +255,5 @@ class childFollowupHandler {
 
 
 }
+
 module.exports = {childFollowupHandler};

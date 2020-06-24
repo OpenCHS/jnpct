@@ -1,11 +1,22 @@
 {
-  "organisationName": "Jashoda Narottam Public Charitable Trust",
   "operationalEncounterTypes" : [ {
     "uuid" : "7ea5120f-8e97-480c-87d6-35a926aa6b6c",
     "encounterType" : {
       "uuid" : "c487771e-738b-41f2-852e-d60c25d8afea"
     },
     "name" : "Eligible Couple Followup"
+  }, {
+    "uuid" : "65fe2029-a5d8-455d-980e-c8a57576d8df",
+    "encounterType" : {
+      "uuid" : "3348db59-a01d-447e-a4b6-0d369023152d"
+    },
+    "name" : "Child Followup"
+  }, {
+    "uuid" : "984e4ed5-3a70-4691-829b-f1c3e82d837f",
+    "encounterType" : {
+      "uuid" : "0a0504d7-a420-4b00-ab03-c620071efa41"
+    },
+    "name" : "ANC"
   }, {
     "uuid" : "333b12a7-d21e-4f19-89ac-a82484bae8e7",
     "encounterType" : {
@@ -25,35 +36,23 @@
     },
     "name" : "Abortion Form"
   }, {
-    "uuid" : "659323b5-b9b8-41d8-b4e6-223c33d25495",
-    "encounterType" : {
-      "uuid" : "9de58542-d280-4041-b879-5e7a5ff83fc2"
-    },
-    "name" : "Child PNC"
-  }, {
-    "uuid" : "984e4ed5-3a70-4691-829b-f1c3e82d837f",
-    "encounterType" : {
-      "uuid" : "0a0504d7-a420-4b00-ab03-c620071efa41"
-    },
-    "name" : "ANC"
-  }, {
     "uuid" : "b7867b79-4037-4c6d-9e65-03283b78bd5b",
     "encounterType" : {
       "uuid" : "d029ef9a-04ca-4364-b447-9a2c1f0e2fa9"
     },
     "name" : "Abortion Followup"
   }, {
+    "uuid" : "659323b5-b9b8-41d8-b4e6-223c33d25495",
+    "encounterType" : {
+      "uuid" : "9de58542-d280-4041-b879-5e7a5ff83fc2"
+    },
+    "name" : "Child PNC"
+  }, {
     "uuid" : "6c5d47ee-b582-45aa-9610-fb6b6593f570",
     "encounterType" : {
       "uuid" : "a2e2aee7-5226-4a94-9cec-00e5bfa137a4"
     },
     "name" : "PNC"
-  }, {
-    "uuid" : "65fe2029-a5d8-455d-980e-c8a57576d8df",
-    "encounterType" : {
-      "uuid" : "3348db59-a01d-447e-a4b6-0d369023152d"
-    },
-    "name" : "Child Followup"
   }, {
     "uuid" : "49cd1a24-90bb-409f-8d4f-1e099424b1ac",
     "encounterType" : {

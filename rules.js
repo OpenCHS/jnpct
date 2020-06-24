@@ -22,5 +22,6 @@ module.exports = _.merge({},
     require('./child/childDecisions'),
     require('./child/childProgramSummary'),
     require('./metadata/rules/visitScheduler'),
-    require('./metadata/rules/viewFilters')
+    require('./metadata/rules/viewFilters'),
+    require('./metadata/rules/ProgramExitFormHandler')
 );

@@ -12,6 +12,7 @@
       "uuid" : "9108cbee-51a3-4420-ace8-62c28eddb89b",
       "keyValues" : [ ],
       "concept" : {
+        "name" : "Date of Abortion/MTP",
         "uuid" : "7ee9f366-ab54-4056-a3a9-37c9a5ea69ca"
       },
       "displayOrder" : 1.0,
@@ -22,6 +23,7 @@
       "uuid" : "e1a0f778-be03-4072-ad85-7ddcffffca3c",
       "keyValues" : [ ],
       "concept" : {
+        "name" : "Whether Abortion or MTP",
         "uuid" : "5e63efa3-2fea-4cbd-bc0d-cabdb1a70471"
       },
       "displayOrder" : 2.0,
@@ -32,6 +34,7 @@
       "uuid" : "1a6b50a6-4860-4daa-9acd-27a7737f24db",
       "keyValues" : [ ],
       "concept" : {
+        "name" : "Type of Abortion",
         "uuid" : "a5775008-5ac7-433f-b8bf-ca4b91efb9be"
       },
       "displayOrder" : 3.0,
@@ -40,13 +43,12 @@
     }, {
       "name" : "Period of gestation in weeks at the time of Abortion/MTP",
       "uuid" : "519979c6-289b-435a-8f0c-73f88ecd0c65",
-      "keyValues" : [
-        {
-          "key" : "editable",
-          "value" : false
-        } 
-       ],
+      "keyValues" : [ {
+        "key" : "editable",
+        "value" : false
+      } ],
       "concept" : {
+        "name" : "Period of gestation in weeks at the time of Abortion/MTP",
         "uuid" : "d0c0173f-fb19-4735-98b3-5e190c646e54"
       },
       "displayOrder" : 4.0,
@@ -57,6 +59,7 @@
       "uuid" : "13257891-940a-4890-957f-e6dbc7165e1c",
       "keyValues" : [ ],
       "concept" : {
+        "name" : "Place of Abortion",
         "uuid" : "1d3250bb-ddee-46b3-8936-35ce2300b426"
       },
       "displayOrder" : 5.0,
@@ -67,6 +70,7 @@
       "uuid" : "24e868e9-c105-42ae-a9f2-e66e2b07b0d5",
       "keyValues" : [ ],
       "concept" : {
+        "name" : "Date Of Discharge For A/M",
         "uuid" : "e09d26e0-1774-441b-bc05-7bb50f60a948"
       },
       "displayOrder" : 6.0,
@@ -77,6 +81,7 @@
       "uuid" : "a90a68d0-6417-49dc-8033-10ade840ad4a",
       "keyValues" : [ ],
       "concept" : {
+        "name" : "Post Abortion/MTP Complications",
         "uuid" : "c25875ea-43fa-4158-9f1c-93748f28afbe"
       },
       "displayOrder" : 7.0,
@@ -87,6 +92,7 @@
       "uuid" : "6cb50e49-06b9-496a-af40-8f08c0e93892",
       "keyValues" : [ ],
       "concept" : {
+        "name" : "Other Post Abortion/MTP complication",
         "uuid" : "c934d6f6-4dd9-40ce-a155-f46b72d2491c"
       },
       "displayOrder" : 8.0,

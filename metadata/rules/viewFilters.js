@@ -1,6 +1,6 @@
 import {
-    StatusBuilderAnnotationFactory, 
-    RuleFactory,  
+    StatusBuilderAnnotationFactory,
+    RuleFactory,
     FormElementsStatusHelper,
     FormElementStatusBuilder,
     FormElementStatus,
@@ -8,8 +8,9 @@ import {
 } from 'rules-config/rules';
 
 const ProgramExitViewFilter = RuleFactory("3db7f626-bc87-4cd1-b897-486c9d431905", "ViewFilter");
+
 @ProgramExitViewFilter("a9f5408e-0dff-42f4-aa74-dcae9f7d7986", "Program Exit Filter", 101.0, {})
- class ProgramExitViewFilterHandler {
+class ProgramExitViewFilterHandler {
     static exec(programExit, formElementGroup) {
         return FormElementsStatusHelper.getFormElementsStatuses(new ProgramExitViewFilterHandler(), programExit, formElementGroup);
     }

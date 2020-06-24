@@ -379,6 +379,17 @@
       "type" : "SingleSelect",
       "mandatory" : true
     }, {
+      "name" : "Is chin attached to breast?",
+      "uuid" : "c329c665-3a10-4765-abac-e73b3d1cd5a6",
+      "keyValues" : [ ],
+      "concept" : {
+        "name" : "Is chin attached to breast?",
+        "uuid" : "dc5da243-4e23-48b7-b5e5-e2cc18a7680e"
+      },
+      "displayOrder" : 4.0,
+      "type" : "SingleSelect",
+      "mandatory" : true
+    }, {
       "name" : "Is lower lip turned outword",
       "uuid" : "69bdee04-df1f-4303-92c0-596eb5c3d363",
       "keyValues" : [ ],
@@ -386,7 +397,7 @@
         "name" : "Is lower lip turned outword",
         "uuid" : "80144e66-99dc-4404-bacc-f33554ea97fb"
       },
-      "displayOrder" : 4.0,
+      "displayOrder" : 5.0,
       "type" : "SingleSelect",
       "mandatory" : true
     }, {
@@ -397,7 +408,7 @@
         "name" : "Is more areola visible above than below the mouth",
         "uuid" : "144796e8-cfcd-47dd-befc-bf62a3f87056"
       },
-      "displayOrder" : 5.0,
+      "displayOrder" : 6.0,
       "type" : "SingleSelect",
       "mandatory" : true
     }, {
@@ -408,7 +419,7 @@
         "name" : "Not suckling at all?",
         "uuid" : "93ad1180-08dc-4717-b722-fa672bfed796"
       },
-      "displayOrder" : 6.0,
+      "displayOrder" : 7.0,
       "type" : "SingleSelect",
       "mandatory" : true
     }, {
@@ -419,7 +430,7 @@
         "name" : "Not suckling effectively",
         "uuid" : "df81c4bf-7d9a-411a-8a66-4796e0116043"
       },
-      "displayOrder" : 7.0,
+      "displayOrder" : 8.0,
       "type" : "SingleSelect",
       "mandatory" : true
     }, {
@@ -430,7 +441,7 @@
         "name" : "Suckling effectively",
         "uuid" : "7d9656d9-e872-47ff-ba34-131d0602e7d8"
       },
-      "displayOrder" : 8.0,
+      "displayOrder" : 9.0,
       "type" : "SingleSelect",
       "mandatory" : true,
       "voided" : true
@@ -442,7 +453,7 @@
         "name" : "Is there anything given other than breastfeeding for infant",
         "uuid" : "26d47b4e-9b2f-45bd-9044-41596b330183"
       },
-      "displayOrder" : 9.0,
+      "displayOrder" : 10.0,
       "type" : "SingleSelect",
       "mandatory" : true
     }, {
@@ -453,7 +464,7 @@
         "name" : "Things given other than bresatfeeding",
         "uuid" : "8c96d4e2-efd5-4886-acc6-e9438522a25b"
       },
-      "displayOrder" : 10.0,
+      "displayOrder" : 11.0,
       "type" : "MultiSelect",
       "mandatory" : true
     }, {
@@ -464,7 +475,7 @@
         "name" : "Does infant has any difficulty in breastfeeding?",
         "uuid" : "d5993485-2b05-4ef8-a980-0f62a9e2b3e4"
       },
-      "displayOrder" : 11.0,
+      "displayOrder" : 12.0,
       "type" : "SingleSelect",
       "mandatory" : true
     }, {
@@ -475,7 +486,7 @@
         "name" : "Is breastfeed given to infant in last 24 hours?",
         "uuid" : "4f440c38-c2f8-4489-9b98-53e7faebb9f5"
       },
-      "displayOrder" : 12.0,
+      "displayOrder" : 13.0,
       "type" : "SingleSelect",
       "mandatory" : true
     }, {
@@ -486,7 +497,7 @@
         "name" : "How many times breastfeeding given to child in last 24 hours",
         "uuid" : "6ca3c61e-2dda-49ad-a9b4-7eb719874c27"
       },
-      "displayOrder" : 13.0,
+      "displayOrder" : 14.0,
       "type" : "SingleSelect",
       "mandatory" : true
     }, {
@@ -497,7 +508,7 @@
         "name" : "In last 24 hours, for how many times infant passes urine?",
         "uuid" : "fff940b1-7cfc-40b1-8145-1fa3794ebdcd"
       },
-      "displayOrder" : 14.0,
+      "displayOrder" : 15.0,
       "type" : "SingleSelect",
       "mandatory" : true
     }, {
@@ -508,7 +519,7 @@
         "name" : "When to start bathing for infant?",
         "uuid" : "8c18e07c-ca8f-4f62-823d-1618fac5912c"
       },
-      "displayOrder" : 15.0,
+      "displayOrder" : 16.0,
       "type" : "SingleSelect",
       "mandatory" : true
     } ]
@@ -628,6 +639,17 @@
       "type" : "SingleSelect",
       "mandatory" : true
     }, {
+      "name" : "If yes, then since how many does infant has watery diarrhoea?",
+      "uuid" : "6233555e-b493-4b3f-a556-7f338d85c814",
+      "keyValues" : [ ],
+      "concept" : {
+        "name" : "If yes, then since how many does infant has watery diarrhoea",
+        "uuid" : "4c7b1f17-380f-422b-85b7-a85f95e040d3"
+      },
+      "displayOrder" : 11.0,
+      "type" : "SingleSelect",
+      "mandatory" : true
+    }, {
       "name" : "Is oral ulcer or thrush seen in infant's mouth",
       "uuid" : "fc604f29-1f57-470b-afc9-220992d211fa",
       "keyValues" : [ ],
@@ -635,7 +657,7 @@
         "name" : "Is oral ulcer or thrush seen in infant's mouth",
         "uuid" : "f0bdf6d9-a8f8-439c-88fc-7be3c00e8de1"
       },
-      "displayOrder" : 11.0,
+      "displayOrder" : 12.0,
       "type" : "SingleSelect",
       "mandatory" : true
     }, {
@@ -646,7 +668,18 @@
         "name" : "Is there visible pustules on body of infant?",
         "uuid" : "c9468105-56fa-4e41-8ed0-943d106c040e"
       },
-      "displayOrder" : 12.0,
+      "displayOrder" : 13.0,
+      "type" : "SingleSelect",
+      "mandatory" : true
+    }, {
+      "name" : "If yes, then since how many does infant has visible pustules on body?",
+      "uuid" : "f6dec46f-f9c5-48b8-a832-50f10910f0e7",
+      "keyValues" : [ ],
+      "concept" : {
+        "name" : "If yes, then since how many does infant has visible pustules on body",
+        "uuid" : "e1b8fe96-c5a1-41c3-b25b-be5ffc9a960a"
+      },
+      "displayOrder" : 14.0,
       "type" : "SingleSelect",
       "mandatory" : true
     }, {
@@ -657,7 +690,7 @@
         "name" : "Weight",
         "uuid" : "bab98eac-14a5-43c4-80ff-ccdb8c3ddf1b"
       },
-      "displayOrder" : 13.0,
+      "displayOrder" : 15.0,
       "type" : "SingleSelect",
       "mandatory" : true
     }, {
@@ -671,7 +704,7 @@
         "name" : "Nutritional status of child",
         "uuid" : "3fb85722-fd53-43db-9e8b-d34767af9f7e"
       },
-      "displayOrder" : 14.0,
+      "displayOrder" : 16.0,
       "type" : "SingleSelect",
       "mandatory" : true
     }, {
@@ -682,7 +715,7 @@
         "name" : "If infant's weight is less than 2.5kg then did KMC?",
         "uuid" : "d21d1844-362b-426c-a5d4-c45ab5fc1690"
       },
-      "displayOrder" : 15.0,
+      "displayOrder" : 17.0,
       "type" : "SingleSelect",
       "mandatory" : true
     }, {
@@ -693,7 +726,7 @@
         "name" : "Weight at the time of KMC started to do",
         "uuid" : "81d81392-d0e6-40ce-84bd-4fd0eba04719"
       },
-      "displayOrder" : 16.0,
+      "displayOrder" : 18.0,
       "type" : "SingleSelect",
       "mandatory" : true
     }, {
@@ -704,7 +737,7 @@
         "name" : "In last 24 hours for how many times did KMC?",
         "uuid" : "4f2cae52-9923-44f3-baf5-b03a62423acb"
       },
-      "displayOrder" : 17.0,
+      "displayOrder" : 19.0,
       "type" : "SingleSelect",
       "mandatory" : true
     }, {
@@ -715,7 +748,7 @@
         "name" : "In one time for how many minutes did KMC?",
         "uuid" : "29d4737c-15b3-42f2-b296-632fee9f5fe7"
       },
-      "displayOrder" : 18.0,
+      "displayOrder" : 20.0,
       "type" : "SingleSelect",
       "mandatory" : true
     }, {
@@ -726,7 +759,7 @@
         "name" : "Weight of infant at time to stoped to do KMC",
         "uuid" : "78511bef-1c10-47a0-98cb-a91aff6f1c3c"
       },
-      "displayOrder" : 19.0,
+      "displayOrder" : 21.0,
       "type" : "SingleSelect",
       "mandatory" : false
     }, {
@@ -737,7 +770,7 @@
         "name" : "Does child require to refer if morbidity found",
         "uuid" : "e8a74be5-e817-4992-87df-abab41753f38"
       },
-      "displayOrder" : 20.0,
+      "displayOrder" : 22.0,
       "type" : "SingleSelect",
       "mandatory" : true
     }, {
@@ -748,7 +781,7 @@
         "name" : "If yes then refered?",
         "uuid" : "61be533a-98a6-4a73-919f-79c1f4fd4cfc"
       },
-      "displayOrder" : 21.0,
+      "displayOrder" : 23.0,
       "type" : "SingleSelect",
       "mandatory" : true
     }, {
@@ -759,7 +792,7 @@
         "name" : "Date of refer",
         "uuid" : "ca103da5-3221-487c-b687-4f43bc434c0c"
       },
-      "displayOrder" : 22.0,
+      "displayOrder" : 24.0,
       "type" : "SingleSelect",
       "mandatory" : true
     }, {
@@ -770,7 +803,7 @@
         "name" : "Who refered?",
         "uuid" : "1aa46e35-6256-40cd-a026-8c825565a98f"
       },
-      "displayOrder" : 23.0,
+      "displayOrder" : 25.0,
       "type" : "SingleSelect",
       "mandatory" : true
     }, {
@@ -781,7 +814,7 @@
         "name" : "Place of refer",
         "uuid" : "38fa0a7d-7bb6-4e84-a5d8-2b1b9c463f6b"
       },
-      "displayOrder" : 24.0,
+      "displayOrder" : 26.0,
       "type" : "SingleSelect",
       "mandatory" : true
     } ]
@@ -945,5 +978,6 @@
   } ],
   "decisionRule" : "",
   "visitScheduleRule" : "",
-  "validationRule" : ""
+  "validationRule" : "",
+  "checklistsRule" : ""
 }
