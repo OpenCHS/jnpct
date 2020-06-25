@@ -179,12 +179,19 @@ class childFollowupHandlerClusterIncharge {
     @WithName('Does child have visible severe wasting')
     @WithName('Is there oedema on both feet')       
     @WithName('MUAC of child')  
-    @WithName('If child is in SAM then refered to CMTC?')
-    @WithName('refer date')
     @WithStatusBuilder
     cf61([programEncounter], statusBuilder) {
         const age = programEncounter.programEnrolment.individual.getAgeInMonths();
             statusBuilder.show().whenItem(age > 6).is.truthy;
+    }
+
+    @WithName('If child is in SAM then refered to CMTC?')
+    @WithStatusBuilder
+    cf63([programEncounter], statusBuilder) {
+        const nutritionalStatus = programEncounter.getObservationReadableValue("Nutritional status of Child");  
+        const age = programEncounter.programEnrolment.individual.getAgeInMonths();
+            statusBuilder.show().whenItem(age > 6).is.truthy
+            .and.whenItem(_.isEqual(nutritionalStatus,'SAM')).is.truthy;
     }
 
     @WithName('refer date')

@@ -173,25 +173,24 @@ class childFollowupHandler {
             .containsAnswerConceptName('No');
     }
 
-    @WithName('If child is in SAM then refered to CMTC?')
-    @WithStatusBuilder
-    cf612([], statusBuilder) {
-        statusBuilder.show().when.valueInEncounter('Nutritional status of child')
-            .containsAnswerConceptName('SAM');
-    }
-
     @WithName('Height')
     @WithName('Does child have visible severe wasting')
     @WithName('Is there oedema on both feet')
     @WithName('MUAC of child')
-
-    @WithName('refer date')
     @WithStatusBuilder
     cf61([programEncounter], statusBuilder) {
         const age = programEncounter.programEnrolment.individual.getAgeInMonths();
         statusBuilder.show().whenItem(age > 6).is.truthy;
     }
 
+    @WithName('If child is in SAM then refered to CMTC?')
+    @WithStatusBuilder
+    cf63([programEncounter], statusBuilder) {
+        const nutritionalStatus = programEncounter.getObservationReadableValue("Nutritional status of Child");  
+        const age = programEncounter.programEnrolment.individual.getAgeInMonths();
+            statusBuilder.show().whenItem(age > 6).is.truthy
+            .and.whenItem(_.isEqual(nutritionalStatus,'SAM')).is.truthy;
+    }
 
     @WithName('refer date')
     @WithStatusBuilder
@@ -238,7 +237,6 @@ class childFollowupHandler {
     }
 
     @WithName('Child Referred ?')
-
     @WithStatusBuilder
     cf14([], statusBuilder) {
         statusBuilder.show().when.valueInEncounter('does child require to refer')

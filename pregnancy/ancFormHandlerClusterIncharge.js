@@ -72,6 +72,12 @@ class PregnancyAncFormViewFilterHandlerClusterIncharge {
         statusBuilder.show().when.latestValueInPreviousEncounters("Height").is.notDefined;
     }
 
+    @WithName("HB measured by color scale")
+    @WithStatusBuilder
+    a44([], statusBuilder) {
+        statusBuilder.show().when.valueInEncounter("H.B").is.notDefined;
+    }
+
     bmi(programEncounter, formElement) {
         let weight = programEncounter.getObservationValue('Weight');
         let height = programEncounter.programEnrolment.getObservationReadableValueInEntireEnrolment('Height', programEncounter);
@@ -591,6 +597,26 @@ export class AncFormDecisionClusterInchargeHandler {
             .is.greaterThanOrEqualTo(10)
             .and.valueInEncounter("H.B")
             .is.lessThanOrEqualTo(10.9);
+
+        complicationsBuilder
+            .addComplication("Severe Anemia")
+            .when.valueInEncounter("HB measured by color scale")
+            .is.lessThan(7);
+
+        complicationsBuilder
+            .addComplication("Moderate Anemia")
+            .when.valueInEncounter("HB measured by color scale")
+            .is.greaterThanOrEqualTo(7)
+            .and.valueInEncounter("HB measured by color scale")
+            .is.lessThanOrEqualTo(9.9);
+
+        complicationsBuilder
+            .addComplication("Mild Anemia")
+            .when.valueInEncounter("HB measured by color scale")
+            .is.greaterThanOrEqualTo(10)
+            .and.valueInEncounter("HB measured by color scale")
+            .is.lessThanOrEqualTo(10.9);
+
 
         return complicationsBuilder.getComplications();
 

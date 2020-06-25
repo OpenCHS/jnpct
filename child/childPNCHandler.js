@@ -433,7 +433,8 @@ class PncDecision {
 
         decisionBuilder.addComplication("High respiratory rate")
             .when.valueInEncounter("Child Respiratory Rate")
-            .is.greaterThan(50).and.whenItem(age < 13).is.truthy.and.whenItem(age > 2).is.truthy;
+            .is.greaterThan(50).and.whenItem(age < 13).is.truthy
+            .and.whenItem(age > 2).is.truthy;
 
         decisionBuilder.addComplication("High respiratory rate")
             .when.valueInEncounter("Child Respiratory Rate")

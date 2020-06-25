@@ -433,12 +433,16 @@ class PncDecisionClusterIncharge {
 
         decisionBuilder.addComplication("High respiratory rate")
             .when.valueInEncounter("Child Respiratory Rate")
-            .is.greaterThan(50).and.whenItem(age < 13).is.truthy;
+            .is.greaterThan(50).and.whenItem(age < 13).is.truthy
+            .and.whenItem(age > 2).is.truthy;
 
         decisionBuilder.addComplication("High respiratory rate")
             .when.valueInEncounter("Child Respiratory Rate")
             .is.greaterThan(40).and.whenItem(age > 12).is.truthy;
 
+        decisionBuilder.addComplication("High respiratory rate")
+            .when.valueInEncounter("Child Respiratory Rate")
+            .is.greaterThan(60).and.whenItem(age < 2).is.truthy;
 
         decisionBuilder.addComplication("There is grunting sound")
             .when.valueInEncounter("Is there any grunting sound?")
