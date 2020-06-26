@@ -49,10 +49,12 @@ const nutritionalStatusForChild = (individual, asOnDate, weight, height) => {
     const wfaGrade = getGradeforZscore(zScoresForChild.wfa);
     const wfaStatus = zScoreGradeStatusMappingWeightForAge[wfaGrade];
     const wfh = zScoresForChild.wfh; //weightForHeightStatus(zScoresForChild.wfh);
+    const wfhStatus = weightForHeightStatus(zScoresForChild.wfh);
 
     return {
         wfaStatus: wfaStatus,
-        wfh: wfh
+        wfh: wfh,
+        wfhStatus: wfhStatus
     };
 };
 
@@ -102,8 +104,15 @@ class childFollowupHandler {
     currentNutritionalStatusAccordingToWeightAndAge(programEncounter, formElement) {
         const age = programEncounter.programEnrolment.individual.getAgeInMonths();
         const nutritionalStatus = getNutritionalStatusForChild(programEncounter);
-        console.log('nutritionalStatus', nutritionalStatus.wfaStatus);
-        return new FormElementStatus(formElement.uuid, age <= 60, nutritionalStatus.wfaStatus);
+        console.log('nutritionalStatus',nutritionalStatus.wfaStatus);
+        return new FormElementStatus(formElement.uuid, age<= 60, nutritionalStatus.wfaStatus);
+    }
+
+    currentNutritionalStatusAccordingToWeightAndHeight(programEncounter, formElement) {
+        const age = programEncounter.programEnrolment.individual.getAgeInMonths();
+        const nutritionalStatus = getNutritionalStatusForChild(programEncounter);
+        console.log('nutritionalStatus',nutritionalStatus.wfhStatus);
+        return new FormElementStatus(formElement.uuid, age > 6, nutritionalStatus.wfhStatus);
     }
 
     @WithName('Then write the problem')
@@ -123,13 +132,13 @@ class childFollowupHandler {
     }
 
     @WithName('Since how many days')
-    @WithName('count breaths in one minute')
+    @WithName('Count breaths in one minute')
     @WithName('Does the child has fast breathing')
     @WithName('look for chest indrwaning ')
     @WithStatusBuilder
     cf3([], statusBuilder) {
         statusBuilder.show().when.valueInEncounter('Does the child have cough or difficult breathing')
-            .containsAnswerConceptName('Yes')
+            .containsAnswerConceptName('Yes');
     }
 
     @WithName('for how long days')
@@ -186,9 +195,21 @@ class childFollowupHandler {
     @WithName('If child is in SAM then refered to CMTC?')
     @WithStatusBuilder
     cf63([programEncounter], statusBuilder) {
-        const nutritionalStatus = programEncounter.getObservationReadableValue("Nutritional status of Child");  
+        const nutritionalStatus = programEncounter.getObservationValue("Nutritional status of child");  
+        //console.log('nutritionalStatus',nutritionalStatus);
+        //_.isEqual(nutritionalStatus,'SAM')
         const age = programEncounter.programEnrolment.individual.getAgeInMonths();
-            statusBuilder.show().whenItem(age > 6).is.truthy
+        // var value = '';
+        // const muac = programEncounter.getObservationValue("MUAC of child");  
+        // const isOedema = programEncounter.getObservationReadableValue("Is there oedema on both feet");  
+        // const nutritionalStatus = getNutritionalStatusForChild(programEncounter);
+        
+        // console.log("muac",muac);
+        // console.log('isOedema',isOedema);
+        // console.log('nutritionalStatus weight for height',nutritionalStatus.wfh);
+      
+        // if(muac <= 11.5 || _.isEqual(isOedema,'Yes'))           
+            statusBuilder.show().whenItem(age > 6).is.truthy        
             .and.whenItem(_.isEqual(nutritionalStatus,'SAM')).is.truthy;
     }
 

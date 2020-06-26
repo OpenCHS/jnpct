@@ -91,7 +91,6 @@ class ProgramCancellationFormFilters {
         statusBuilder.skipAnswers("Child Death");
         
     }
-
   
     otherReason(programEncounter, formElement) {
         const cancelReasonObs = programEncounter.findCancelEncounterObservation('Visit cancel reason');
@@ -99,23 +98,35 @@ class ProgramCancellationFormFilters {
         return new FormElementStatus(formElement.uuid, answer === 'Other');
     }
 
-    @WithName('Place of death')
-    @statusBuilder
-    a12([programEncounter], statusBuilder) {    
+    placeOfDeath(programEncounter, formElement) {
         const cancelReasonObs = programEncounter.findCancelEncounterObservation('Visit cancel reason');
         const answer = cancelReasonObs && cancelReasonObs.getReadableValue();
-           
-        statusBuilder.show().whenItem(answer ==="Maternal Death" || answer ==="Child Death").is.truthy;
+        return new FormElementStatus(formElement.uuid, answer ==="Maternal Death" || answer ==="Child Death");
     }
 
-    @WithName('Date of death')
-    @statusBuilder
-    a13([programEncounter], statusBuilder) {        
+    dateOfDeath(programEncounter, formElement) {
         const cancelReasonObs = programEncounter.findCancelEncounterObservation('Visit cancel reason');
         const answer = cancelReasonObs && cancelReasonObs.getReadableValue();
-           
-        statusBuilder.show().whenItem(answer ==="Maternal Death" || answer ==="Child Death").is.truthy;
+        return new FormElementStatus(formElement.uuid, answer ==="Maternal Death" || answer ==="Child Death");
     }
+
+    // @WithName('Place of death')
+    // @statusBuilder
+    // a12([programEncounter], statusBuilder) {    
+    //     const cancelReasonObs = programEncounter.findCancelEncounterObservation('Visit cancel reason');
+    //     const answer = cancelReasonObs && cancelReasonObs.getReadableValue();
+           
+    //     statusBuilder.show().whenItem(answer ==="Maternal Death" || answer ==="Child Death").is.truthy;
+    // }
+
+    // @WithName('Date of death')
+    // @statusBuilder
+    // a13([programEncounter], statusBuilder) {        
+    //     const cancelReasonObs = programEncounter.findCancelEncounterObservation('Visit cancel reason');
+    //     const answer = cancelReasonObs && cancelReasonObs.getReadableValue();
+           
+    //     statusBuilder.show().whenItem(answer ==="Maternal Death" || answer ==="Child Death").is.truthy;
+    // }
 
     @WithName('Reason of death')
     @statusBuilder
@@ -125,7 +136,7 @@ class ProgramCancellationFormFilters {
            
         statusBuilder.show().whenItem(answer ==="Maternal Death" || answer ==="Child Death").is.truthy;
   
-        const programName = programExit.program.name;
+        const programName = programEncounter.programEnrolment.program.name;
 
         if(programName === 'Child')
         statusBuilder.skipAnswers("APH","PPH","Sepsis","Unsafe abortion","Obstructed labour",

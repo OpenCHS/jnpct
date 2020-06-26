@@ -107,7 +107,7 @@ class FollowDecisions {
         addIfRequired(decisions.encounterDecisions, "Weight for age Status", nutritionalStatus.wfaStatus ? [nutritionalStatus.wfaStatus] : []);
 
         addIfRequired(decisions.encounterDecisions, "Weight for height z-score", nutritionalStatus.wfh);
-        // addIfRequired(decisions.encounterDecisions, "Weight for Height Status", nutritionalStatus.wfhStatus ? [nutritionalStatus.wfhStatus] : []);
+        addIfRequired(decisions.encounterDecisions, "Weight for Height Status", nutritionalStatus.wfhStatus ? [nutritionalStatus.wfhStatus] : []);
 
         decisions.encounterDecisions.push(FollowDecisions.referToHospital(programEncounter));
         return decisions;
@@ -118,6 +118,9 @@ class FollowDecisions {
             programEncounter: programEncounter,
             complicationsConcept: "Refer to the hospital for"
         });
+
+        const age = programEncounter.programEnrolment.individual.getAgeInMonths();
+
 
         decisionBuilder.addComplication("Not able to drink or breastfeed")
             .when.valueInEncounter("Is the child able to drink or breastfeed").is.no;
@@ -135,6 +138,20 @@ class FollowDecisions {
             .when.valueInEncounter("look for chest indrwaning").is.yes;
         decisionBuilder.addComplication("child has complaint")
             .when.valueInEncounter("does child has any other complaint").is.yes;
+
+        
+        decisionBuilder.addComplication("High respiratory rate")
+            .when.valueInEncounter("Child Respiratory Rate")
+            .is.greaterThan(50).and.whenItem(age < 13).is.truthy
+            .and.whenItem(age > 2).is.truthy;
+
+        decisionBuilder.addComplication("High respiratory rate")
+            .when.valueInEncounter("Child Respiratory Rate")
+            .is.greaterThan(40).and.whenItem(age > 12).is.truthy;
+
+        decisionBuilder.addComplication("High respiratory rate")
+            .when.valueInEncounter("Child Respiratory Rate")
+            .is.greaterThan(60).and.whenItem(age < 2).is.truthy;
 
         return decisionBuilder.getComplications();
 
@@ -163,7 +180,7 @@ class FollowDecisionsClusterIncharge {
         addIfRequired(decisions.encounterDecisions, "Weight for age Status", nutritionalStatus.wfaStatus ? [nutritionalStatus.wfaStatus] : []);
 
         addIfRequired(decisions.encounterDecisions, "Weight for height z-score", nutritionalStatus.wfh);
-        // addIfRequired(decisions.encounterDecisions, "Weight for Height Status", nutritionalStatus.wfhStatus ? [nutritionalStatus.wfhStatus] : []);
+        addIfRequired(decisions.encounterDecisions, "Weight for Height Status", nutritionalStatus.wfhStatus ? [nutritionalStatus.wfhStatus] : []);
 
         console.log('decisions', decisions);
         decisions.encounterDecisions.push(FollowDecisionsClusterIncharge.referToHospital(programEncounter));
@@ -176,6 +193,9 @@ class FollowDecisionsClusterIncharge {
             programEncounter: programEncounter,
             complicationsConcept: "Refer to the hospital for"
         });
+
+        const age = programEncounter.programEnrolment.individual.getAgeInMonths();
+
 
         decisionBuilder.addComplication("Not able to drink or breastfeed")
             .when.valueInEncounter("Is the child able to drink or breastfeed").is.no;
@@ -193,6 +213,20 @@ class FollowDecisionsClusterIncharge {
             .when.valueInEncounter("look for chest indrwaning").is.yes;
         decisionBuilder.addComplication("child has complaint")
             .when.valueInEncounter("does child has any other complaint").is.yes;
+
+        decisionBuilder.addComplication("High respiratory rate")
+            .when.valueInEncounter("Child Respiratory Rate")
+            .is.greaterThan(50).and.whenItem(age < 13).is.truthy
+            .and.whenItem(age > 2).is.truthy;
+
+        decisionBuilder.addComplication("High respiratory rate")
+            .when.valueInEncounter("Child Respiratory Rate")
+            .is.greaterThan(40).and.whenItem(age > 12).is.truthy;
+
+        decisionBuilder.addComplication("High respiratory rate")
+            .when.valueInEncounter("Child Respiratory Rate")
+            .is.greaterThan(60).and.whenItem(age < 2).is.truthy;
+    
 
         return decisionBuilder.getComplications();
 

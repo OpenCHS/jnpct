@@ -81,6 +81,9 @@ class BirthFormDecisions {
         programEncounter: programEncounter,
         complicationsConcept: "Refer to the hospital for"
         });
+
+        const age = programEncounter.programEnrolment.individual.getAgeInMonths();
+
         
         referralBuilder.addComplication("Life threatening abnormality")
         .when.valueInEncounter('Is there life threatening abnormality?')
@@ -98,9 +101,18 @@ class BirthFormDecisions {
         .when.valueInEncounter('Is blood coming out from any part of body?')
         .is.yes;
 
+     //   referralBuilder.addComplication("High respiratory rate")
+       // .when.valueInEncounter('Child Respiratory Rate')
+       // .is.greaterThan(50);
+
+       referralBuilder.addComplication("High respiratory rate")
+            .when.valueInEncounter("Child Respiratory Rate")
+            .is.greaterThan(50).and.whenItem(age < 13).is.truthy
+            .and.whenItem(age > 2).is.truthy;
+
         referralBuilder.addComplication("High respiratory rate")
-        .when.valueInEncounter('Child Respiratory Rate')
-        .is.greaterThan(50);
+            .when.valueInEncounter("Child Respiratory Rate")
+            .is.greaterThan(60).and.whenItem(age < 2).is.truthy;
 
         return referralBuilder.getComplications();
     }

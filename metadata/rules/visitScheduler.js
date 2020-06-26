@@ -78,9 +78,12 @@ const scheduleVisitsDuringECFollowup = (programEncounter, scheduleBuilder) => {
 
 const scheduleVisitsDuringAbortionFollowup = (programEncounter, scheduleBuilder) => {
     const abortionDate = programEncounter.programEnrolment
-        .getObservationReadableValueInEntireEnrolment('Date of Abortion/MTP');
-    let visitDate = programEncounter.encounterDateTime || getEarliestEncounterDate(programEncounter);
+        .getObservationReadableValueInEntireEnrolment('Date of Abortion/MTP')
+        || programEncounter.getObservationValue('Date of Abortion/MTP');
 
+   
+    let visitDate = programEncounter.encounterDateTime || getEarliestEncounterDate(programEncounter);
+   
     if (!hasExitedProgram(programEncounter)) {
         var schedule = _.chain(encounterScheduleAbortionFollowup)
             .filter(e => moment(visitDate).isSameOrBefore(moment(lib.C.addDays(abortionDate, e.earliest)), 'date') === true)
@@ -149,7 +152,8 @@ const scheduleVisitsDuringANCClusterIncharge = (programEncounter, scheduleBuilde
 };
 
 const scheduleVisitsDuringPNC = (programEncounter, scheduleBuilder) => {
-    const deliveryDate = programEncounter.programEnrolment.getObservationReadableValueInEntireEnrolment('Date of delivery');
+    const deliveryDate = programEncounter.programEnrolment.getObservationReadableValueInEntireEnrolment('Date of delivery')
+                || programEncounter.getObservationValue('Date of delivery');
     let visitDate = programEncounter.encounterDateTime || getEarliestEncounterDate(programEncounter);
 
     if (!hasExitedProgram(programEncounter)) {
@@ -581,6 +585,10 @@ class ScheduleVisitDuringDelivery {
         let scheduleBuilder = RuleHelper.createProgramEncounterVisitScheduleBuilder(programEncounter, visitSchedule);
         const deliveryDate = programEncounter.getObservationValue('Date of delivery');
         RuleHelper.addSchedule(scheduleBuilder, 'PNC 1', 'PNC', deliveryDate, 8);
+
+        if(programEncounter.programEnrolment.hasEncounter('PNC', 'PNC 1') === false)
+            scheduleVisitsDuringPNC(programEncounter, scheduleBuilder);
+      
         return scheduleBuilder.getAllUnique("encounterType");
     }
 }
@@ -592,6 +600,10 @@ class ScheduleVisitDuringAbortion {
         let scheduleBuilder = RuleHelper.createProgramEncounterVisitScheduleBuilder(programEncounter, visitSchedule);
         const abortionDate = programEncounter.getObservationValue('Date of Abortion/MTP');
         RuleHelper.addSchedule(scheduleBuilder, 'Abortion Followup Visit-1', 'Abortion Followup', abortionDate, 8);
+
+      if(programEncounter.programEnrolment.hasEncounter('Abortion Followup', 'Abortion Followup Visit-1') == false)
+        scheduleVisitsDuringAbortionFollowup(programEncounter, scheduleBuilder);        
+
         return scheduleBuilder.getAllUnique("encounterType");
     }
 }
