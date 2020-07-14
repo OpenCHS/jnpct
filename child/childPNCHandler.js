@@ -157,32 +157,32 @@ class ChildPNCHandler {
     @WithName('If yes, then since how many does infant has watery diarrhoea?')
     @WithStatusBuilder
     dummy101([], statusBuilder) {
-        statusBuilder.show().when.valueInEncounter('Does infant has watery diarrhoea?').containsAnswerConceptName('Yes')
+        statusBuilder.show().when.valueInEncounter('Does infant has watery diarrhoea?').containsAnswerConceptName('Yes');
     }
 
     //If yes, then since how many does infant has visible pustules on body?
-    @WithName('If yes, then since how many does infant has visible pustules on body?')
+    @WithName('If yes, then how many visible pustules are on the body')
     @WithStatusBuilder
     dummy102([], statusBuilder) {
-        statusBuilder.show().when.valueInEncounter('Is there visible pustules on body of infant?').containsAnswerConceptName('Yes')
+        statusBuilder.show().when.valueInEncounter('Is there visible pustules on body of infant?').containsAnswerConceptName('Yes');
     }
 
     @WithName('Specify the problem')
     @WithStatusBuilder
     dummy1([], statusBuilder) {
-        statusBuilder.show().when.valueInEncounter('Does infant has any problem now?').containsAnswerConceptName('Yes')
+        statusBuilder.show().when.valueInEncounter('Does infant has any problem now?').containsAnswerConceptName('Yes');
     }
 
     @WithName('Measure the auxillary temprature of infant')
     @WithStatusBuilder
     dummy2([], statusBuilder) {
-        statusBuilder.show().when.valueInEncounter('Is temperature recorded?').containsAnswerConceptName('Yes')
+        statusBuilder.show().when.valueInEncounter('Is temperature recorded?').containsAnswerConceptName('Yes');
     }
 
     @WithName('Reason for not recording temperature')
     @WithStatusBuilder
     dummy3([], statusBuilder) {
-        statusBuilder.show().when.valueInEncounter('Is temperature recorded?').containsAnswerConceptName('No')
+        statusBuilder.show().when.valueInEncounter('Is temperature recorded?').containsAnswerConceptName('No');
     }
 
     @WithName('When was first breastfeed given to child?')
@@ -195,13 +195,13 @@ class ChildPNCHandler {
     @WithName('Things given other than bresatfeeding')
     @WithStatusBuilder
     dummy5([], statusBuilder) {
-        statusBuilder.show().when.valueInEncounter('Is there anything given other than breastfeeding for infant').containsAnswerConceptName('Yes')
+        statusBuilder.show().when.valueInEncounter('Is there anything given other than breastfeeding for infant').containsAnswerConceptName('Yes');
     }
 
     @WithName('How many times breastfeeding given to child in last 24 hours')
     @WithStatusBuilder
     dummy6([], statusBuilder) {
-        statusBuilder.show().when.valueInEncounter('Is breastfeed given to infant in last 24 hours?').containsAnswerConceptName('Yes')
+        statusBuilder.show().when.valueInEncounter('Is breastfeed given to infant in last 24 hours?').containsAnswerConceptName('Yes');
     }
 
     // 42 When to start bathing for infant  ?
@@ -327,11 +327,7 @@ class PncDecision {
             .when.valueInEncounter("Condition of umbelicus")
             .containsAnswerConceptNameOtherThan("Normal");
 
-        decisionBuilder.addComplication("Explain mother for proper suckling position")
-            .when.valueInEncounter("Not suckling effectively")
-            .is.yes;
-
-        decisionBuilder.addComplication("Expain mother for exclusive breastfeeding")
+          decisionBuilder.addComplication("Expain mother for exclusive breastfeeding")
             .when.valueInEncounter("Is there anything given other than breastfeeding for infant")
             .is.yes;
 
@@ -387,9 +383,16 @@ class PncDecision {
             .when.valueInEncounter("Is oral ulcer or thrush seen in infant's mouth")
             .is.yes;
 
-        decisionBuilder.addComplication("if 10 or above pustules are present then give primary treatment and refer , if less than 10 pustule then apply 0.5% GV lotion and give cotri syrup two times for 5 days.")
-            .when.valueInEncounter("Is there visible pustules on body of infant?")
-            .is.yes;
+//If 10 or above pustules are present then give primary treatment and refer
+        decisionBuilder.addComplication("If 10 or above pustules are present then give primary treatment and refer")
+            .when.valueInEncounter("If yes, then how many visible pustules are on the body")
+            .containsAnswerConceptName("10 or more than 10");
+
+
+//If less than 10 pustule then apply 0.5% GV lotion and give cotri syrup two times for 5 days
+        decisionBuilder.addComplication("If less than 10 pustule then apply 0.5% GV lotion and give cotri syrup two times for 5 days")
+            .when.valueInEncounter("If yes, then how many visible pustules are on the body")
+            .containsAnswerConceptName("Less than 10");
 
 
         return decisionBuilder.getComplications();
@@ -479,10 +482,7 @@ class PncDecision {
             .when.valueInEncounter("How is the infant attachment while sucking?")
             .containsAnswerConceptNameOtherThan("Good - Normal");
 
-        decisionBuilder.addComplication("Not suckling")
-            .when.valueInEncounter("Not suckling at all?")
-            .is.yes;
-
+       
         decisionBuilder.addComplication("Difficulty in breastfeeding")
             .when.valueInEncounter("Does infant has any difficulty in breastfeeding?")
             .is.yes;

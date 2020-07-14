@@ -25,12 +25,12 @@ class PncFormViewFilterHandlerJNPCT {
             .getFormElementsStatusesWithoutDefaults(new PncFormViewFilterHandlerJNPCT(), programEncounter, formElementGroup, today);
     }
 
-    @WithName("Other breast related problems")
-    @WithStatusBuilder
-    p1([], statusBuilder) {
-        statusBuilder.show().when.valueInEncounter("Any breast problems")
-            .containsAnswerConceptName("Other");
-    }
+    // @WithName("Other breast related problems")
+    // @WithStatusBuilder
+    // p1([], statusBuilder) {
+    //     statusBuilder.show().when.valueInEncounter("Any breast problems")
+    //         .containsAnswerConceptName("Other");
+    // }
 
     @WithName('Which day after Delivery')
     p2(programEncounter, formElement) {
@@ -147,8 +147,8 @@ class PregnancyMotherPncDecision {
             .when.valueInEncounter("Post partum dipression symptoms")
             .containsAnyAnswerConceptName("Insomnia", "Irritability", "Loss of appetite", "Weakness");
 
-        referralBuilder.addComplication("Pain in hypogastrium")
-            .when.valueInEncounter("Pain in hypogastrium?").is.yes;
+        // referralBuilder.addComplication("Pain in hypogastrium")
+        //     .when.valueInEncounter("Pain in hypogastrium?").is.yes;
 
         //referralBuilder.addComplication("Burning micturation")
         //        .when.valueInEncounter("Burning micturation?").is.yes;

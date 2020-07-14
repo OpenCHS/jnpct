@@ -25,12 +25,12 @@ class AbortionFollowupViewFilterHandlerJNPCT {
             .getFormElementsStatusesWithoutDefaults(new AbortionFollowupViewFilterHandlerJNPCT(), programEncounter, formElementGroup, today);
     }
 
-   @WithName("Other breast related problems")
-   @WithStatusBuilder
-   f1([], statusBuilder) {
-         statusBuilder.show().when.valueInEncounter("Any breast problems")
-            .containsAnswerConceptName("Other");
-   }
+//    @WithName("Other breast related problems")
+//    @WithStatusBuilder
+//    f1([], statusBuilder) {
+//          statusBuilder.show().when.valueInEncounter("Any breast problems")
+//             .containsAnswerConceptName("Other");
+//    }
 
     @WithName('Which Day after Abortion?')
     f2(programEncounter, formElement) {

@@ -54,11 +54,11 @@ class PregnancyEnrolmentViewFilterHandlerJNPCT {
         statusBuilder.show().when.valueInEnrolment("Previous history of disease").containsAnswerConceptName("Other");
     }
 
-    @WithName('Parity')
-    @WithStatusBuilder
-    p2([], statusBuilder) {
-        statusBuilder.show().when.valueInEnrolment("Gravida").containsAnswerConceptNameOtherThan("1");
-    }
+    // @WithName('Parity')
+    // @WithStatusBuilder
+    // p2([], statusBuilder) {
+    //     statusBuilder.show().when.valueInEnrolment("Gravida").containsAnswerConceptNameOtherThan("1");
+    // }
 
     @WithName('Number of Abortion')
     @WithStatusBuilder
