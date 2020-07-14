@@ -154,7 +154,7 @@ class ChildPNCHandler {
     }
 
     //If yes, then since how many does infant has watery diarrhoea?
-    @WithName('If yes, then since how many does infant has watery diarrhoea?')
+    @WithName('If yes, then since how many days does infant has watery diarrhoea?')
     @WithStatusBuilder
     dummy101([], statusBuilder) {
         statusBuilder.show().when.valueInEncounter('Does infant has watery diarrhoea?').containsAnswerConceptName('Yes');
