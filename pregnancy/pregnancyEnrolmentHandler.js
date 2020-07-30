@@ -139,7 +139,7 @@ export class PregnancyFormDecisionHandler {
                 "Heart disease", "Diabetes", "Asthama", "Other");
 
         complicationsBuilder
-            .addComplication("Gravida")
+            .addComplication("Gravida is more than 5")
             .when.valueInEnrolment('Gravida')
             .containsAnswerConceptName("5 and more");
 
