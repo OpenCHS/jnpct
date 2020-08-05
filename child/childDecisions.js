@@ -24,13 +24,22 @@ const zScoreGradeStatusMappingHeightForAge = {
 //ordered map
 //KEY:status, value: max z-score for the particular status
 
+// const zScoreGradeStatusMappingWeightForHeight = [
+//     ["Severely wasted", -3],
+//     ["Wasted", -2],
+//     ["Normal", 1],
+//     ["Possible risk of overweight", 2],
+//     ["Overweight", 3],
+//     ["Obese", Infinity],
+// ];
+
 const zScoreGradeStatusMappingWeightForHeight = [
-    ["Severely wasted", -3],
-    ["Wasted", -2],
+    ["SAM", -3],
+    ["MAM", -2],
     ["Normal", 1],
-    ["Possible risk of overweight", 2],
-    ["Overweight", 3],
-    ["Obese", Infinity],
+    ["Normal", 2],
+    ["Normal", 3],
+    ["Normal", Infinity],
 ];
 
 const weightForHeightStatus = function (zScore) {
