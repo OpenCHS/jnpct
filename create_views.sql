@@ -858,4 +858,376 @@ create view jnpct_pnc_visit_view as (
       AND programEnrolment.enrolment_date_time IS NOT NULL
 
     );
-    
+
+drop view if exists jnpct_child_birth_form_view;
+create view jnpct_child_birth_form_view as (
+  SELECT individual.id                                                                          "Ind.Id",
+         individual.address_id                                                                  "Ind.address_id",
+         individual.uuid                                                                        "Ind.uuid",
+         individual.first_name                                                                  "Ind.first_name",
+         individual.last_name                                                                   "Ind.last_name",
+         g.name                                                                                 "Ind.Gender",
+         individual.date_of_birth                                                               "Ind.date_of_birth",
+         individual.date_of_birth_verified                                                      "Ind.date_of_birth_verified",
+         individual.registration_date                                                           "Ind.registration_date",
+         individual.facility_id                                                                 "Ind.facility_id",
+         village.title                                                                          "Ind.village",
+         subcenter.title                                                                        "Ind.subcenter",
+         phc.title                                                                              "Ind.phc",
+         block.title                                                                            "Ind.block",
+         individual.is_voided                                                                   "Ind.is_voided",
+         op.name                                                                                "Enl.Program Name",
+         programEnrolment.id                                                                    "Enl.Id",
+         programEnrolment.uuid                                                                  "Enl.uuid",
+         programEnrolment.is_voided                                                             "Enl.is_voided",
+         oet.name                                                                               "Enc.Type",
+         programEncounter.id                                                                    "Enc.Id",
+         programEncounter.earliest_visit_date_time                                              "Enc.earliest_visit_date_time",
+         programEncounter.encounter_date_time                                                   "Enc.encounter_date_time",
+         programEncounter.program_enrolment_id                                                  "Enc.program_enrolment_id",
+         programEncounter.uuid                                                                  "Enc.uuid",
+         programEncounter.name                                                                  "Enc.name",
+         programEncounter.max_visit_date_time                                                   "Enc.max_visit_date_time",
+         programEncounter.is_voided                                                             "Enc.is_voided",
+         single_select_coded(
+             individual.observations ->> 'a20a030b-9bef-4ef8-ba8a-88e2b23c1478')::TEXT       as "Ind.Marital status",
+         (individual.observations ->> 'a01c2055-7483-4a19-98c1-80fdf955b50c')::TEXT          as "Ind.Number of family members",
+         single_select_coded(
+             individual.observations ->> 'f4028968-bbac-4a66-8fe7-df081321414f')::TEXT       as "Ind.Who is decision making person in family",
+         single_select_coded(
+             individual.observations ->> '8eb5a6ce-7b8a-45cc-a066-fcceca3708f7')::TEXT       as "Ind.Ration card",
+         single_select_coded(
+             individual.observations ->> 'ba25ac4c-784a-4723-8e15-a965a0d63b50')::TEXT       as "Ind.Caste",
+         single_select_coded(
+             individual.observations ->> '5f20070c-1cfe-4e0b-b0db-70dffee99394')::TEXT       as "Ind.Subcaste",
+         single_select_coded(
+             individual.observations ->> 'b9c9d807-7064-46fd-8dc7-1640345dc8cb')::TEXT       as "Ind.Religion",
+         single_select_coded(
+             individual.observations ->> '4e90fc18-7bf1-4722-87c3-f3b2bd5d1d7d')::TEXT       as "Ind.Satipati family",
+         single_select_coded(
+             individual.observations ->> '0a668e5b-f3c2-4fc6-8589-d2abda26658b')::TEXT       as "Ind.Addiction",
+         multi_select_coded(
+             individual.observations -> 'e0a3086c-8d69-479e-bf44-258bc27b8105')::TEXT        as "Ind.Addiction - Please specify",
+         single_select_coded(
+             individual.observations ->> '89fe78b2-20a9-45f1-90e3-119a7bc95ce3')::TEXT       as "Ind.Very poor family",
+         single_select_coded(
+             individual.observations ->> '6f03e969-f0bf-4438-a528-5d2ce3b70e15')::TEXT       as "Ind.Occupation of mother",
+         single_select_coded(
+             individual.observations ->> '65a5101b-38fc-4962-876e-e0f8b9ba4cec')::TEXT       as "Ind.Occupation of husband/father",
+         single_select_coded(
+             individual.observations ->> 'e42f5b28-bee4-4a01-aff0-922d823d0075')::TEXT       as "Ind.Mother's education",
+         (individual.observations ->> '881d9628-eb4f-4056-ae10-09e4ef71cae4')::TEXT          as "Ind.Mobile number",
+         single_select_coded(
+             individual.observations ->> '5f0b2fa0-ed20-4d6b-a8b5-3fed09dac067')::TEXT       as "Ind.Specialy abled",
+         single_select_coded(
+             individual.observations ->> 'a154508a-9d8b-49d9-9d78-b61cbc9daf7f')::TEXT       as "Ind.Specially abled - Please specify",
+         single_select_coded(
+             individual.observations ->> 'd009887c-6d29-4c47-9e34-21e3b9298f44')::TEXT       as "Ind.Any long-term illnesses",
+         multi_select_coded(
+             individual.observations -> '7fa81959-a016-4569-920d-47dee242b27a')::TEXT        as "Ind.Long-term illness - Please specify",
+         single_select_coded(
+             individual.observations ->> '54105452-1752-4661-9d30-2d99bd2d04fa')::TEXT       as "Ind.Toilet facility present",
+         single_select_coded(
+             individual.observations ->> '59db93f0-0963-4e49-87b6-485efb705561')::TEXT       as "Ind.Using the toilet regularly",
+         multi_select_coded(
+             individual.observations -> '789733c4-42ba-4da3-89e6-71da227cf4c2')::TEXT        as "Ind.Source of drinking water",
+         single_select_coded(
+             programEnrolment.observations ->> 'f1a9ede3-1b9b-4b1a-a8fb-6a3bb8f1cc19')::TEXT as "Enl.Is child getting registered at Birth",
+         (programEnrolment.observations ->> 'bab98eac-14a5-43c4-80ff-ccdb8c3ddf1b')::TEXT    as "Enl.Weight",
+         (programEnrolment.observations ->> 'c82cd1c8-d0a9-4237-b791-8d64e52b6c4a')::TEXT    as "Enl.Birth Weight",
+         single_select_coded(
+             programEncounter.observations ->> 'a9002492-13f9-4778-8082-2d8d58862912')::TEXT as "Enc.Place of Birth",
+         (programEncounter.observations ->> 'c82cd1c8-d0a9-4237-b791-8d64e52b6c4a')::TEXT    as "Enc.Birth Weight",
+         single_select_coded(
+             programEncounter.observations ->> '01168515-86a6-4ddf-beb9-13c80ff2aaa1')::TEXT as "Enc.Gestational age category at birth",
+         single_select_coded(
+             programEncounter.observations ->> 'dffe45ff-7784-4fb9-96a0-83fa0ed4420d')::TEXT as "Enc.Did the baby cry soon after birth?",
+         single_select_coded(
+             programEncounter.observations ->> '90086c0d-33a6-4044-b3e8-bbef93796517')::TEXT as "Enc.Did breast feeding start within 1 hour of birth?",
+         (programEncounter.observations ->> '38ca808e-8247-4c89-aee2-494262b2cc43')::TEXT    as "Enc.When did breast feeding start?",
+         single_select_coded(
+             programEncounter.observations ->> '5f42d5e5-8405-40ae-ab2f-77b5992e7359')::TEXT as "Enc.Was colostrum given?",
+         single_select_coded(
+             programEncounter.observations ->> '4a24ed38-5d6c-4c77-8574-aed4ccaa4537')::TEXT as "Enc.Was any kind of sweet liquid tried to child?",
+         single_select_coded(
+             programEncounter.observations ->> '37a2e804-b377-4a94-8628-252a6ae83b67')::TEXT as "Enc.Was child wrapped in 3-4 folded clothes?",
+         multi_select_coded(
+             programEncounter.observations -> 'a6ad7816-154d-4007-8fb5-ef36ed19af95')::TEXT  as "Enc.Birth Defects",
+         (programEncounter.observations ->> '959ad8b6-2388-4b15-8bce-bd511fb97815')::TEXT    as "Enc.Other Birth Defect",
+         single_select_coded(
+             programEncounter.observations ->> '35870e21-f4a7-4df1-980a-b77954928f66')::TEXT as "Enc.Colour of child",
+         single_select_coded(
+             programEncounter.observations ->> 'b0306743-3879-46f0-b963-f41447d1891b')::TEXT as "Enc.Icterus present within 24 hrs of birth?",
+         single_select_coded(
+             programEncounter.observations ->> '397e9057-446b-4076-8676-92b79281601b')::TEXT as "Enc.Is child breathing regularly?",
+         single_select_coded(
+             programEncounter.observations ->> '92264531-33df-4ad3-97ce-89ef2a9eb514')::TEXT as "Enc.Is there life threatening abnormality?",
+         single_select_coded(
+             programEncounter.observations ->> '9f3a91ea-7e87-4cb7-b40c-426d20adc737')::TEXT as "Enc.Is foam coming out from child's mouth?",
+         single_select_coded(
+             programEncounter.observations ->> '737ae4e7-f38a-4aef-a6aa-d9ad1642494a')::TEXT as "Enc.Is any kind of cyst or tumor present on neck, back and on lower back?",
+         single_select_coded(
+             programEncounter.observations ->> 'e1711f03-e9ff-4356-b018-5f08c1ee6207')::TEXT as "Enc.Is umbelical cord of newborn tied properly?",
+         single_select_coded(
+             programEncounter.observations ->> '09573558-edb4-41c6-a2a7-55484158c96e')::TEXT as "Enc.Is blood coming out from any part of body?",
+         (programEncounter.observations ->> 'b0b2e912-5433-4594-8d86-2098c57d671a')::TEXT    as "Enc.Temperature of infant",
+         (programEncounter.observations ->> '20401dea-a7ee-480a-8980-6cb419f732fe')::TEXT    as "Enc.Child Respiratory Rate",
+         programEncounter.cancel_date_time                                                      "EncCancel.cancel_date_time",
+         single_select_coded(
+             programEncounter.observations ->> '0066a0f7-c087-40f4-ae44-a3e931967767')::TEXT as "EncCancel.Visit cancel reason",
+         (programEncounter.observations ->> 'fadd881a-beed-47ea-a4d6-700009a61a32')::TEXT    as "EncCancel.Other reason for cancelling",
+         single_select_coded(
+             programEncounter.observations ->> 'dde645f5-0f70-45e9-a670-b7190c86c981')::TEXT as "EncCancel.Place of death",
+         (programEncounter.observations ->> '3b269f11-ed0a-4636-8273-da0259783214')::DATE    as "EncCancel.Date of death",
+         single_select_coded(
+             programEncounter.observations ->> '7c88aea6-dfed-451e-a086-881e2dcfd85f')::TEXT as "EncCancel.Reason of death"
+  FROM program_encounter programEncounter
+         LEFT OUTER JOIN operational_encounter_type oet on programEncounter.encounter_type_id = oet.encounter_type_id
+         LEFT OUTER JOIN program_enrolment programEnrolment
+                         ON programEncounter.program_enrolment_id = programEnrolment.id
+         LEFT OUTER JOIN operational_program op ON op.program_id = programEnrolment.program_id
+         LEFT OUTER JOIN individual individual ON programEnrolment.individual_id = individual.id
+         LEFT OUTER JOIN gender g ON g.id = individual.gender_id
+         LEFT JOIN address_level village ON individual.address_id = village.id
+         LEFT JOIN address_level subcenter ON village.parent_id = subcenter.id
+         LEFT JOIN address_level phc ON subcenter.parent_id = phc.id
+         LEFT JOIN address_level block ON phc.parent_id = block.id
+  WHERE op.uuid = '70e4db05-c79a-406c-89be-54f8d77f643a'
+    AND oet.uuid = '8ffacbcf-518f-45eb-a524-a425a36aab3f'
+    AND programEncounter.encounter_date_time IS NOT NULL
+    AND programEnrolment.enrolment_date_time IS NOT NULL
+);
+
+drop view if exists jnpct_child_pnc_view;
+create view jnpct_child_pnc_view as (
+  SELECT individual.id                                                                          "Ind.Id",
+         individual.address_id                                                                  "Ind.address_id",
+         individual.uuid                                                                        "Ind.uuid",
+         individual.first_name                                                                  "Ind.first_name",
+         individual.last_name                                                                   "Ind.last_name",
+         g.name                                                                                 "Ind.Gender",
+         individual.date_of_birth                                                               "Ind.date_of_birth",
+         individual.date_of_birth_verified                                                      "Ind.date_of_birth_verified",
+         individual.registration_date                                                           "Ind.registration_date",
+         individual.facility_id                                                                 "Ind.facility_id",
+         village.title                                                                             AS "Ind.village",
+         subcenter.title                                                                           AS "Ind.subcenter",
+         phc.title                                                                                 AS "Ind.phc",
+         block.title                                                                               AS "Ind.block",
+         individual.is_voided                                                                   "Ind.is_voided",
+         op.name                                                                                "Enl.Program Name",
+         programEnrolment.id                                                                    "Enl.Id",
+         programEnrolment.uuid                                                                  "Enl.uuid",
+         programEnrolment.is_voided                                                             "Enl.is_voided",
+         oet.name                                                                               "Enc.Type",
+         programEncounter.id                                                                    "Enc.Id",
+         programEncounter.earliest_visit_date_time                                              "Enc.earliest_visit_date_time",
+         programEncounter.encounter_date_time                                                   "Enc.encounter_date_time",
+         programEncounter.program_enrolment_id                                                  "Enc.program_enrolment_id",
+         programEncounter.uuid                                                                  "Enc.uuid",
+         programEncounter.name                                                                  "Enc.name",
+         programEncounter.max_visit_date_time                                                   "Enc.max_visit_date_time",
+         programEncounter.is_voided                                                             "Enc.is_voided",
+         single_select_coded(
+             individual.observations ->> 'a20a030b-9bef-4ef8-ba8a-88e2b23c1478')::TEXT       as "Ind.Marital status",
+         (individual.observations ->> 'a01c2055-7483-4a19-98c1-80fdf955b50c')::TEXT          as "Ind.Number of family members",
+         single_select_coded(
+             individual.observations ->> 'f4028968-bbac-4a66-8fe7-df081321414f')::TEXT       as "Ind.Who is decision making person in family",
+         single_select_coded(
+             individual.observations ->> '8eb5a6ce-7b8a-45cc-a066-fcceca3708f7')::TEXT       as "Ind.Ration card",
+         single_select_coded(
+             individual.observations ->> 'ba25ac4c-784a-4723-8e15-a965a0d63b50')::TEXT       as "Ind.Caste",
+         single_select_coded(
+             individual.observations ->> '5f20070c-1cfe-4e0b-b0db-70dffee99394')::TEXT       as "Ind.Subcaste",
+         single_select_coded(
+             individual.observations ->> 'b9c9d807-7064-46fd-8dc7-1640345dc8cb')::TEXT       as "Ind.Religion",
+         single_select_coded(
+             individual.observations ->> '4e90fc18-7bf1-4722-87c3-f3b2bd5d1d7d')::TEXT       as "Ind.Satipati family",
+         single_select_coded(
+             individual.observations ->> '0a668e5b-f3c2-4fc6-8589-d2abda26658b')::TEXT       as "Ind.Addiction",
+         multi_select_coded(
+             individual.observations -> 'e0a3086c-8d69-479e-bf44-258bc27b8105')::TEXT        as "Ind.Addiction - Please specify",
+         single_select_coded(
+             individual.observations ->> '89fe78b2-20a9-45f1-90e3-119a7bc95ce3')::TEXT       as "Ind.Very poor family",
+         single_select_coded(
+             individual.observations ->> '6f03e969-f0bf-4438-a528-5d2ce3b70e15')::TEXT       as "Ind.Occupation of mother",
+         single_select_coded(
+             individual.observations ->> '65a5101b-38fc-4962-876e-e0f8b9ba4cec')::TEXT       as "Ind.Occupation of husband/father",
+         single_select_coded(
+             individual.observations ->> 'e42f5b28-bee4-4a01-aff0-922d823d0075')::TEXT       as "Ind.Mother's education",
+         (individual.observations ->> '881d9628-eb4f-4056-ae10-09e4ef71cae4')::TEXT          as "Ind.Mobile number",
+         single_select_coded(
+             individual.observations ->> '5f0b2fa0-ed20-4d6b-a8b5-3fed09dac067')::TEXT       as "Ind.Specialy abled",
+         single_select_coded(
+             individual.observations ->> 'a154508a-9d8b-49d9-9d78-b61cbc9daf7f')::TEXT       as "Ind.Specially abled - Please specify",
+         single_select_coded(
+             individual.observations ->> 'd009887c-6d29-4c47-9e34-21e3b9298f44')::TEXT       as "Ind.Any long-term illnesses",
+         multi_select_coded(
+             individual.observations -> '7fa81959-a016-4569-920d-47dee242b27a')::TEXT        as "Ind.Long-term illness - Please specify",
+         single_select_coded(
+             individual.observations ->> '54105452-1752-4661-9d30-2d99bd2d04fa')::TEXT       as "Ind.Toilet facility present",
+         single_select_coded(
+             individual.observations ->> '59db93f0-0963-4e49-87b6-485efb705561')::TEXT       as "Ind.Using the toilet regularly",
+         multi_select_coded(
+             individual.observations -> '789733c4-42ba-4da3-89e6-71da227cf4c2')::TEXT        as "Ind.Source of drinking water",
+         single_select_coded(
+             programEnrolment.observations ->> 'f1a9ede3-1b9b-4b1a-a8fb-6a3bb8f1cc19')::TEXT as "Enl.Is child getting registered at Birth",
+         (programEnrolment.observations ->> 'bab98eac-14a5-43c4-80ff-ccdb8c3ddf1b')::TEXT    as "Enl.Weight",
+         (programEnrolment.observations ->> 'c82cd1c8-d0a9-4237-b791-8d64e52b6c4a')::TEXT    as "Enl.Birth Weight",
+         single_select_coded(
+             programEncounter.observations ->> '6c3250f8-8380-4f72-97e7-d5ce9e41338a')::TEXT as "Enc.Whether child breathing regularly?",
+         single_select_coded(
+             programEncounter.observations ->> 'e401ebe8-07e0-4f34-bcf8-8a8c3eaf3b9d')::TEXT as "Enc.Is the child pinkish in colour?",
+         single_select_coded(
+             programEncounter.observations ->> '7ee92cf1-1661-420f-8eaf-9b7249779058')::TEXT as "Enc.Is body temprature warm?",
+         single_select_coded(
+             programEncounter.observations ->> 'bb279686-d296-4378-858a-f88532454430')::TEXT as "Enc.Is there active movement of hands and legs?",
+         single_select_coded(
+             programEncounter.observations ->> '186e42dc-515f-4415-8a48-e7709123c060')::TEXT as "Enc.Is there any life threatening abnormality?",
+         single_select_coded(
+             programEncounter.observations ->> '0277a00d-20d5-436e-8070-205d29a458d2')::TEXT as "Enc.Examine for cleft palate/lips in child's mouth?",
+         single_select_coded(
+             programEncounter.observations ->> '23456b1a-29bb-4a16-952c-9476f7751dd0')::TEXT as "Enc.Does foam coming out from child's mouth?",
+         single_select_coded(
+             programEncounter.observations ->> 'b6930840-0515-4805-8ade-30431f95122e')::TEXT as "Enc.Does child paases stool and urine within 24  hour",
+         single_select_coded(
+             programEncounter.observations ->> 'f51ec371-e402-4ce6-b680-7d82002f1717')::TEXT as "Enc.Is there anal opening present?",
+         single_select_coded(
+             programEncounter.observations ->> '972d4847-b8d4-49cc-b0ae-b3fbe4125283')::TEXT as "Enc.Does any kind of cyst or tumor present on neck, back and on lower back?",
+         single_select_coded(
+             programEncounter.observations ->> '714fc100-13c3-418c-aa76-e2ca24e0d6f3')::TEXT as "Enc.Does umbelical cord of newborn tied properly?",
+         single_select_coded(
+             programEncounter.observations ->> '60746eac-8f88-4c59-b107-bb8f64406f1f')::TEXT as "Enc.Is blood coming out from any part of body ( cord ,head ,mouth, anus )?",
+         single_select_coded(
+             programEncounter.observations ->> '648faf63-17f1-4ec6-a9b9-78d1edb4061a')::TEXT as "Enc.Is there visible jaundice?",
+         single_select_coded(
+             programEncounter.observations ->> 'd48fca1d-8344-499c-bcf7-86ce64606f74')::TEXT as "Enc.Does infant has any problem now?",
+         (programEncounter.observations ->> '96ded0c5-3937-40b7-ab27-7a82126bd60c')::TEXT    as "Enc.Problem with infant",
+         (programEncounter.observations ->> '20401dea-a7ee-480a-8980-6cb419f732fe')::TEXT    as "Enc.Child Respiratory Rate",
+         single_select_coded(
+             programEncounter.observations ->> '58d017ed-56e3-426c-add1-e06f2af19e01')::TEXT as "Enc.Is there any grunting sound?",
+         single_select_coded(
+             programEncounter.observations ->> '3f8b75b0-41aa-4f38-82bd-459ac8b8fa37')::TEXT as "Enc.Is there chest indrawing?",
+         single_select_coded(
+             programEncounter.observations ->> 'bc9c3023-5d55-4172-a883-f83ab449deff')::TEXT as "Enc.Is there nasal flaring?",
+         single_select_coded(
+             programEncounter.observations ->> '56aec7ea-d2aa-4439-a531-59d0acc402dd')::TEXT as "Enc.How is the colour of infant",
+         single_select_coded(
+             programEncounter.observations ->> 'db74f827-c052-4c0a-9df3-9d34dcddea6f')::TEXT as "Enc.Look at the infants movement",
+         single_select_coded(
+             programEncounter.observations ->> 'e58035a6-32f4-4728-8ebb-7a8ab3e1b082')::TEXT as "Enc.Is anything applied on umbelicus?",
+         single_select_coded(
+             programEncounter.observations ->> '90c1f569-76e9-433c-a0fe-096d179ef8de')::TEXT as "Enc.Is infant coverred with 3-4 folded cloth?",
+         single_select_coded(
+             programEncounter.observations ->> 'cdf5f2b6-ec61-4dc3-8260-61960d1239ce')::TEXT as "Enc.Is temperature recorded?",
+         (programEncounter.observations ->> 'b0b2e912-5433-4594-8d86-2098c57d671a')::TEXT    as "Enc.Temperature of infant",
+         single_select_coded(
+             programEncounter.observations ->> '9a5019fa-cd87-441c-8b8c-f2373987178f')::TEXT as "Enc.Reason for not recording temperature",
+         single_select_coded(
+             programEncounter.observations ->> 'cadf0874-1446-411a-9e97-cf8a67a234e1')::TEXT as "Enc.How you feel infants temprature on touch?",
+         single_select_coded(
+             programEncounter.observations ->> 'df75e2e6-4d5f-4ed8-a24e-14ce72da1e10')::TEXT as "Enc.Condition of umbelicus",
+         (programEncounter.observations ->> 'bc203ffc-00bf-42ed-988c-97cc954d1061')::TEXT    as "Enc.When was first breastfeed given to child?",
+         single_select_coded(
+             programEncounter.observations ->> '60baea86-df95-443c-bac4-852482d2b2a8')::TEXT as "Enc.How is the infant attachment while sucking?",
+         single_select_coded(
+             programEncounter.observations ->> '5e309ac3-1b96-4965-a94a-2341f834a7c0')::TEXT as "Enc.Is mouth wide open",
+         single_select_coded(
+             programEncounter.observations ->> '80144e66-99dc-4404-bacc-f33554ea97fb')::TEXT as "Enc.Is lower lip turned outword",
+         single_select_coded(
+             programEncounter.observations ->> 'dc5da243-4e23-48b7-b5e5-e2cc18a7680e')::TEXT as "Enc.Is chin attached to breast?",
+         single_select_coded(
+             programEncounter.observations ->> '144796e8-cfcd-47dd-befc-bf62a3f87056')::TEXT as "Enc.Is more areola visible above than below the mouth",
+         single_select_coded(
+             programEncounter.observations ->> '26d47b4e-9b2f-45bd-9044-41596b330183')::TEXT as "Enc.Is there anything given other than breastfeeding for infant",
+         multi_select_coded(
+             programEncounter.observations -> '8c96d4e2-efd5-4886-acc6-e9438522a25b')::TEXT  as "Enc.Things given other than bresatfeeding",
+         single_select_coded(
+             programEncounter.observations ->> 'd5993485-2b05-4ef8-a980-0f62a9e2b3e4')::TEXT as "Enc.Does infant has any difficulty in breastfeeding?",
+         single_select_coded(
+             programEncounter.observations ->> '4f440c38-c2f8-4489-9b98-53e7faebb9f5')::TEXT as "Enc.Is breastfeed given to infant in last 24 hours?",
+         (programEncounter.observations ->> '6ca3c61e-2dda-49ad-a9b4-7eb719874c27')::TEXT    as "Enc.How many times breastfeeding given to child in last 24 hours",
+         single_select_coded(
+             programEncounter.observations ->> 'fff940b1-7cfc-40b1-8145-1fa3794ebdcd')::TEXT as "Enc.In last 24 hours, for how many times infant passes urine?",
+         single_select_coded(
+             programEncounter.observations ->> '8c18e07c-ca8f-4f62-823d-1618fac5912c')::TEXT as "Enc.When to start bathing for infant?",
+         single_select_coded(
+             programEncounter.observations ->> 'f4d9696d-9075-4b32-bc6a-3f33fd19ef40')::TEXT as "Enc.Is there bleeding from any part of infant's body?",
+         single_select_coded(
+             programEncounter.observations ->> '09b4ee52-8d80-48f5-84dd-e375e16bbda9')::TEXT as "Enc.Is infant vomiting?",
+         single_select_coded(
+             programEncounter.observations ->> '57bf7e17-a75d-4141-ae61-5f9a10b67527')::TEXT as "Enc.Does infant's abdomen look gasious?",
+         single_select_coded(
+             programEncounter.observations ->> 'bbf0e17f-769e-4389-82e5-01eccb0c745c')::TEXT as "Enc.Does infant looks icteric?",
+         single_select_coded(
+             programEncounter.observations ->> 'cfba52eb-6f92-4db8-a42c-8a3623e15bde')::TEXT as "Enc.Does infant looks cynosed?",
+         single_select_coded(
+             programEncounter.observations ->> 'd350f4e7-0d54-44d3-aeb0-e47b898b2e8d')::TEXT as "Enc.Does infant looks abnormal?",
+         single_select_coded(
+             programEncounter.observations ->> 'b2097167-c02d-4d2d-a9ec-49614027a5ea')::TEXT as "Enc.Is the infant's mouth cleft pallet seen?",
+         single_select_coded(
+             programEncounter.observations ->> '4b225831-3670-4537-b663-90c87c417f98')::TEXT as "Enc.Is there visible tumor on back or on head of infant?",
+         single_select_coded(
+             programEncounter.observations ->> 'ee670016-5517-4c10-a27a-998bbd94247e')::TEXT as "Enc.Is foam coming from infant's mouth continuously?",
+         single_select_coded(
+             programEncounter.observations ->> '477207cd-61ef-46ed-b28d-1c2be3eb6415')::TEXT as "Enc.Does infant has watery diarrhoea?",
+         (programEncounter.observations ->> '4c7b1f17-380f-422b-85b7-a85f95e040d3')::TEXT    as "Enc.If yes, then since how many does infant has watery diarrhoea",
+         single_select_coded(
+             programEncounter.observations ->> 'f0bdf6d9-a8f8-439c-88fc-7be3c00e8de1')::TEXT as "Enc.Is oral ulcer or thrush seen in infant's mouth",
+         single_select_coded(
+             programEncounter.observations ->> 'c9468105-56fa-4e41-8ed0-943d106c040e')::TEXT as "Enc.Is there visible pustules on body of infant?",
+         single_select_coded(
+             programEncounter.observations ->> '6b66b89e-e7f6-470c-be4e-1f236d15af90')::TEXT as "Enc.If yes, then how many visible pustules are on the body",
+         (programEncounter.observations ->> 'bab98eac-14a5-43c4-80ff-ccdb8c3ddf1b')::TEXT    as "Enc.Weight",
+         (programEncounter.observations ->> '3fb85722-fd53-43db-9e8b-d34767af9f7e')::TEXT    as "Enc.Nutritional status of child",
+         single_select_coded(
+             programEncounter.observations ->> 'd21d1844-362b-426c-a5d4-c45ab5fc1690')::TEXT as "Enc.If infant's weight is less than 2.5kg then did KMC?",
+         (programEncounter.observations ->> '81d81392-d0e6-40ce-84bd-4fd0eba04719')::TEXT    as "Enc.Weight at the time of KMC started to do",
+         (programEncounter.observations ->> '4f2cae52-9923-44f3-baf5-b03a62423acb')::TEXT    as "Enc.In last 24 hours for how many times did KMC?",
+         (programEncounter.observations ->> '29d4737c-15b3-42f2-b296-632fee9f5fe7')::TEXT    as "Enc.In one time for how many minutes did KMC?",
+         (programEncounter.observations ->> '78511bef-1c10-47a0-98cb-a91aff6f1c3c')::TEXT    as "Enc.Weight of infant at time to stoped to do KMC",
+         single_select_coded(
+             programEncounter.observations ->> 'e8a74be5-e817-4992-87df-abab41753f38')::TEXT as "Enc.Does child require to refer if morbidity found",
+         single_select_coded(
+             programEncounter.observations ->> '61be533a-98a6-4a73-919f-79c1f4fd4cfc')::TEXT as "Enc.If yes then refered?",
+         (programEncounter.observations ->> 'ca103da5-3221-487c-b687-4f43bc434c0c')::DATE    as "Enc.Date of refer",
+         single_select_coded(
+             programEncounter.observations ->> '1aa46e35-6256-40cd-a026-8c825565a98f')::TEXT as "Enc.Who refered?",
+         single_select_coded(
+             programEncounter.observations ->> '38fa0a7d-7bb6-4e84-a5d8-2b1b9c463f6b')::TEXT as "Enc.Place of refer",
+         single_select_coded(
+             programEncounter.observations ->> 'f006c0b1-d6ad-44b4-b347-0f8ba148048d')::TEXT as "Enc.Baby Warming Dos",
+         single_select_coded(
+             programEncounter.observations ->> '3657a1ae-83cb-4204-82b0-0745d29541c2')::TEXT as "Enc.Breast Feeding - Do's",
+         single_select_coded(
+             programEncounter.observations ->> 'cddc0438-74a1-4bcb-843c-34a47da7c1e4')::TEXT as "Enc.Hygiene advice",
+         single_select_coded(
+             programEncounter.observations ->> '063fd686-1070-405b-89a6-cbf5e3c79f0f')::TEXT as "Enc.Child PNC Weight -Do's",
+         single_select_coded(
+             programEncounter.observations ->> 'c13e5e72-2c93-4462-be0b-010263bb2e02')::TEXT as "Enc.Registration Immunisation - Do's",
+         programEncounter.cancel_date_time                                                      "EncCancel.cancel_date_time",
+         single_select_coded(
+             programEncounter.observations ->> '0066a0f7-c087-40f4-ae44-a3e931967767')::TEXT as "EncCancel.Visit cancel reason",
+         (programEncounter.observations ->> 'fadd881a-beed-47ea-a4d6-700009a61a32')::TEXT    as "EncCancel.Other reason for cancelling",
+         single_select_coded(
+             programEncounter.observations ->> 'dde645f5-0f70-45e9-a670-b7190c86c981')::TEXT as "EncCancel.Place of death",
+         (programEncounter.observations ->> '3b269f11-ed0a-4636-8273-da0259783214')::DATE    as "EncCancel.Date of death",
+         single_select_coded(
+             programEncounter.observations ->> '7c88aea6-dfed-451e-a086-881e2dcfd85f')::TEXT as "EncCancel.Reason of death"
+  FROM program_encounter programEncounter
+         LEFT OUTER JOIN operational_encounter_type oet on programEncounter.encounter_type_id = oet.encounter_type_id
+         LEFT OUTER JOIN program_enrolment programEnrolment
+                         ON programEncounter.program_enrolment_id = programEnrolment.id
+         LEFT OUTER JOIN operational_program op ON op.program_id = programEnrolment.program_id
+         LEFT OUTER JOIN individual individual ON programEnrolment.individual_id = individual.id
+         LEFT OUTER JOIN gender g ON g.id = individual.gender_id
+         LEFT JOIN address_level village ON individual.address_id = village.id
+         LEFT JOIN address_level subcenter ON village.parent_id = subcenter.id
+         LEFT JOIN address_level phc ON subcenter.parent_id = phc.id
+         LEFT JOIN address_level block ON phc.parent_id = block.id
+
+  WHERE op.uuid = '70e4db05-c79a-406c-89be-54f8d77f643a'
+    AND oet.uuid = '659323b5-b9b8-41d8-b4e6-223c33d25495'
+    AND programEncounter.encounter_date_time IS NOT NULL
+    AND programEnrolment.enrolment_date_time IS NOT NULL
+);
