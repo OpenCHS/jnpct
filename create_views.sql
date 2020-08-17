@@ -1455,3 +1455,29 @@ SELECT  individual.id "Ind.Id",
         AND (oet.uuid = '65fe2029-a5d8-455d-980e-c8a57576d8df' OR oet.uuid ='72a7e163-8950-4047-a2a1-737586867d53')
         AND programEncounter.encounter_date_time IS NOT NULL  
         AND programEnrolment.enrolment_date_time IS NOT NULL);
+
+
+drop view if exists jnpct_program_exit_view;
+create view jnpct_program_exit_view as (
+   SELECT
+       pe.enrolment_date_time,
+       pe.program_exit_date_time,
+       i.date_of_birth::timestamp,
+       i.address_id,
+       village.title             "Ind.village",
+       subcenter.title           "Ind.subcenter",
+       phc.title                 "Ind.phc",
+       block.title               "Ind.block",
+       single_select_coded(program_exit_observations ->> '29238876-fbd8-4f39-b749-edb66024e25e'::text)::text reason_for_exit,
+       (program_exit_observations ->> '3b269f11-ed0a-4636-8273-da0259783214')::timestamp date_of_death,
+       multi_select_coded(program_exit_observations -> '7c88aea6-dfed-451e-a086-881e2dcfd85f'::text)::text reason_of_death,
+       single_select_coded(program_exit_observations ->> 'dde645f5-0f70-45e9-a670-b7190c86c981'::text)::text place_of_death
+   FROM program_enrolment pe
+            LEFT JOIN operational_program op on op.program_id = pe.program_id
+            LEFT JOIN individual i on pe.individual_id = i.id
+            LEFT JOIN address_level village ON address_id = village.id
+            LEFT JOIN address_level subcenter ON village.parent_id = subcenter.id
+            LEFT JOIN address_level phc ON subcenter.parent_id = phc.id
+            LEFT JOIN address_level block ON phc.parent_id = block.id
+   WHERE pe.program_exit_date_time IS NOT NULL
+);
