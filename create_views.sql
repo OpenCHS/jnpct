@@ -72,8 +72,8 @@ create view jnpct_pregnancy_enrolment_view as (
     WHERE op.uuid = '0d9321b2-4bb8-437d-b191-cc39ee00e75a' 
     AND programEnrolment.enrolment_date_time IS NOT NULL
     );
-    
 
+drop view if exists jnpct_delivery_view;
 create view jnpct_delivery_view as
 SELECT individual.id                                                                             AS "Ind.Id",
        individual.address_id                                                                     AS "Ind.address_id",
@@ -94,6 +94,8 @@ SELECT individual.id                                                            
        programenrolment.id                                                                       AS "Enl.Id",
        programenrolment.uuid                                                                     AS "Enl.uuid",
        programenrolment.is_voided                                                                AS "Enl.is_voided",
+       programEnrolment.enrolment_date_time                                                      AS "Enl.enrolment_date_time",
+       programEnrolment.program_exit_date_time                                                   AS "Enl.program_exit_date_time",
        oet.name                                                                                  AS "Enc.Type",
        programencounter.id                                                                       AS "Enc.Id",
        programencounter.earliest_visit_date_time                                                 AS "Enc.earliest_visit_date_time",
