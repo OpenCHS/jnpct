@@ -547,7 +547,7 @@ const scheduleVisitsDuringChildFollowupClusterIncharge = (programEncounter, sche
         && !programEncounter.programEnrolment.hasEncounter('Child Followup Cluster Incharge', 'Child Followup Cluster Incharge-2')) {
         if (ageOfChildInMonths > 2 && ageOfChildInMonths < 6)
             RuleHelper.addSchedule(scheduleBuilder, 'Child Followup Cluster Incharge-2', 'Child Followup Cluster Incharge',
-                lib.C.addMonths(birthDate, 155), 14);
+                lib.C.addDays(birthDate, 155), 14);
         else if (ageOfChildInMonths <= 60) {
             switch (nutritionalStatus) {
                 case 'Severely Underweight':

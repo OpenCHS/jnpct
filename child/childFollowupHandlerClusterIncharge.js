@@ -103,10 +103,10 @@ class childFollowupHandlerClusterIncharge {
         console.log('isOedema',isOedema);
         console.log('nutritionalStatus weight for height',nutritionalStatus.wfh);
       
-        if(muac <= 11.5 || _.isEqual(isOedema,'Yes'))
-            value = 'SAM';
-        else if(muac >= 11.6 && muac <= 12.5 && nutritionalStatus.wfh < 3)
-            value = 'MAM';
+        if (muac <= 11.5 || _.isEqual(isOedema, 'Yes') || nutritionalStatus.wfh < -3)
+        value = 'SAM';
+        else if(_.inRange(muac, 11.6, 12.6 ) || _.inRange(nutritionalStatus.wfh, -1.9 , -3.1 ))
+        value = 'MAM';
         else value = 'Normal';
 
         return new FormElementStatus(formElement.uuid, age > 6, value);

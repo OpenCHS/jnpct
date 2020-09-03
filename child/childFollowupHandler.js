@@ -89,6 +89,8 @@ class childFollowupHandler {
             .getFormElementsStatusesWithoutDefaults(new childFollowupHandler(), programEncounter, formElementGroup, today);
     }
 
+// SAM-- If MUAC less than 11.5 or there is oedema on both the feet or weight for height less than -3SD.
+// MAM--If MUAC is between 11.6 and 12.5 or z-score for weight and height is less than 2 but more than or equal to 3 SD
 
     nutritionalStatusOfChild(programEncounter, formElement) {
         const age = programEncounter.programEnrolment.individual.getAgeInMonths();
@@ -100,10 +102,12 @@ class childFollowupHandler {
         console.log("muac", muac);
         console.log('isOedema', isOedema);
         console.log('nutritionalStatus weight for height', nutritionalStatus.wfh);
+        console.log('nutritionalStatus weight for height', nutritionalStatus.wfhStatus);
+        //if (muac >= 11.6 && muac <= 12.5 && nutritionalStatus.wfh < 3)
 
-        if (muac <= 11.5 || _.isEqual(isOedema, 'Yes'))
+        if (muac <= 11.5 || _.isEqual(isOedema, 'Yes') || nutritionalStatus.wfh < -3)
             value = 'SAM';
-        else if (muac >= 11.6 && muac <= 12.5 && nutritionalStatus.wfh < 3)
+        else if(_.inRange(muac, 11.6, 12.6 ) || _.inRange(nutritionalStatus.wfh, -1.9 , -3.1 ))
             value = 'MAM';
         else value = 'Normal';
 
