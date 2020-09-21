@@ -22,11 +22,13 @@ const getEarliestECFollowupDate = (eventDate) => {
 };
 
 const encounterScheduleAbortionFollowup = [
+    {"name": "Abortion Followup Visit-1", "earliest": 0, "max": 8},
     {"name": "Abortion Followup Visit-2", "earliest": 28, "max": 36},
     {"name": "Abortion Followup Visit-3", "earliest": 50, "max": 61}
 ];
 
 const encounterSchedulePNC = [
+    {"name": "PNC 1", "earliest": 0, "max": 8},
     {"name": "PNC 2", "earliest": 28, "max": 36},
     {"name": "PNC 3", "earliest": 50, "max": 61}
 ];
@@ -86,7 +88,7 @@ const scheduleVisitsDuringAbortionFollowup = (programEncounter, scheduleBuilder)
    
     if (!hasExitedProgram(programEncounter)) {
         var schedule = _.chain(encounterScheduleAbortionFollowup)
-            .filter(e => moment(visitDate).isSameOrBefore(moment(lib.C.addDays(abortionDate, e.earliest)), 'date') === true)
+            .filter(e => moment(visitDate).isSameOrBefore(moment(lib.C.addDays(abortionDate, e.max)), 'date') === true)
             .filter(e => (programEncounter.programEnrolment.hasEncounter('Abortion Followup', e.name)) === false)
             .first()
             .value();
@@ -158,7 +160,7 @@ const scheduleVisitsDuringPNC = (programEncounter, scheduleBuilder) => {
 
     if (!hasExitedProgram(programEncounter)) {
         var schedule = _.chain(encounterSchedulePNC)
-            .filter(e => moment(visitDate).isSameOrBefore(moment(lib.C.addDays(deliveryDate, e.earliest)), 'date') === true)
+            .filter(e => moment(visitDate).isSameOrBefore(moment(lib.C.addDays(deliveryDate, e.max)), 'date') === true)
             .filter(e => (programEncounter.programEnrolment.hasEncounter('PNC', e.name)) === false)
             .first()
             .value();
@@ -623,10 +625,11 @@ class ScheduleVisitDuringEligibleCoupleEnrolment {
 class ScheduleVisitDuringDelivery {
     static exec(programEncounter, visitSchedule = [], scheduleConfig) {
         let scheduleBuilder = RuleHelper.createProgramEncounterVisitScheduleBuilder(programEncounter, visitSchedule);
-        const deliveryDate = programEncounter.getObservationValue('Date of delivery');
-        RuleHelper.addSchedule(scheduleBuilder, 'PNC 1', 'PNC', deliveryDate, 8);
+        // const deliveryDate = programEncounter.getObservationValue('Date of delivery');
+        // RuleHelper.addSchedule(scheduleBuilder, 'PNC 1', 'PNC', deliveryDate, 8);
+        // console.log('has pnc1 after delivery',programEncounter.programEnrolment.hasEncounter('PNC', 'PNC 1'));
 
-        if(programEncounter.programEnrolment.hasEncounter('PNC', 'PNC 1') === false)
+        // if(programEncounter.programEnrolment.hasEncounter('PNC', 'PNC 1') === false)
             scheduleVisitsDuringPNC(programEncounter, scheduleBuilder);
       
         return scheduleBuilder.getAllUnique("encounterType");
@@ -638,10 +641,10 @@ class ScheduleVisitDuringDelivery {
 class ScheduleVisitDuringAbortion {
     static exec(programEncounter, visitSchedule = [], scheduleConfig) {
         let scheduleBuilder = RuleHelper.createProgramEncounterVisitScheduleBuilder(programEncounter, visitSchedule);
-        const abortionDate = programEncounter.getObservationValue('Date of Abortion/MTP');
-        RuleHelper.addSchedule(scheduleBuilder, 'Abortion Followup Visit-1', 'Abortion Followup', abortionDate, 8);
+    //     const abortionDate = programEncounter.getObservationValue('Date of Abortion/MTP');
+    //     RuleHelper.addSchedule(scheduleBuilder, 'Abortion Followup Visit-1', 'Abortion Followup', abortionDate, 8);
 
-      if(programEncounter.programEnrolment.hasEncounter('Abortion Followup', 'Abortion Followup Visit-1') == false)
+    //   if(programEncounter.programEnrolment.hasEncounter('Abortion Followup', 'Abortion Followup Visit-1') == false)
         scheduleVisitsDuringAbortionFollowup(programEncounter, scheduleBuilder);        
 
         return scheduleBuilder.getAllUnique("encounterType");
