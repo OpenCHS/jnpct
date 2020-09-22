@@ -711,9 +711,10 @@ class ScheduleVisitDuringChildEnrolment {
 
         const dob = programEnrolment.individual.dateOfBirth;
         const ageOfChildInDays = lib.C.getDays(dob, programEnrolment.enrolmentDateTime);
-        if (ageOfChildInDays < 90)
+        if (ageOfChildInDays < 90){
+            if(!programEnrolment.hasEncounter('Birth Form','Birth Form'))
             RuleHelper.addSchedule(scheduleBuilder, 'Birth Form', 'Birth Form', getEarliestDate(programEnrolment), 0);
-        else {
+        }else {
             RuleHelper.addSchedule(scheduleBuilder, 'Child Followup', 'Child Followup',
                 getEarliestDate(programEnrolment), 0);
         }
