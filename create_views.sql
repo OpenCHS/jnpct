@@ -50,12 +50,12 @@ create view jnpct_pregnancy_enrolment_view as (
              (programEnrolment.observations->>'83e23cc8-52c2-4c8d-8f34-adb98f0db604')::DATE as "Enl.Estimated Date of Delivery",
             get_coded_string_value(programEnrolment.observations->'8bee6542-cd1e-4bd8-b0d4-5a88575fcb1c', concepts.map)::TEXT as "Enl.Previous history of disease",
              (programEnrolment.observations->>'b5e0662c-7412-4fd1-9a6b-4f0f8c62afc1')::TEXT as "Enl.Other previous history of disease - Please specify",
-            get_coded_string_value(programEnrolment.observations->'bec0e4d4-8daf-4956-8906-0f579b4cf628')::TEXT as "Enl.Gravida",
+            get_coded_string_value(programEnrolment.observations->'bec0e4d4-8daf-4956-8906-0f579b4cf628', concepts.map)::TEXT as "Enl.Gravida",
              (programEnrolment.observations->>'3bf33915-bc67-4431-86eb-a38905be62cf')::TEXT as "Enl.Number of Abortion",
              (programEnrolment.observations->>'9acef9b8-8212-49c0-b421-824f9314f319')::TEXT as "Enl.Number of live childrens",
              (programEnrolment.observations->>'76333e77-9ff5-4caf-9a87-021e915f0e9f')::TEXT as "Enl.MALE",
              (programEnrolment.observations->>'2a523870-c948-4418-8283-902c3494b607')::TEXT as "Enl.FEMALE",
-            get_coded_string_value(programEnrolment.observations->'4c8e7665-30f1-4f65-b76e-b9132904ed69')::TEXT as "Enl.Result of last delivery",
+            get_coded_string_value(programEnrolment.observations->'4c8e7665-30f1-4f65-b76e-b9132904ed69', concepts.map)::TEXT as "Enl.Result of last delivery",
              (programEnrolment.observations->>'4e89f7b0-0b3d-4902-8f78-6d45ac5614a9')::DATE as "Enl.Age of Youngest child",
             get_coded_string_value(programEnrolment.observations->'8e28efd9-7bc8-4870-929d-867ad9367962', concepts.map)::TEXT as "Enl.Place of last delivery",
             get_coded_string_value(programEnrolment.observations->'9b7af000-0354-4036-a7ab-1f07b43346df', concepts.map)::TEXT as "Enl.Risk in the last pregnancy",
@@ -108,50 +108,50 @@ SELECT individual.id                                                            
        programencounter.name                                                                     AS "Enc.name",
        programencounter.max_visit_date_time                                                      AS "Enc.max_visit_date_time",
        programencounter.is_voided                                                                AS "Enc.is_voided",
-       (get_coded_string_value((individual.observations ->
-                             'a20a030b-9bef-4ef8-ba8a-88e2b23c1478'::text, concepts.map)))::text               AS "Ind.Marital status",
+       (get_coded_string_value(individual.observations ->
+                             'a20a030b-9bef-4ef8-ba8a-88e2b23c1478', concepts.map))::text               AS "Ind.Marital status",
        (individual.observations ->>
         'a01c2055-7483-4a19-98c1-80fdf955b50c'::text)                                            AS "Ind.Number of family members",
-       (get_coded_string_value((individual.observations ->
-                             'f4028968-bbac-4a66-8fe7-df081321414f'::text, concepts.map)))::text               AS "Ind.Who is decision making person in family",
-       (get_coded_string_value((individual.observations ->
-                             '8eb5a6ce-7b8a-45cc-a066-fcceca3708f7'::text, concepts.map)))::text               AS "Ind.Ration card",
-       (get_coded_string_value((individual.observations ->
-                             'ba25ac4c-784a-4723-8e15-a965a0d63b50'::text, concepts.map)))::text               AS "Ind.Caste",
-       (get_coded_string_value((individual.observations ->
-                             '5f20070c-1cfe-4e0b-b0db-70dffee99394'::text, concepts.map)))::text               AS "Ind.Subcaste",
-       (get_coded_string_value((individual.observations ->
-                             'b9c9d807-7064-46fd-8dc7-1640345dc8cb'::text, concepts.map)))::text               AS "Ind.Religion",
-       (get_coded_string_value((individual.observations ->
-                             '4e90fc18-7bf1-4722-87c3-f3b2bd5d1d7d'::text, concepts.map)))::text               AS "Ind.Satipati family",
-       (get_coded_string_value((individual.observations ->
-                             '0a668e5b-f3c2-4fc6-8589-d2abda26658b'::text, concepts.map)))::text               AS "Ind.Addiction",
+       (get_coded_string_value(individual.observations ->
+                             'f4028968-bbac-4a66-8fe7-df081321414f', concepts.map))::text               AS "Ind.Who is decision making person in family",
+       (get_coded_string_value(individual.observations ->
+                             '8eb5a6ce-7b8a-45cc-a066-fcceca3708f7', concepts.map))::text               AS "Ind.Ration card",
+       (get_coded_string_value(individual.observations ->
+                             'ba25ac4c-784a-4723-8e15-a965a0d63b50', concepts.map))::text               AS "Ind.Caste",
+       (get_coded_string_value(individual.observations ->
+                             '5f20070c-1cfe-4e0b-b0db-70dffee99394', concepts.map))::text               AS "Ind.Subcaste",
+       (get_coded_string_value(individual.observations ->
+                             'b9c9d807-7064-46fd-8dc7-1640345dc8cb', concepts.map))::text               AS "Ind.Religion",
+       (get_coded_string_value(individual.observations ->
+                             '4e90fc18-7bf1-4722-87c3-f3b2bd5d1d7d', concepts.map))::text               AS "Ind.Satipati family",
+       (get_coded_string_value(individual.observations ->
+                             '0a668e5b-f3c2-4fc6-8589-d2abda26658b', concepts.map))::text               AS "Ind.Addiction",
        (get_coded_string_value(
-               (individual.observations -> 'e0a3086c-8d69-479e-bf44-258bc27b8105'::text, concepts.map)))::text AS "Ind.Addiction - Please specify",
-       (get_coded_string_value((individual.observations ->
-                             '89fe78b2-20a9-45f1-90e3-119a7bc95ce3'::text, concepts.map)))::text               AS "Ind.Very poor family",
-       (get_coded_string_value((individual.observations ->
-                             '6f03e969-f0bf-4438-a528-5d2ce3b70e15'::text, concepts.map)))::text               AS "Ind.Occupation of mother",
-       (get_coded_string_value((individual.observations ->
-                             '65a5101b-38fc-4962-876e-e0f8b9ba4cec'::text, concepts.map)))::text               AS "Ind.Occupation of husband/father",
-       (get_coded_string_value((individual.observations ->
-                             'e42f5b28-bee4-4a01-aff0-922d823d0075'::text, concepts.map)))::text               AS "Ind.Mother's education",
+               individual.observations -> 'e0a3086c-8d69-479e-bf44-258bc27b8105', concepts.map))::text AS "Ind.Addiction - Please specify",
+       (get_coded_string_value(individual.observations ->
+                             '89fe78b2-20a9-45f1-90e3-119a7bc95ce3', concepts.map))::text               AS "Ind.Very poor family",
+       (get_coded_string_value(individual.observations ->
+                             '6f03e969-f0bf-4438-a528-5d2ce3b70e15', concepts.map))::text               AS "Ind.Occupation of mother",
+       (get_coded_string_value(individual.observations ->
+                             '65a5101b-38fc-4962-876e-e0f8b9ba4cec', concepts.map))::text               AS "Ind.Occupation of husband/father",
+       (get_coded_string_value(individual.observations ->
+                             'e42f5b28-bee4-4a01-aff0-922d823d0075', concepts.map))::text               AS "Ind.Mother's education",
        (individual.observations ->>
         '881d9628-eb4f-4056-ae10-09e4ef71cae4'::text)                                            AS "Ind.Mobile number",
-       (get_coded_string_value((individual.observations ->
-                             '5f0b2fa0-ed20-4d6b-a8b5-3fed09dac067'::text, concepts.map)))::text               AS "Ind.Specialy abled",
-       (get_coded_string_value((individual.observations ->
-                             'a154508a-9d8b-49d9-9d78-b61cbc9daf7f'::text, concepts.map)))::text               AS "Ind.Specially abled - Please specify",
-       (get_coded_string_value((individual.observations ->
-                             'd009887c-6d29-4c47-9e34-21e3b9298f44'::text, concepts.map)))::text               AS "Ind.Any long-term illnesses",
+       (get_coded_string_value(individual.observations ->
+                             '5f0b2fa0-ed20-4d6b-a8b5-3fed09dac067', concepts.map))::text               AS "Ind.Specialy abled",
+       (get_coded_string_value(individual.observations ->
+                             'a154508a-9d8b-49d9-9d78-b61cbc9daf7f', concepts.map))::text               AS "Ind.Specially abled - Please specify",
+       (get_coded_string_value(individual.observations ->
+                             'd009887c-6d29-4c47-9e34-21e3b9298f44', concepts.map))::text               AS "Ind.Any long-term illnesses",
        (get_coded_string_value(
-               (individual.observations -> '7fa81959-a016-4569-920d-47dee242b27a'::text, concepts.map)))::text AS "Ind.Long-term illness - Please specify",
-       (get_coded_string_value((individual.observations ->
-                             '54105452-1752-4661-9d30-2d99bd2d04fa'::text, concepts.map)))::text               AS "Ind.Toilet facility present",
-       (get_coded_string_value((individual.observations ->
-                             '59db93f0-0963-4e49-87b6-485efb705561'::text, concepts.map)))::text               AS "Ind.Using the toilet regularly",
+               individual.observations -> '7fa81959-a016-4569-920d-47dee242b27a', concepts.map))::text AS "Ind.Long-term illness - Please specify",
+       (get_coded_string_value(individual.observations ->
+                             '54105452-1752-4661-9d30-2d99bd2d04fa', concepts.map))::text               AS "Ind.Toilet facility present",
+       (get_coded_string_value(individual.observations ->
+                             '59db93f0-0963-4e49-87b6-485efb705561', concepts.map))::text               AS "Ind.Using the toilet regularly",
        (get_coded_string_value(
-               (individual.observations -> '789733c4-42ba-4da3-89e6-71da227cf4c2'::text, concepts.map)))::text AS "Ind.Source of drinking water",
+               individual.observations -> '789733c4-42ba-4da3-89e6-71da227cf4c2', concepts.map))::text AS "Ind.Source of drinking water",
        (individual.observations ->>
         '7170eabd-6f4f-4e30-b22e-85b20a4d854f'::text)                                            AS "Ind.Aadhaar card",
        ((programenrolment.observations ->>
@@ -159,11 +159,11 @@ SELECT individual.id                                                            
        ((programenrolment.observations ->>
          '83e23cc8-52c2-4c8d-8f34-adb98f0db604'::text))::date                                    AS "Enl.Estimated Date of Delivery",
        (get_coded_string_value(programenrolment.observations ->
-                            '8bee6542-cd1e-4bd8-b0d4-5a88575fcb1c'::text, concepts.map))::text                AS "Enl.Previous history of disease",
+                            '8bee6542-cd1e-4bd8-b0d4-5a88575fcb1c', concepts.map))::text                AS "Enl.Previous history of disease",
        (programenrolment.observations ->>
         'b5e0662c-7412-4fd1-9a6b-4f0f8c62afc1'::text)                                            AS "Enl.Other previous history of disease - Please specify",
-       (get_coded_string_value((programenrolment.observations ->
-                             'bec0e4d4-8daf-4956-8906-0f579b4cf628'::text, concepts.map)))::text               AS "Enl.Gravida",
+       (get_coded_string_value(programenrolment.observations ->
+                             'bec0e4d4-8daf-4956-8906-0f579b4cf628', concepts.map))::text               AS "Enl.Gravida",
        (programenrolment.observations ->>
         '3bf33915-bc67-4431-86eb-a38905be62cf'::text)                                            AS "Enl.Number of Abortion",
        (programenrolment.observations ->>
@@ -172,70 +172,70 @@ SELECT individual.id                                                            
         '76333e77-9ff5-4caf-9a87-021e915f0e9f'::text)                                            AS "Enl.MALE",
        (programenrolment.observations ->>
         '2a523870-c948-4418-8283-902c3494b607'::text)                                            AS "Enl.FEMALE",
-       (get_coded_string_value((programenrolment.observations ->
-                             '4c8e7665-30f1-4f65-b76e-b9132904ed69'::text, concepts.map)))::text               AS "Enl.Result of last delivery",
+       (get_coded_string_value(programenrolment.observations ->
+                             '4c8e7665-30f1-4f65-b76e-b9132904ed69', concepts.map))::text               AS "Enl.Result of last delivery",
        ((programenrolment.observations ->>
          '4e89f7b0-0b3d-4902-8f78-6d45ac5614a9'::text))::date                                    AS "Enl.Age of Youngest child",
-       (get_coded_string_value((programenrolment.observations ->
-                             '8e28efd9-7bc8-4870-929d-867ad9367962'::text, concepts.map)))::text               AS "Enl.Place of last delivery",
-       (get_coded_string_value((programenrolment.observations ->
-                             '9b7af000-0354-4036-a7ab-1f07b43346df'::text, concepts.map)))::text               AS "Enl.Risk in the last pregnancy",
-       (multi_select_coded((programenrolment.observations ->
-                            '9f8e78d6-72fc-4f03-9dd9-3ec7f28639df'::text)))::text                AS "Enl.what kind of risk occurred",
+       (get_coded_string_value(programenrolment.observations ->
+                             '8e28efd9-7bc8-4870-929d-867ad9367962', concepts.map))::text               AS "Enl.Place of last delivery",
+       (get_coded_string_value(programenrolment.observations ->
+                             '9b7af000-0354-4036-a7ab-1f07b43346df', concepts.map))::text               AS "Enl.Risk in the last pregnancy",
+       (multi_select_coded(programenrolment.observations ->
+                            '9f8e78d6-72fc-4f03-9dd9-3ec7f28639df'))::text                AS "Enl.what kind of risk occurred",
        ((programencounter.observations ->>
          'd1effb17-12e7-42b4-8791-8a7c4a7c1a64'::text))::date                                    AS "Enc.Date of delivery",
-       (get_coded_string_value((programencounter.observations ->
-                             '95ee3ade-e926-4f8e-a6b9-6c4086a4db3a'::text, concepts.map)))::text               AS "Enc.Place of delivery",
-       (get_coded_string_value((programencounter.observations ->
-                             'ab201e49-cf1c-44c0-8a86-0545a2d57227'::text, concepts.map)))::text               AS "Enc.Delivery pack used ?",
+       (get_coded_string_value(programencounter.observations ->
+                             '95ee3ade-e926-4f8e-a6b9-6c4086a4db3a', concepts.map))::text               AS "Enc.Place of delivery",
+       (get_coded_string_value(programencounter.observations ->
+                             'ab201e49-cf1c-44c0-8a86-0545a2d57227', concepts.map))::text               AS "Enc.Delivery pack used ?",
        ((programencounter.observations ->>
          '94f0dddd-0b11-45d7-8aae-7ba9f08b3bb4'::text))::date                                    AS "Enc.Date of discharge",
        (programencounter.observations ->>
         'a2c7a7b3-ef6d-42d1-8d4b-b8b140625c4c'::text)                                            AS "Enc.Number of days stayed at the hospital",
        (programencounter.observations ->>
         'f38349e4-afad-4bed-897b-dfb32d8c4c08'::text)                                            AS "Enc.Week of Gestation",
-       (get_coded_string_value((programencounter.observations ->
-                             'c07b4a59-8155-4015-a220-a20c80da9f75'::text, concepts.map)))::text               AS "Enc.Delivered By",
-       (get_coded_string_value((programencounter.observations ->
-                             '3a896aa4-db6c-42b1-abab-9fb89bd62c79'::text, concepts.map)))::text               AS "Enc.Type of delivery",
-       (get_coded_string_value((programencounter.observations ->
-                             'eb1dd4c0-0465-4865-a357-7325184b29ad'::text, concepts.map)))::text               AS "Enc.Delivery outcome",
-       (multi_select_coded((programencounter.observations ->
-                            'd63cf4d8-e890-4b0f-b331-25aa87f61cc3'::text)))::text                AS "Enc.Delivery complication",
+       (get_coded_string_value(programencounter.observations ->
+                             'c07b4a59-8155-4015-a220-a20c80da9f75', concepts.map))::text               AS "Enc.Delivered By",
+       (get_coded_string_value(programencounter.observations ->
+                             '3a896aa4-db6c-42b1-abab-9fb89bd62c79', concepts.map))::text               AS "Enc.Type of delivery",
+       (get_coded_string_value(programencounter.observations ->
+                             'eb1dd4c0-0465-4865-a357-7325184b29ad', concepts.map))::text               AS "Enc.Delivery outcome",
+       (multi_select_coded(programencounter.observations ->
+                            'd63cf4d8-e890-4b0f-b331-25aa87f61cc3'))::text                AS "Enc.Delivery complication",
        (programencounter.observations ->>
         'facf00bd-b1db-4304-b0e4-e484d7e3db29'::text)                                            AS "Enc.Number of babies",
-       (get_coded_string_value((programencounter.observations ->
-                             'd3de7fbb-9851-41b8-9b6a-4c183f4986ea'::text, concepts.map)))::text               AS "Enc.Gender of Newborn1",
+       (get_coded_string_value(programencounter.observations ->
+                             'd3de7fbb-9851-41b8-9b6a-4c183f4986ea'::text, concepts.map))::text               AS "Enc.Gender of Newborn1",
        (programencounter.observations ->>
         'f0a5edd9-5250-4f27-bc0d-0536b13c8a25'::text)                                            AS "Enc.Weight of Newborn1",
-       (get_coded_string_value((programencounter.observations ->
-                             '3f0c5c4e-40bd-476d-a0ae-3a7e19c78c83'::text, concepts.map)))::text               AS "Enc.Gender of Newborn2",
+       (get_coded_string_value(programencounter.observations ->
+                             '3f0c5c4e-40bd-476d-a0ae-3a7e19c78c83'::text, concepts.map))::text               AS "Enc.Gender of Newborn2",
        (programencounter.observations ->>
         'b24b1d7d-5c08-495e-a8fc-e0c2c854d694'::text)                                            AS "Enc.Weight of Newborn2",
-       (get_coded_string_value((programencounter.observations ->
-                             '8dda0b63-3d60-4a09-888b-e40683c32776'::text, concepts.map)))::text               AS "Enc.Gender of Newborn3",
+       (get_coded_string_value(programencounter.observations ->
+                             '8dda0b63-3d60-4a09-888b-e40683c32776'::text, concepts.map))::text               AS "Enc.Gender of Newborn3",
        (programencounter.observations ->>
         'fe7784c0-61ef-481a-98be-7ebeff7cfdde'::text)                                            AS "Enc.Weight of Newborn3",
        (programencounter.observations ->>
         'a738b2ba-84a9-4e4f-9e0c-0f2bbafc44b0'::text)                                            AS "Enc.Number of Stillborn babies",
-       (get_coded_string_value((programencounter.observations ->
-                             'f35f29b3-5c6e-4b8e-a2d9-3847a7f4af3d'::text, concepts.map)))::text               AS "Enc.Gender of Stillborn1",
+       (get_coded_string_value(programencounter.observations ->
+                             'f35f29b3-5c6e-4b8e-a2d9-3847a7f4af3d'::text, concepts.map))::text               AS "Enc.Gender of Stillborn1",
        (programencounter.observations ->>
         '69114ef1-3fd1-4a57-b58d-c6e7169fd65c'::text)                                            AS "Enc.Weight of Stillborn1",
-       (get_coded_string_value((programencounter.observations ->
-                             'ac7d6e60-93c2-4227-b9fa-87ede2c8af96'::text, concepts.map)))::text               AS "Enc.Gender of Stillborn2",
+       (get_coded_string_value(programencounter.observations ->
+                             'ac7d6e60-93c2-4227-b9fa-87ede2c8af96'::text, concepts.map))::text               AS "Enc.Gender of Stillborn2",
        (programencounter.observations ->>
         'bed2de93-e2ea-4677-8301-2e6b1173b248'::text)                                            AS "Enc.Weight of Stillborn2",
-       (get_coded_string_value((programencounter.observations ->
-                             'e28df31b-1434-4dc5-8a65-baa6eb8e30cc'::text, concepts.map)))::text               AS "Enc.Gender of Stillborn3",
+       (get_coded_string_value(programencounter.observations ->
+                             'e28df31b-1434-4dc5-8a65-baa6eb8e30cc'::text, concepts.map))::text               AS "Enc.Gender of Stillborn3",
        (programencounter.observations ->>
         '46601220-c8f7-4e1a-bab2-8176ca92f130'::text)                                            AS "Enc.Weight of Stillborn3",
-       (get_coded_string_value((programencounter.observations ->
-                             '96147a70-1bd0-4210-8260-56c956bf05da'::text, concepts.map)))::text               AS "Enc.Mother with high risk",
-       (get_coded_string_value((programencounter.observations ->
-                             '55075e60-068a-46e9-8d12-663a3d9784df'::text, concepts.map)))::text               AS "Enc.Did beneficiary inform to Aarogya Saheli?",
-       (get_coded_string_value((programencounter.observations ->
-                             'df02e753-a400-436b-870b-97482d131e06'::text, concepts.map)))::text               AS "Enc.Aarogya Saheli present durinng the time of delivery?",
+       (get_coded_string_value(programencounter.observations ->
+                             '96147a70-1bd0-4210-8260-56c956bf05da'::text, concepts.map))::text               AS "Enc.Mother with high risk",
+       (get_coded_string_value(programencounter.observations ->
+                             '55075e60-068a-46e9-8d12-663a3d9784df'::text, concepts.map))::text               AS "Enc.Did beneficiary inform to Aarogya Saheli?",
+       (get_coded_string_value(programencounter.observations ->
+                             'df02e753-a400-436b-870b-97482d131e06'::text, concepts.map))::text               AS "Enc.Aarogya Saheli present durinng the time of delivery?",
        programencounter.cancel_date_time                                                         AS "EncCancel.cancel_date_time"
 FROM program_encounter programencounter
          CROSS JOIN concepts
@@ -290,7 +290,7 @@ SELECT  individual.id "Ind.Id",
             programEncounter.is_voided "Enc.is_voided",
             get_coded_string_value(individual.observations->'a20a030b-9bef-4ef8-ba8a-88e2b23c1478', concepts.map)::TEXT as "Ind.Marital status",
             (individual.observations->>'a01c2055-7483-4a19-98c1-80fdf955b50c')::TEXT as "Ind.Number of family members",
-            get_coded_string_value(individual.observations->'f4028968-bbac-4a66-8fe7-df081321414f')::TEXT as "Ind.Who is decision making person in family",
+            get_coded_string_value(individual.observations->'f4028968-bbac-4a66-8fe7-df081321414f', concepts.map)::TEXT as "Ind.Who is decision making person in family",
             get_coded_string_value(individual.observations->'8eb5a6ce-7b8a-45cc-a066-fcceca3708f7', concepts.map)::TEXT as "Ind.Ration card",
             get_coded_string_value(individual.observations->'ba25ac4c-784a-4723-8e15-a965a0d63b50', concepts.map)::TEXT as "Ind.Caste",
             get_coded_string_value(individual.observations->'5f20070c-1cfe-4e0b-b0db-70dffee99394', concepts.map)::TEXT as "Ind.Subcaste",
