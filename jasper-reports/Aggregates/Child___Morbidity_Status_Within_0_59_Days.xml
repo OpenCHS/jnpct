@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<reportUnit exportedWithPermissions="true">
+    <folder>/JNPCT/Reports/Aggregates</folder>
+    <name>Child___Morbidity_Status_Within_0_59_Days</name>
+    <version>5</version>
+    <label>Child - Morbidity Status Within 0-59 Days</label>
+    <description></description>
+    <creationDate>2020-09-01T15:12:57.858+05:30</creationDate>
+    <updateDate>2020-09-29T12:03:20.397+05:30</updateDate>
+    <mainReport>
+        <localResource
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            exportedWithPermissions="false" dataFile="main_jrxml.data" xsi:type="fileResource">
+            <folder>/JNPCT/Reports/Aggregates/Child___Morbidity_Status_Within_0_59_Days_files</folder>
+            <name>main_jrxml</name>
+            <version>6</version>
+            <label>main_jrxml</label>
+            <creationDate>2020-09-01T15:12:57.858+05:30</creationDate>
+            <updateDate>2020-09-04T15:21:35.331+05:30</updateDate>
+            <fileType>jrxml</fileType>
+        </localResource>
+    </mainReport>
+    <dataSource>
+        <uri>/JNPCT/Data_Sources/jnpct</uri>
+    </dataSource>
+    <inputControl>
+        <uri>/JNPCT/Input_Controls/PARAM_MANDATORY_START_DATE</uri>
+    </inputControl>
+    <inputControl>
+        <uri>/JNPCT/Input_Controls/PARAM_MANDATORY_DATE_END</uri>
+    </inputControl>
+    <inputControl>
+        <uri>/JNPCT/Input_Controls/PARAM_PHC_NAME</uri>
+    </inputControl>
+    <inputControl>
+        <uri>/JNPCT/Input_Controls/PARAM_SUBCENTRE_NAME</uri>
+    </inputControl>
+    <inputControl>
+        <uri>/JNPCT/Input_Controls/PARAM_VILLAGE_NAME</uri>
+    </inputControl>
+    <resource>
+        <localResource
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            exportedWithPermissions="false" xsi:type="fileResource">
+            <folder>/JNPCT/Reports/Aggregates/Child___Morbidity_Status_Within_0_59_Days_files</folder>
+            <name>Linelist.jrtx</name>
+            <version>0</version>
+            <label>Linelist.jrtx</label>
+            <creationDate>2020-09-01T15:12:57.858+05:30</creationDate>
+            <updateDate>2020-09-01T15:12:57.858+05:30</updateDate>
+            <referenceUri>/Templates/Styles/Linelist.jrtx</referenceUri>
+        </localResource>
+    </resource>
+    <inputControlRenderingView></inputControlRenderingView>
+    <alwaysPromptControls>false</alwaysPromptControls>
+    <controlsLayout>4</controlsLayout>
+</reportUnit>

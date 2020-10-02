@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<reportUnit exportedWithPermissions="true">
+    <folder>/JNPCT/Reports/Aggregates</folder>
+    <name>High_Risk_Delivery_Care</name>
+    <version>16</version>
+    <label>High Risk Delivery Care</label>
+    <description></description>
+    <creationDate>2020-08-17T10:17:07.119+05:30</creationDate>
+    <updateDate>2020-09-29T12:22:06.750+05:30</updateDate>
+    <mainReport>
+        <localResource
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            exportedWithPermissions="false" dataFile="main_jrxml.data" xsi:type="fileResource">
+            <folder>/JNPCT/Reports/Aggregates/High_Risk_Delivery_Care_files</folder>
+            <name>main_jrxml</name>
+            <version>26</version>
+            <label>Main jrxml</label>
+            <creationDate>2020-08-17T10:17:07.119+05:30</creationDate>
+            <updateDate>2020-08-20T09:31:00.842+05:30</updateDate>
+            <fileType>jrxml</fileType>
+        </localResource>
+    </mainReport>
+    <dataSource>
+        <uri>/JNPCT/Data_Sources/jnpct</uri>
+    </dataSource>
+    <inputControl>
+        <uri>/JNPCT/Input_Controls/PARAM_DATE_START</uri>
+    </inputControl>
+    <inputControl>
+        <uri>/JNPCT/Input_Controls/PARAM_DATE_END</uri>
+    </inputControl>
+    <inputControl>
+        <uri>/JNPCT/Input_Controls/PARAM_PHC_NAME</uri>
+    </inputControl>
+    <inputControl>
+        <uri>/JNPCT/Input_Controls/PARAM_SUBCENTRE_NAME</uri>
+    </inputControl>
+    <inputControl>
+        <uri>/JNPCT/Input_Controls/PARAM_VILLAGE_NAME</uri>
+    </inputControl>
+    <inputControl>
+        <uri>/JNPCT/Input_Controls/ANC_delivered</uri>
+    </inputControl>
+    <inputControl>
+        <uri>/JNPCT/Input_Controls/Exited</uri>
+    </inputControl>
+    <resource>
+        <localResource
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            exportedWithPermissions="false"
+            dataFile="AggregateReportStyles.jrtx.data" xsi:type="fileResource">
+            <folder>/JNPCT/Reports/Aggregates/High_Risk_Delivery_Care_files</folder>
+            <name>AggregateReportStyles.jrtx</name>
+            <version>13</version>
+            <label>AggregateReportStyles.jrtx</label>
+            <creationDate>2020-08-17T10:17:07.119+05:30</creationDate>
+            <updateDate>2020-08-17T10:17:07.119+05:30</updateDate>
+            <fileType>jrtx</fileType>
+        </localResource>
+    </resource>
+    <inputControlRenderingView></inputControlRenderingView>
+    <alwaysPromptControls>false</alwaysPromptControls>
+    <controlsLayout>4</controlsLayout>
+</reportUnit>

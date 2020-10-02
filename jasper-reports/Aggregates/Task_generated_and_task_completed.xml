@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<reportUnit exportedWithPermissions="true">
+    <folder>/JNPCT/Reports/Aggregates</folder>
+    <name>Task_generated_and_task_completed</name>
+    <version>16</version>
+    <label>Task generated and task completed</label>
+    <description></description>
+    <creationDate>2020-08-26T11:35:09.026+05:30</creationDate>
+    <updateDate>2020-09-29T12:27:21.954+05:30</updateDate>
+    <mainReport>
+        <localResource
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            exportedWithPermissions="false" dataFile="main_jrxml.data" xsi:type="fileResource">
+            <folder>/JNPCT/Reports/Aggregates/Task_generated_and_task_completed_files</folder>
+            <name>main_jrxml</name>
+            <version>28</version>
+            <label>Main jrxml</label>
+            <creationDate>2020-08-26T11:35:09.026+05:30</creationDate>
+            <updateDate>2020-08-28T17:21:24.917+05:30</updateDate>
+            <fileType>jrxml</fileType>
+        </localResource>
+    </mainReport>
+    <dataSource>
+        <uri>/JNPCT/Data_Sources/jnpct</uri>
+    </dataSource>
+    <inputControl>
+        <uri>/JNPCT/Input_Controls/PARAM_DATE_START</uri>
+    </inputControl>
+    <inputControl>
+        <uri>/JNPCT/Input_Controls/PARAM_DATE_END</uri>
+    </inputControl>
+    <inputControl>
+        <uri>/JNPCT/Input_Controls/PARAM_PHC_NAME</uri>
+    </inputControl>
+    <inputControl>
+        <uri>/JNPCT/Input_Controls/PARAM_SUBCENTRE_NAME</uri>
+    </inputControl>
+    <inputControl>
+        <uri>/JNPCT/Input_Controls/PARAM_VILLAGE_NAME</uri>
+    </inputControl>
+    <inputControl>
+        <uri>/JNPCT/Input_Controls/Exited</uri>
+    </inputControl>
+    <resource>
+        <localResource
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            exportedWithPermissions="false"
+            dataFile="Linelist.jrtx.data" xsi:type="fileResource">
+            <folder>/JNPCT/Reports/Aggregates/Task_generated_and_task_completed_files</folder>
+            <name>Linelist.jrtx</name>
+            <version>14</version>
+            <label>Linelist.jrtx</label>
+            <creationDate>2020-08-26T11:35:09.026+05:30</creationDate>
+            <updateDate>2020-08-26T11:35:09.026+05:30</updateDate>
+            <fileType>jrtx</fileType>
+        </localResource>
+    </resource>
+    <inputControlRenderingView></inputControlRenderingView>
+    <alwaysPromptControls>false</alwaysPromptControls>
+    <controlsLayout>4</controlsLayout>
+</reportUnit>

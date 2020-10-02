@@ -1,0 +1,860 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.12.2.final using JasperReports Library version 6.11.0  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Aggregate_3Groups" pageWidth="1684" pageHeight="720" columnWidth="1080" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="fa1a9231-754c-4c0f-8a57-3e034206cd5a">
+	<property name="ireport.jasperserver.url" value="https://reporting-jasper.avniproject.org/jasperserver/"/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="JNPCT Data Adapter"/>
+	<template><![CDATA["repo:/Templates/Styles/AggregateReportStyles.jrtx"]]></template>
+	<parameter name="PARAM_DATE_START" class="java.sql.Timestamp"/>
+	<parameter name="PARAM_DATE_END" class="java.sql.Timestamp"/>
+	<parameter name="PARAM_PHC_NAME" class="java.util.List" nestedType="java.lang.String"/>
+	<parameter name="PARAM_SUBCENTRE_NAME" class="java.util.List" nestedType="java.lang.String"/>
+	<parameter name="PARAM_VILLAGE_NAME" class="java.util.List" nestedType="java.lang.String"/>
+	<parameter name="Exited" class="java.util.List" nestedType="java.lang.String"/>
+	<queryString language="SQL">
+		<![CDATA[with merged_child_obs as (select enrolment."Ind.Id" "Ind.Id",
+                                enrolment."Ind.phc" "PHC",
+                                (EXTRACT(year FROM age(enrolment."Ind.date_of_birth"))*12 + EXTRACT(month FROM age(enrolment."Ind.date_of_birth"))) age_in_months,
+                                followup."Enc.Nutritional status of child"  nutritional_status,
+                                followup."Enc.Place of referral" cmtc_referred,
+                                row_number() OVER (PARTITION BY enrolment."Ind.Id" ORDER BY 
+                                coalesce(followup."Enc.encounter_date_time", enrolment."Enl.enrolment_date_time") desc) visit_number,
+                                case when enrolment."Enl.program_exit_date_time" is null then 'No' else 'Yes' end      isExited    
+       
+from  jnpct_child_enrolment_view enrolment 
+left join jnpct_child_followup_view followup on enrolment."Ind.Id" = followup."Ind.Id")
+
+select coalesce("PHC",'Total')                                     "PHC",
+        count(*) filter (where visit_number=1 )                                              "Current",
+        count(*) filter ( where normal_visit_one = 'Yes' ) "Normal",
+        count(*) filter ( where sam_visit_one = 'Yes') "SAM",
+        count(*) filter ( where mam_visit_one = 'Yes') "MAM",        
+        count(*) filter ( where sam_visit_two = 'Yes' and sam_visit_one = 'No' )  "Removed from SAM",         
+        count(*) filter ( where sam_visit_one = 'Yes' and sam_visit_two ='No') "Added in SAM",        
+        count(*) filter (where cmtc_referred like '%State hospital%'  and visit_number=1 ) "State hospital",
+        count(*) filter (where cmtc_referred like '%SRH%'  and visit_number=1 ) "SRH",
+        count(*) filter (where cmtc_referred like '%CHC PINDVAL%'  and visit_number=1 ) "CHC PINDVAL",
+        count(*) filter (where cmtc_referred like '%CHC KAPRADA%' and visit_number=1 ) "CHC KAPRADA",
+        count(*) filter (where cmtc_referred like '%PHC%'  and visit_number=1  ) "PHC hospital",
+        count(*) filter (where cmtc_referred like '%Private Hospital%'  and visit_number=1 ) "Private Hospital",
+        count(*) filter (where cmtc_referred like '%CHC NANAPONDHA%'  and visit_number=1 ) "CHC NANAPONDHA",
+        count(*) filter (where cmtc_referred is not null  and visit_number=1 ) "Total"
+        
+  from( select  "PHC",
+  				case when nutritional_status like '%Normal%' and visit_number=1 then 'Yes' else 'No' end normal_visit_one,
+  				case when nutritional_status like '%SAM%' and visit_number=1 then 'Yes' else 'No' end sam_visit_one,
+  				case when nutritional_status like '%MAM%' and visit_number=1 then 'Yes' else 'No' end mam_visit_one,
+  							
+  				case when nutritional_status like '%Normal%' and visit_number=2 then 'Yes' else 'No' end normal_visit_two,
+  				case when nutritional_status like '%SAM%' and visit_number=2 then 'Yes' else 'No' end sam_visit_two,
+  				case when nutritional_status like '%MAM%' and visit_number=2 then 'Yes' else 'No' end mam_visit_two,
+  				visit_number,
+  				cmtc_referred,
+  				"Ind.Id"
+  				
+from merged_child_obs child
+LEFT OUTER JOIN individual individual ON child."Ind.Id" = individual.id  
+LEFT OUTER JOIN gender g ON g.id = individual.gender_id 
+LEFT JOIN address_level village ON individual.address_id = village.id
+LEFT JOIN address_level subcenter ON village.parent_id = subcenter.id
+LEFT JOIN address_level phc ON subcenter.parent_id = phc.id
+LEFT JOIN address_level block ON phc.parent_id = block.id  
+
+where age_in_months between 7 and 60 
+	 and $X{IN,phc.title,PARAM_PHC_NAME}
+	 and $X{IN,subcenter.title,PARAM_SUBCENTRE_NAME}
+     and $X{IN,village.title,PARAM_VILLAGE_NAME}
+     and $X{BETWEEN,individual.date_of_birth,PARAM_DATE_START, PARAM_DATE_END}
+     and $X{IN,isExited,Exited} ) 
+ data group by rollup("PHC")]]>
+	</queryString>
+	<field name="PHC" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="PHC"/>
+	</field>
+	<field name="Current" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.label" value="Current"/>
+	</field>
+	<field name="Normal" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.label" value="Normal"/>
+	</field>
+	<field name="SAM" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.label" value="SAM"/>
+	</field>
+	<field name="MAM" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.label" value="MAM"/>
+	</field>
+	<field name="Removed from SAM" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.label" value="Removed from SAM"/>
+	</field>
+	<field name="Added in SAM" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.label" value="Added in SAM"/>
+	</field>
+	<field name="State hospital" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.label" value="State hospital"/>
+	</field>
+	<field name="SRH" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.label" value="SRH"/>
+	</field>
+	<field name="CHC PINDVAL" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.label" value="CHC PINDVAL"/>
+	</field>
+	<field name="CHC KAPRADA" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.label" value="CHC KAPRADA"/>
+	</field>
+	<field name="PHC hospital" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.label" value="PHC hospital"/>
+	</field>
+	<field name="Private Hospital" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.label" value="Private Hospital"/>
+	</field>
+	<field name="CHC NANAPONDHA" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.label" value="CHC NANAPONDHA"/>
+	</field>
+	<field name="Total" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.label" value="Total"/>
+	</field>
+	<variable name="CURRENT_SEVEN_MONTHS_DYNAMIC_WHERE" class="java.lang.String">
+		<variableExpression><![CDATA[$F{PHC}.equals("Total") ? "and visit_number=1" :
+"and \"PHC\" = '" + $F{PHC} + "' and visit_number=1"]]></variableExpression>
+	</variable>
+	<variable name="CURRENT_SEVEN_NORMAL_MONTHS_DYNAMIC_WHERE" class="java.lang.String">
+		<variableExpression><![CDATA[$F{PHC}.equals("Total") ? "and \"Nutritional status of child\" like '%Normal%' and visit_number=1" :
+"and \"PHC\" = '" + $F{PHC} + "' and \"Nutritional status of child\" like '%Normal%' and visit_number=1"]]></variableExpression>
+	</variable>
+	<variable name="CURRENT_SEVEN_SAM_MONTHS_DYNAMIC_WHERE" class="java.lang.String">
+		<variableExpression><![CDATA[$F{PHC}.equals("Total") ? "and \"Nutritional status of child\" like '%SAM%' and visit_number=1" :
+"and \"PHC\" = '" + $F{PHC} + "' and \"Nutritional status of child\" like '%SAM%' and visit_number=1"]]></variableExpression>
+	</variable>
+	<variable name="CURRENT_SEVEN_MAM_MONTHS_DYNAMIC_WHERE" class="java.lang.String">
+		<variableExpression><![CDATA[$F{PHC}.equals("Total") ? "and \"Nutritional status of child\" like '%MAM%' and visit_number=1" :
+"and \"PHC\" = '" + $F{PHC} + "' and \"Nutritional status of child\" like '%MAM%' and visit_number=1"]]></variableExpression>
+	</variable>
+	<variable name="REMOVED_FROM_SAM_DYNAMIC_WHERE" class="java.lang.String">
+		<variableExpression><![CDATA[$F{PHC}.equals("Total") ? "and sam_visit_two = 'Yes' and sam_visit_one = 'No'" :
+"and \"PHC\" = '" + $F{PHC} + "' and sam_visit_two = 'Yes' and sam_visit_one = 'No'"]]></variableExpression>
+	</variable>
+	<variable name="ADDED_IN_SAM_DYNAMIC_WHERE" class="java.lang.String">
+		<variableExpression><![CDATA[$F{PHC}.equals("Total") ? "and sam_visit_one = 'Yes' and sam_visit_two ='No'" :
+"and \"PHC\" = '" + $F{PHC} + "' and sam_visit_one = 'Yes' and sam_visit_two ='No'"]]></variableExpression>
+	</variable>
+	<variable name="CMTC_STATE_HOSPITAL_DYNAMIC_WHERE" class="java.lang.String">
+		<variableExpression><![CDATA[$F{PHC}.equals("Total") ? "and \"Place of referral\" like '%State hospital%'  and visit_number=1 " :
+"and \"PHC\" = '" + $F{PHC} + "' and \"Place of referral\" like '%State hospital%'  and visit_number=1 "]]></variableExpression>
+	</variable>
+	<variable name="CMTC_SRH_DYNAMIC_WHERE" class="java.lang.String">
+		<variableExpression><![CDATA[$F{PHC}.equals("Total") ? "and \"Place of referral\" like '%SRH%'  and visit_number=1 " :
+"and \"PHC\" = '" + $F{PHC} + "' and \"Place of referral\" like '%SRH%'  and visit_number=1 "]]></variableExpression>
+	</variable>
+	<variable name="CMTC_CHC_PINDVAL_DYNAMIC_WHERE" class="java.lang.String">
+		<variableExpression><![CDATA[$F{PHC}.equals("Total") ? "and \"Place of referral\" like '%CHC PINDVAL%'  and visit_number=1 " :
+"and \"PHC\" = '" + $F{PHC} + "' and \"Place of referral\" like '%CHC PINDVAL%'  and visit_number=1 "]]></variableExpression>
+	</variable>
+	<variable name="CMTC_CHC_KAPRADA_DYNAMIC_WHERE" class="java.lang.String">
+		<variableExpression><![CDATA[$F{PHC}.equals("Total") ? "and \"Place of referral\" like '%CHC KAPRADA%'  and visit_number=1 " :
+"and \"PHC\" = '" + $F{PHC} + "' and \"Place of referral\" like '%CHC KAPRADA%'  and visit_number=1 "]]></variableExpression>
+	</variable>
+	<variable name="CMTC_PHC_DYNAMIC_WHERE" class="java.lang.String">
+		<variableExpression><![CDATA[$F{PHC}.equals("Total") ? "and \"Place of referral\" like '%PHC%'  and visit_number=1 " :
+"and \"PHC\" = '" + $F{PHC} + "' and \"Place of referral\" like '%PHC%'  and visit_number=1 "]]></variableExpression>
+	</variable>
+	<variable name="CMTC_PRIVATE_HOSPIATL_DYNAMIC_WHERE" class="java.lang.String">
+		<variableExpression><![CDATA[$F{PHC}.equals("Total") ? "and \"Place of referral\" like '%Private Hospital%'  and visit_number=1 " :
+"and \"PHC\" = '" + $F{PHC} + "' and \"Place of referral\" like '%Private Hospital%'  and visit_number=1 "]]></variableExpression>
+	</variable>
+	<variable name="CMTC_CHC_NANAPONDHA_DYNAMIC_WHERE" class="java.lang.String">
+		<variableExpression><![CDATA[$F{PHC}.equals("Total") ? "and \"Place of referral\" like '%CHC NANAPONDHA%'  and visit_number=1 " :
+"and \"PHC\" = '" + $F{PHC} + "' and \"Place of referral\" like '%CHC NANAPONDHA%'  and visit_number=1 "]]></variableExpression>
+	</variable>
+	<variable name="CMTC_TOTAL_DYNAMIC_WHERE" class="java.lang.String">
+		<variableExpression><![CDATA[$F{PHC}.equals("Total") ? "and \"Place of referral\" is not null  and visit_number=1 " :
+"and \"PHC\" = '" + $F{PHC} + "' and \"Place of referral\" is not null  and visit_number=1 "]]></variableExpression>
+	</variable>
+	<background>
+		<band height="100" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+		</band>
+	</background>
+	<title>
+		<band height="50" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<staticText>
+				<reportElement style="ReportTitle" x="0" y="0" width="1644" height="50" uuid="b41c1dbc-657e-4f9f-93da-2951563f95d4"/>
+				<text><![CDATA[Child growth monitoring 7 month to 5 year]]></text>
+			</staticText>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="60" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<staticText>
+				<reportElement style="ColumnHeader" x="0" y="0" width="108" height="60" uuid="a8c64255-9b73-463d-b6af-9e2bdc18ddc8">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="25bcc05b-c2a3-4d6f-a7e9-39cc6a8e2e99"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+				</box>
+				<text><![CDATA[PHC]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="108" y="0" width="110" height="60" uuid="9384bd84-16fb-42e2-9a12-65c13153a07f">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="a88d357f-4c00-438a-a0b6-40190b134c9b"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+				</box>
+				<text><![CDATA[Total children 7 month - 5 yrs ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="218" y="30" width="109" height="30" uuid="00e39f9a-dbfc-4de4-b183-29d06ac53f63">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="3cd2e9e9-7102-4606-afb6-e311eabbcd70"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+				</box>
+				<text><![CDATA[Normal]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="327" y="30" width="109" height="30" uuid="c17c78f7-85c9-4754-92e9-034fc8acc8f9">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="1c870d30-ba77-43bf-a90f-14748abd8702"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+				</box>
+				<text><![CDATA[SAM]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="436" y="30" width="109" height="30" uuid="f1ec61fc-4a29-4d2a-a8f7-c80fc5ce8a9b">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="a02838b8-f675-47e8-9098-b31e52b6fb3c"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+				</box>
+				<text><![CDATA[MAM]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="545" y="0" width="109" height="60" backcolor="#DEB8DE" uuid="9ac885f1-895b-4f69-8712-b5f3bf62d976">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="b7e416a0-cbbc-49fe-b26b-1026d63d8329"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+				</box>
+				<text><![CDATA[Removed from SAM]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="654" y="0" width="109" height="60" backcolor="#DEB8DE" uuid="b5d4517d-cb98-44a2-81d2-162086f6e1ea">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="cbef0cd1-d3a3-49d7-84c1-56d263d9dc5d"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+				</box>
+				<text><![CDATA[Added in SAM]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="763" y="30" width="109" height="30" uuid="99cb47f8-9644-4b58-8237-71846f819490">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="5444f97f-816b-4b00-a915-3ba8a20baacf"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+				</box>
+				<text><![CDATA[State hospital]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="872" y="30" width="109" height="30" uuid="3dafea0f-ca40-47ce-87fc-b456b638d2d9">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="fa84e47b-040f-4804-80e8-07573fc6950a"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+				</box>
+				<text><![CDATA[SRH]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="981" y="30" width="109" height="30" uuid="130e85e2-cff0-4cad-bc8e-5da0b7886cda">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="d00cbaa9-6395-4129-858b-7157f4080e0c"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+				</box>
+				<text><![CDATA[CHC PINDVAL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="1090" y="30" width="109" height="30" uuid="c37e9731-988d-49ab-b731-12b727a8b176">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="3274d3c7-d406-426d-9fc0-0c9548d54bf5"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+				</box>
+				<text><![CDATA[CHC KAPRADA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="1199" y="30" width="109" height="30" uuid="68044d29-a21a-48ff-868d-c8db78cdd7e6">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="6501fa31-092b-45c2-b480-a2d743288330"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+				</box>
+				<text><![CDATA[PHC hospital]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="1308" y="30" width="109" height="30" uuid="34c5a203-2a39-4d5a-b8dc-6fc7414ce019">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="89106a73-524d-4718-ad50-8a0945a91d04"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+				</box>
+				<text><![CDATA[Private Hospital]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="1417" y="30" width="109" height="30" uuid="f43c09f9-263a-44e3-ad72-e78da53ee65a">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="53fd95cf-5351-4043-beae-559bf7405dfb"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+				</box>
+				<text><![CDATA[CHC NANAPONDHA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="1526" y="30" width="107" height="30" uuid="3ba9a2f4-156a-4519-9a93-53a0233c482e">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="670edd91-16cf-41c3-98b8-17ebbc7ea4d2"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+				</box>
+				<text><![CDATA[Total]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="218" y="0" width="327" height="30" uuid="54d93ee8-7469-49a4-8746-6554ad8647af"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+				</box>
+				<text><![CDATA[Latest grade]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="763" y="0" width="870" height="30" uuid="35486eb3-f8b9-4f4e-af57-1523cf6889e7"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+				</box>
+				<text><![CDATA[CMTC referred child]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="30" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.spreadsheet.SpreadsheetLayout"/>
+			<textField textAdjust="StretchHeight">
+				<reportElement style="DataRowElement" stretchType="RelativeToTallestObject" x="0" y="0" width="108" height="30" uuid="c21c7f78-eab2-49c4-a36e-92a6b869da83">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="25bcc05b-c2a3-4d6f-a7e9-39cc6a8e2e99"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{PHC}]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight" hyperlinkType="ReportExecution">
+				<reportElement style="DataRowElement" stretchType="RelativeToTallestObject" x="108" y="0" width="110" height="30" uuid="6d92bad9-800d-4e46-b9ff-74e8f3416451">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="a88d357f-4c00-438a-a0b6-40190b134c9b"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{Current}]]></textFieldExpression>
+				<hyperlinkWhenExpression><![CDATA[$F{Current} > 0]]></hyperlinkWhenExpression>
+				<hyperlinkTooltipExpression><![CDATA["Click for the line list"]]></hyperlinkTooltipExpression>
+				<hyperlinkParameter name="_report">
+					<hyperlinkParameterExpression><![CDATA["/JNPCT/Reports/Linelists/Linelist_for_child_grwoth_monitoring_7_month_to_5_years"]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DATE_END">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_END}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DATE_START">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_START}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_PHC_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_PHC_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_SUBCENTRE_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_SUBCENTRE_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_VILLAGE_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_VILLAGE_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="Exited">
+					<hyperlinkParameterExpression><![CDATA[$P{Exited}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DYNAMIC_WHERE">
+					<hyperlinkParameterExpression><![CDATA[$V{CURRENT_SEVEN_MONTHS_DYNAMIC_WHERE}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+			</textField>
+			<textField textAdjust="StretchHeight" hyperlinkType="ReportExecution">
+				<reportElement style="DataRowElement" stretchType="RelativeToTallestObject" x="218" y="0" width="109" height="30" uuid="017ec633-ec95-4a96-9923-71c87da87a42">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="3cd2e9e9-7102-4606-afb6-e311eabbcd70"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{Normal}]]></textFieldExpression>
+				<hyperlinkWhenExpression><![CDATA[$F{Normal} > 0]]></hyperlinkWhenExpression>
+				<hyperlinkTooltipExpression><![CDATA["Click for the line list"]]></hyperlinkTooltipExpression>
+				<hyperlinkParameter name="_report">
+					<hyperlinkParameterExpression><![CDATA["/JNPCT/Reports/Linelists/Linelist_for_child_grwoth_monitoring_7_month_to_5_years"]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DATE_END">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_END}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DATE_START">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_START}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_PHC_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_PHC_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_SUBCENTRE_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_SUBCENTRE_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_VILLAGE_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_VILLAGE_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="Exited">
+					<hyperlinkParameterExpression><![CDATA[$P{Exited}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DYNAMIC_WHERE">
+					<hyperlinkParameterExpression><![CDATA[$V{CURRENT_SEVEN_NORMAL_MONTHS_DYNAMIC_WHERE}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+			</textField>
+			<textField textAdjust="StretchHeight" hyperlinkType="ReportExecution">
+				<reportElement style="DataRowElement" stretchType="RelativeToTallestObject" x="327" y="0" width="109" height="30" uuid="d6f0193e-610b-4431-bedf-f9102e4d6b08">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="1c870d30-ba77-43bf-a90f-14748abd8702"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{SAM}]]></textFieldExpression>
+				<hyperlinkWhenExpression><![CDATA[$F{SAM} > 0]]></hyperlinkWhenExpression>
+				<hyperlinkTooltipExpression><![CDATA["Click for the line list"]]></hyperlinkTooltipExpression>
+				<hyperlinkParameter name="_report">
+					<hyperlinkParameterExpression><![CDATA["/JNPCT/Reports/Linelists/Linelist_for_child_grwoth_monitoring_7_month_to_5_years"]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DATE_END">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_END}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DATE_START">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_START}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_PHC_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_PHC_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_SUBCENTRE_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_SUBCENTRE_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_VILLAGE_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_VILLAGE_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="Exited">
+					<hyperlinkParameterExpression><![CDATA[$P{Exited}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DYNAMIC_WHERE">
+					<hyperlinkParameterExpression><![CDATA[$V{CURRENT_SEVEN_SAM_MONTHS_DYNAMIC_WHERE}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+			</textField>
+			<textField textAdjust="StretchHeight" hyperlinkType="ReportExecution">
+				<reportElement style="DataRowElement" stretchType="RelativeToTallestObject" x="436" y="0" width="109" height="30" uuid="955b5386-261e-48aa-95c3-1154ac1951a3">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="a02838b8-f675-47e8-9098-b31e52b6fb3c"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{MAM}]]></textFieldExpression>
+				<hyperlinkWhenExpression><![CDATA[$F{MAM} > 0]]></hyperlinkWhenExpression>
+				<hyperlinkTooltipExpression><![CDATA["Click for the line list"]]></hyperlinkTooltipExpression>
+				<hyperlinkParameter name="_report">
+					<hyperlinkParameterExpression><![CDATA["/JNPCT/Reports/Linelists/Linelist_for_child_grwoth_monitoring_7_month_to_5_years"]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DATE_END">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_END}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DATE_START">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_START}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_PHC_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_PHC_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_SUBCENTRE_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_SUBCENTRE_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_VILLAGE_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_VILLAGE_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="Exited">
+					<hyperlinkParameterExpression><![CDATA[$P{Exited}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DYNAMIC_WHERE">
+					<hyperlinkParameterExpression><![CDATA[$V{CURRENT_SEVEN_MAM_MONTHS_DYNAMIC_WHERE}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+			</textField>
+			<textField textAdjust="StretchHeight" hyperlinkType="ReportExecution">
+				<reportElement style="DataRowElement" stretchType="RelativeToTallestObject" x="545" y="0" width="109" height="30" uuid="106c2a61-1bb3-48fe-aab3-a5af94805443">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="b7e416a0-cbbc-49fe-b26b-1026d63d8329"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{Removed from SAM}]]></textFieldExpression>
+				<hyperlinkWhenExpression><![CDATA[$F{Removed from SAM} > 0]]></hyperlinkWhenExpression>
+				<hyperlinkTooltipExpression><![CDATA["Click for the line list"]]></hyperlinkTooltipExpression>
+				<hyperlinkParameter name="_report">
+					<hyperlinkParameterExpression><![CDATA["/JNPCT/Reports/Linelists/Linelist_for_child_grwoth_monitoring_7_month_to_5_years"]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DATE_END">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_END}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DATE_START">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_START}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_PHC_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_PHC_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_SUBCENTRE_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_SUBCENTRE_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_VILLAGE_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_VILLAGE_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="Exited">
+					<hyperlinkParameterExpression><![CDATA[$P{Exited}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DYNAMIC_WHERE">
+					<hyperlinkParameterExpression><![CDATA[$V{REMOVED_FROM_SAM_DYNAMIC_WHERE}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+			</textField>
+			<textField textAdjust="StretchHeight" hyperlinkType="ReportExecution">
+				<reportElement style="DataRowElement" stretchType="RelativeToTallestObject" x="654" y="0" width="109" height="30" uuid="34fd4988-f16a-47ce-997d-2a68a188e8fc">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="cbef0cd1-d3a3-49d7-84c1-56d263d9dc5d"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{Added in SAM}]]></textFieldExpression>
+				<hyperlinkWhenExpression><![CDATA[$F{Added in SAM} > 0]]></hyperlinkWhenExpression>
+				<hyperlinkTooltipExpression><![CDATA["Click for the line list"]]></hyperlinkTooltipExpression>
+				<hyperlinkParameter name="_report">
+					<hyperlinkParameterExpression><![CDATA["/JNPCT/Reports/Linelists/Linelist_for_child_grwoth_monitoring_7_month_to_5_years"]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DATE_END">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_END}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DATE_START">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_START}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_PHC_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_PHC_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_SUBCENTRE_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_SUBCENTRE_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_VILLAGE_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_VILLAGE_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="Exited">
+					<hyperlinkParameterExpression><![CDATA[$P{Exited}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DYNAMIC_WHERE">
+					<hyperlinkParameterExpression><![CDATA[$V{ADDED_IN_SAM_DYNAMIC_WHERE}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+			</textField>
+			<textField textAdjust="StretchHeight" hyperlinkType="ReportExecution">
+				<reportElement style="DataRowElement" stretchType="RelativeToTallestObject" x="763" y="0" width="109" height="30" uuid="2c943180-5cc5-42eb-83f0-7df459ec8761">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="5444f97f-816b-4b00-a915-3ba8a20baacf"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{State hospital}]]></textFieldExpression>
+				<hyperlinkWhenExpression><![CDATA[$F{State hospital} > 0]]></hyperlinkWhenExpression>
+				<hyperlinkTooltipExpression><![CDATA["Click for the line list"]]></hyperlinkTooltipExpression>
+				<hyperlinkParameter name="_report">
+					<hyperlinkParameterExpression><![CDATA["/JNPCT/Reports/Linelists/Linelist_for_child_grwoth_monitoring_7_month_to_5_years"]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DATE_END">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_END}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DATE_START">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_START}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_PHC_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_PHC_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_SUBCENTRE_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_SUBCENTRE_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_VILLAGE_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_VILLAGE_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="Exited">
+					<hyperlinkParameterExpression><![CDATA[$P{Exited}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DYNAMIC_WHERE">
+					<hyperlinkParameterExpression><![CDATA[$V{CMTC_STATE_HOSPITAL_DYNAMIC_WHERE}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+			</textField>
+			<textField textAdjust="StretchHeight" hyperlinkType="ReportExecution">
+				<reportElement style="DataRowElement" stretchType="RelativeToTallestObject" x="872" y="0" width="109" height="30" uuid="3f40e634-86c0-4077-97d2-90ab69eb544e">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="fa84e47b-040f-4804-80e8-07573fc6950a"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{SRH}]]></textFieldExpression>
+				<hyperlinkWhenExpression><![CDATA[$F{SRH} > 0]]></hyperlinkWhenExpression>
+				<hyperlinkTooltipExpression><![CDATA["Click for the line list"]]></hyperlinkTooltipExpression>
+				<hyperlinkParameter name="_report">
+					<hyperlinkParameterExpression><![CDATA["/JNPCT/Reports/Linelists/Linelist_for_child_grwoth_monitoring_7_month_to_5_years"]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DATE_END">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_END}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DATE_START">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_START}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_PHC_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_PHC_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_SUBCENTRE_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_SUBCENTRE_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_VILLAGE_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_VILLAGE_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="Exited">
+					<hyperlinkParameterExpression><![CDATA[$P{Exited}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DYNAMIC_WHERE">
+					<hyperlinkParameterExpression><![CDATA[$V{CMTC_SRH_DYNAMIC_WHERE}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+			</textField>
+			<textField textAdjust="StretchHeight" hyperlinkType="ReportExecution">
+				<reportElement style="DataRowElement" stretchType="RelativeToTallestObject" x="981" y="0" width="109" height="30" uuid="8c82eb59-fed4-41f5-881e-a3f938ab0177">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="d00cbaa9-6395-4129-858b-7157f4080e0c"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{CHC PINDVAL}]]></textFieldExpression>
+				<hyperlinkWhenExpression><![CDATA[$F{CHC PINDVAL} > 0]]></hyperlinkWhenExpression>
+				<hyperlinkTooltipExpression><![CDATA["Click for the line list"]]></hyperlinkTooltipExpression>
+				<hyperlinkParameter name="_report">
+					<hyperlinkParameterExpression><![CDATA["/JNPCT/Reports/Linelists/Linelist_for_child_grwoth_monitoring_7_month_to_5_years"]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DATE_END">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_END}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DATE_START">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_START}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_PHC_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_PHC_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_SUBCENTRE_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_SUBCENTRE_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_VILLAGE_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_VILLAGE_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="Exited">
+					<hyperlinkParameterExpression><![CDATA[$P{Exited}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DYNAMIC_WHERE">
+					<hyperlinkParameterExpression><![CDATA[$V{CMTC_CHC_PINDVAL_DYNAMIC_WHERE}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+			</textField>
+			<textField textAdjust="StretchHeight" hyperlinkType="ReportExecution">
+				<reportElement style="DataRowElement" stretchType="RelativeToTallestObject" x="1090" y="0" width="109" height="30" uuid="e2ee79ed-e545-4e12-aca2-81b2352de94d">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="3274d3c7-d406-426d-9fc0-0c9548d54bf5"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{CHC KAPRADA}]]></textFieldExpression>
+				<hyperlinkWhenExpression><![CDATA[$F{CHC KAPRADA} > 0]]></hyperlinkWhenExpression>
+				<hyperlinkTooltipExpression><![CDATA["Click for the line list"]]></hyperlinkTooltipExpression>
+				<hyperlinkParameter name="_report">
+					<hyperlinkParameterExpression><![CDATA["/JNPCT/Reports/Linelists/Linelist_for_child_grwoth_monitoring_7_month_to_5_years"]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DATE_END">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_END}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DATE_START">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_START}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_PHC_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_PHC_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_SUBCENTRE_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_SUBCENTRE_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_VILLAGE_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_VILLAGE_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="Exited">
+					<hyperlinkParameterExpression><![CDATA[$P{Exited}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DYNAMIC_WHERE">
+					<hyperlinkParameterExpression><![CDATA[$V{CMTC_CHC_KAPRADA_DYNAMIC_WHERE}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+			</textField>
+			<textField textAdjust="StretchHeight" hyperlinkType="ReportExecution">
+				<reportElement style="DataRowElement" stretchType="RelativeToTallestObject" x="1199" y="0" width="109" height="30" uuid="ad0fe7af-4ff7-422a-a0b6-c714f04bd487">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="6501fa31-092b-45c2-b480-a2d743288330"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{PHC hospital}]]></textFieldExpression>
+				<hyperlinkWhenExpression><![CDATA[$F{PHC hospital} > 0]]></hyperlinkWhenExpression>
+				<hyperlinkTooltipExpression><![CDATA["Click for the line list"]]></hyperlinkTooltipExpression>
+				<hyperlinkParameter name="_report">
+					<hyperlinkParameterExpression><![CDATA["/JNPCT/Reports/Linelists/Linelist_for_child_grwoth_monitoring_7_month_to_5_years"]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DATE_END">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_END}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DATE_START">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_START}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_PHC_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_PHC_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_SUBCENTRE_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_SUBCENTRE_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_VILLAGE_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_VILLAGE_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="Exited">
+					<hyperlinkParameterExpression><![CDATA[$P{Exited}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DYNAMIC_WHERE">
+					<hyperlinkParameterExpression><![CDATA[$V{CMTC_PHC_DYNAMIC_WHERE}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+			</textField>
+			<textField textAdjust="StretchHeight" hyperlinkType="ReportExecution">
+				<reportElement style="DataRowElement" stretchType="RelativeToTallestObject" x="1308" y="0" width="109" height="30" uuid="3eebfbc3-2886-4672-9e80-54f310b12783">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="89106a73-524d-4718-ad50-8a0945a91d04"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{Private Hospital}]]></textFieldExpression>
+				<hyperlinkWhenExpression><![CDATA[$F{Private Hospital} > 0]]></hyperlinkWhenExpression>
+				<hyperlinkTooltipExpression><![CDATA["Click for the line list"]]></hyperlinkTooltipExpression>
+				<hyperlinkParameter name="_report">
+					<hyperlinkParameterExpression><![CDATA["/JNPCT/Reports/Linelists/Linelist_for_child_grwoth_monitoring_7_month_to_5_years"]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DATE_END">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_END}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DATE_START">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_START}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_PHC_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_PHC_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_SUBCENTRE_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_SUBCENTRE_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_VILLAGE_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_VILLAGE_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="Exited">
+					<hyperlinkParameterExpression><![CDATA[$P{Exited}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DYNAMIC_WHERE">
+					<hyperlinkParameterExpression><![CDATA[$V{CMTC_PRIVATE_HOSPIATL_DYNAMIC_WHERE}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+			</textField>
+			<textField textAdjust="StretchHeight" hyperlinkType="ReportExecution">
+				<reportElement style="DataRowElement" stretchType="RelativeToTallestObject" x="1417" y="0" width="109" height="30" uuid="66648c0d-fdba-45bc-bb57-52b72b945d50">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="53fd95cf-5351-4043-beae-559bf7405dfb"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{CHC NANAPONDHA}]]></textFieldExpression>
+				<hyperlinkWhenExpression><![CDATA[$F{CHC NANAPONDHA} > 0]]></hyperlinkWhenExpression>
+				<hyperlinkTooltipExpression><![CDATA["Click for the line list"]]></hyperlinkTooltipExpression>
+				<hyperlinkParameter name="_report">
+					<hyperlinkParameterExpression><![CDATA["/JNPCT/Reports/Linelists/Linelist_for_child_grwoth_monitoring_7_month_to_5_years"]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DATE_END">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_END}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DATE_START">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_START}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_PHC_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_PHC_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_SUBCENTRE_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_SUBCENTRE_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_VILLAGE_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_VILLAGE_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="Exited">
+					<hyperlinkParameterExpression><![CDATA[$P{Exited}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DYNAMIC_WHERE">
+					<hyperlinkParameterExpression><![CDATA[$V{CMTC_CHC_NANAPONDHA_DYNAMIC_WHERE}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+			</textField>
+			<textField textAdjust="StretchHeight" hyperlinkType="ReportExecution">
+				<reportElement style="DataRowElement" stretchType="RelativeToTallestObject" x="1526" y="0" width="107" height="30" uuid="9614b77e-3a3b-48b8-8912-db9dc44dfc8f">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="670edd91-16cf-41c3-98b8-17ebbc7ea4d2"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{Total}]]></textFieldExpression>
+				<hyperlinkWhenExpression><![CDATA[$F{Total} > 0]]></hyperlinkWhenExpression>
+				<hyperlinkTooltipExpression><![CDATA["Click for the line list"]]></hyperlinkTooltipExpression>
+				<hyperlinkParameter name="_report">
+					<hyperlinkParameterExpression><![CDATA["/JNPCT/Reports/Linelists/Linelist_for_child_grwoth_monitoring_7_month_to_5_years"]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DATE_END">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_END}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DATE_START">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_START}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_PHC_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_PHC_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_SUBCENTRE_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_SUBCENTRE_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_VILLAGE_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_VILLAGE_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="Exited">
+					<hyperlinkParameterExpression><![CDATA[$P{Exited}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DYNAMIC_WHERE">
+					<hyperlinkParameterExpression><![CDATA[$V{CMTC_TOTAL_DYNAMIC_WHERE}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

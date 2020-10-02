@@ -1,0 +1,588 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.12.2.final using JasperReports Library version 6.11.0  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Linelist for ANC" pageWidth="4155" pageHeight="720" orientation="Landscape" columnWidth="1080" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="05cc1aaf-5713-4062-a0f6-7bab099e5fb6">
+	<property name="ireport.jasperserver.url" value="https://reporting-jasper.avniproject.org/jasperserver/"/>
+	<property name="com.jaspersoft.studio.report.description" value=""/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="JNPCT Data Adapter"/>
+	<template><![CDATA["repo:/Templates/Styles/Linelist.jrtx"]]></template>
+	<parameter name="PARAM_DATE_START" class="java.sql.Timestamp"/>
+	<parameter name="PARAM_DATE_END" class="java.sql.Timestamp"/>
+	<parameter name="PARAM_PHC_NAME" class="java.util.List" nestedType="java.lang.String"/>
+	<parameter name="PARAM_SUBCENTRE_NAME" class="java.util.List" nestedType="java.lang.String"/>
+	<parameter name="PARAM_VILLAGE_NAME" class="java.util.List" nestedType="java.lang.String"/>
+	<parameter name="Exited" class="java.util.List" nestedType="java.lang.String"/>
+	<parameter name="PARAM_DYNAMIC_WHERE" class="java.lang.String">
+		<defaultValueExpression><![CDATA["and 1=1"]]></defaultValueExpression>
+	</parameter>
+	<queryString language="SQL">
+		<![CDATA[with merged_obs as (
+select enl.id enl_id,
+       enl.individual_id individual_id,
+       enl.enrolment_date_time enrolment_date_time,
+       enl.program_exit_date_time  program_exit_date_time,
+       (enl.observations->>'0cf252ba-e6b4-4209-903b-4b6d48cd7070')::DATE lmp,
+       (enl.observations->>'83e23cc8-52c2-4c8d-8f34-adb98f0db604')::DATE edd,
+       single_select_coded(enl.observations->>'bec0e4d4-8daf-4956-8906-0f579b4cf628')::TEXT gravida,
+       single_select_coded(enl.observations->>'4c8e7665-30f1-4f65-b76e-b9132904ed69')::TEXT result_of_last_delivery,
+       multi_select_coded(enl.observations->'8bee6542-cd1e-4bd8-b0d4-5a88575fcb1c')::TEXT as previous_history_of_disease,
+     
+jsonb_merge(jsonb_agg(jsonb_strip_nulls(enc.observations) order by encounter_date_time desc)) all_obs
+from program_enrolment enl
+join program_encounter enc on enl.id = enc.program_enrolment_id
+join encounter_type et on enc.encounter_type_id = et.id
+join program p on enl.program_id = p.id
+
+where et.name in ('ANC', 'ANC Cluster Incharge')
+and p.name = 'Pregnancy'
+group by enl.id
+)
+
+select row_number() over (order by "Name") as "Sr.no", * 
+from( select concat(individual.first_name, ' ',individual.last_name)                "Name",
+block.title																			"Block",
+phc.title            																"PHC",
+subcenter.title                                                                     "Subcenter",
+village.title                                                                       "Village",
+to_char(age(individual.date_of_birth), 'yy')                                        "Age",
+to_char(enrolment_date_time, 'dd-mm-yyyy')                                          "Date of enrolment",
+TRUNC(DATE_PART('day',  enrolment_date_time::timestamp - lmp::timestamp)/7)			 pregnancy_week,
+case  when TRUNC(DATE_PART('day',  enrolment_date_time::timestamp - lmp::timestamp)/7) between 0 and 12 then 'First trimester'
+	  when TRUNC(DATE_PART('day',  enrolment_date_time::timestamp - lmp::timestamp)/7) between 13 and 28 then 'Second trimester'
+	  when TRUNC(DATE_PART('day',  enrolment_date_time::timestamp - lmp::timestamp)/7) between 29 and 1000  then 'Third trimester' 
+end                                                                                 "Registered in trimester",
+to_char(lmp, 'dd-mm-yyyy')                                                          "LMP",
+to_char(edd, 'dd-mm-yyyy')                                                          "EDD",
+to_char((all_obs->>'0f2f8288-126f-4976-a7bb-09999f7d870e')::DATE, 'dd-mm-yyyy')     "EDD as per USG",
+gravida                                                                             "Gravida",
+result_of_last_delivery                                                             "Result of last delivery",
+previous_history_of_disease                                                         "Previous history of disease",
+(all_obs->>'7d9af174-9e58-4e96-a77c-8351a5a4152d')::TEXT  "Height",
+(all_obs->>'bab98eac-14a5-43c4-80ff-ccdb8c3ddf1b')::TEXT  "Weight",
+(all_obs->>'27803190-b702-4223-b9b4-64c75fdcf588')::TEXT  "BMI",
+(all_obs->>'915a4d71-6267-4190-af9f-882bbd07629e')::TEXT  "MUAC (in cms)",
+(all_obs->>'d5d860cc-9165-45b5-8795-065c2ee0e5aa')::TEXT  "B.P - Systolic",
+(all_obs->>'378241fc-b879-4037-bdc3-4746a7a11682')::TEXT  "B.P - Diastolic",
+coalesce(all_obs->>'057ab538-63ef-4c56-b37c-03651ad823e2',
+all_obs->>'f76ba360-0079-4c7b-bd16-b79ea26355ad')  "H.B",
+to_char((all_obs->>'515b0e64-4621-4f0e-8636-4b68a922decf')::DATE, 'dd-mm-yyyy')   "TD 1",
+to_char((all_obs->>'4ad7f1d8-fa36-47b7-a3b6-83b8909c49ac')::DATE, 'dd-mm-yyyy')   "TD 2",
+to_char((all_obs->>'afdec7b2-ecb2-409a-a506-d6ae3c5f9676')::DATE, 'dd-mm-yyyy')   "TD Booster",
+case when
+single_select_coded(all_obs->>'c8722864-8f31-4e58-8a3b-ce2c8a549f2b')::TEXT = 'Positive' then 'Yes'
+else 'No'  end     "Sickle cell disease",     
+case when multi_select_coded(all_obs->'0ca1c6a2-001b-475a-9813-1d905df9e81b') is not null then 'Yes'
+        else 'No' 
+        end  "Any risk occurred in current pregnancy",
+single_select_coded(all_obs ->> 'b9bd871d-cb06-4895-907b-adda2572b8c9')::TEXT     "Complete hospital checkup done",
+single_select_coded(all_obs->>'2c2c44c6-b2c9-4c99-a0da-fcee2cddd14c')::TEXT       "Calcium tablet consumed",
+single_select_coded(all_obs->>'734d46fe-363a-4037-afb4-89ff87fbac5b')::TEXT       "Iron Tablet consumed",
+'https://app.avniproject.org/#/app/subject?uuid=' || individual.uuid 		       url,
+case when program_exit_date_time is null then 'No'
+else 'Yes' end                                                                     isExited,
+delivery."Enc.encounter_date_time"                                                 delivery_reported
+
+from merged_obs obs 
+LEFT OUTER JOIN individual individual ON obs.individual_id = individual.id  
+LEFT OUTER JOIN gender g ON g.id = individual.gender_id 
+LEFT JOIN jnpct_delivery_view delivery on delivery."Ind.Id" = obs.individual_id
+LEFT JOIN address_level village ON individual.address_id = village.id
+LEFT JOIN address_level subcenter ON village.parent_id = subcenter.id
+LEFT JOIN address_level phc ON subcenter.parent_id = phc.id
+LEFT JOIN address_level block ON phc.parent_id = block.id
+
+where 1=1 and $X{IN,phc.title,PARAM_PHC_NAME}
+        and $X{IN,subcenter.title,PARAM_SUBCENTRE_NAME}
+        and $X{IN,village.title,PARAM_VILLAGE_NAME}
+        and $X{BETWEEN,enrolment_date_time,PARAM_DATE_START, PARAM_DATE_END})
+data where 1=1 and $X{IN, isExited, Exited} $P!{PARAM_DYNAMIC_WHERE}]]>
+	</queryString>
+	<field name="Sr.no" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.label" value="Sr.no"/>
+	</field>
+	<field name="Name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="Name"/>
+	</field>
+	<field name="Block" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="Block"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="jnpct_pregnancy_enrolment_view"/>
+	</field>
+	<field name="PHC" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="PHC"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="jnpct_pregnancy_enrolment_view"/>
+	</field>
+	<field name="Subcenter" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="Subcenter"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="jnpct_pregnancy_enrolment_view"/>
+	</field>
+	<field name="Village" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="Village"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="jnpct_pregnancy_enrolment_view"/>
+	</field>
+	<field name="Age" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="Age"/>
+	</field>
+	<field name="Date of enrolment" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="Date of enrolment"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="jnpct_pregnancy_enrolment_view"/>
+	</field>
+	<field name="Registered in trimester" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="Registered in trimester"/>
+	</field>
+	<field name="LMP" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="LMP"/>
+	</field>
+	<field name="EDD" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="EDD"/>
+	</field>
+	<field name="EDD as per USG" class="java.sql.Date">
+		<property name="com.jaspersoft.studio.field.label" value="EDD as per USG"/>
+	</field>
+	<field name="Gravida" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="Gravida"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="jnpct_pregnancy_enrolment_view"/>
+	</field>
+	<field name="Result of last delivery" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="Result of last delivery"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="jnpct_pregnancy_enrolment_view"/>
+	</field>
+	<field name="Previous history of disease" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="Previous history of disease"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="jnpct_pregnancy_enrolment_view"/>
+	</field>
+	<field name="Height" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="Height"/>
+	</field>
+	<field name="Weight" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="Weight"/>
+	</field>
+	<field name="BMI" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="BMI"/>
+	</field>
+	<field name="MUAC (in cms)" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="MUAC"/>
+	</field>
+	<field name="B.P - Systolic" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="B.P - Systolic"/>
+	</field>
+	<field name="B.P - Diastolic" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="B.P - Diastolic"/>
+	</field>
+	<field name="H.B" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="H.B"/>
+	</field>
+	<field name="Sickle cell disease" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="Sickle cell disease"/>
+	</field>
+	<field name="TD 1" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="TD 1"/>
+	</field>
+	<field name="TD 2" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="TD 2"/>
+	</field>
+	<field name="TD Booster" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="TD Booster"/>
+	</field>
+	<field name="Complete hospital checkup done" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="Complete hospital checkup done"/>
+	</field>
+	<field name="Any risk occurred in current pregnancy" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="Any risk occurred in current pregnancy"/>
+	</field>
+	<field name="Calcium tablet consumed" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="Calcium tablet consumed "/>
+	</field>
+	<field name="Iron Tablet consumed" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="Iron Tablet consumed"/>
+	</field>
+	<field name="url" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="url"/>
+	</field>
+	<background>
+		<band height="100" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+		</band>
+	</background>
+	<title>
+		<band height="50" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<staticText>
+				<reportElement style="ReportTitle" x="0" y="0" width="1644" height="50" uuid="ccc013a8-2e32-4c97-acca-cfac4c04bef7"/>
+				<text><![CDATA[Linelist for anetnatal cases]]></text>
+			</staticText>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="30" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<staticText>
+				<reportElement style="ColumnHeader" x="0" y="0" width="63" height="30" uuid="dd70f6e1-f9db-4906-a3fd-7e37734b91e8">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ef7d2f8f-82d4-4759-ac2d-b871d3a2a47b"/>
+				</reportElement>
+				<text><![CDATA[Sr.no]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="63" y="0" width="137" height="30" uuid="248386ac-b83d-4f2c-8c43-21c3766a8fbd">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="4422b4c2-a880-45ca-8e74-ae84fd8621eb"/>
+				</reportElement>
+				<text><![CDATA[Name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="200" y="0" width="137" height="30" uuid="f2f7c454-a279-4703-bd2e-345752446aba">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="92195097-7c56-431f-8fee-4c0303bb27be"/>
+				</reportElement>
+				<text><![CDATA[Block]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="337" y="0" width="137" height="30" uuid="1321c36a-47d2-4e62-b6d2-ab5b0bbace49">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="8d53fd41-1f4a-4dc2-9cbb-17835994c244"/>
+				</reportElement>
+				<text><![CDATA[PHC]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="474" y="0" width="137" height="30" uuid="44f26c23-0717-46d4-a05b-4a1c12b1c201">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="428acd49-121d-4b33-816e-c776dfebbceb"/>
+				</reportElement>
+				<text><![CDATA[Subcenter]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="611" y="0" width="137" height="30" uuid="51f5450f-35cc-4e46-ad10-46a28de89b0a">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="b99a2123-d577-4b26-8f84-e13a508424ec"/>
+				</reportElement>
+				<text><![CDATA[Village]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="748" y="0" width="137" height="30" uuid="de58734e-a784-40cb-8043-6b5083e72a1a">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="8874f512-853d-4ea6-b64f-28432eb81ec1"/>
+				</reportElement>
+				<text><![CDATA[Age]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="885" y="0" width="137" height="30" uuid="3430677b-9835-4331-87d6-ccd691e26119">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="e4f58cf2-cd9d-431c-b294-32e529c75bc5"/>
+				</reportElement>
+				<text><![CDATA[Date of enrolment]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="1022" y="0" width="137" height="30" uuid="9c0295e2-c0ec-4625-8541-1629cbba1dd0">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="18c1cbdb-355b-4eb0-8be9-a03816721416"/>
+				</reportElement>
+				<text><![CDATA[Registered in trimester]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="1159" y="0" width="137" height="30" uuid="5056a848-c95f-4607-a7d0-2c65b2733f7d">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="a10ba0dc-ba48-488c-b69f-258526b2ddac"/>
+				</reportElement>
+				<text><![CDATA[LMP]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="1296" y="0" width="137" height="30" uuid="dab0f2a6-8357-47ee-b957-68ee6a27c743">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="975141c2-a6ad-453a-a9c1-156b4022306b"/>
+				</reportElement>
+				<text><![CDATA[EDD]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="1433" y="0" width="137" height="30" uuid="3540881d-5f0d-4009-a8ec-871e4a5444f6">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="19144160-9942-4baa-902e-7dee164cd88e"/>
+				</reportElement>
+				<text><![CDATA[EDD as per USG]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="1570" y="0" width="137" height="30" uuid="b3c78a11-c7e9-4adc-b3e3-66e0442d136a">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="e00f3d73-ff73-4c8d-8ec8-b6f584423a78"/>
+				</reportElement>
+				<text><![CDATA[Gravida]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="1707" y="0" width="137" height="30" uuid="f09f41c6-6bfe-4acd-9c3d-1063bfd92937">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="5dcd6637-51ee-4333-b0be-945694e4822e"/>
+				</reportElement>
+				<text><![CDATA[Result of last delivery]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="1844" y="0" width="137" height="30" uuid="2c8f4106-d305-400b-bcd9-b9fda0d2d215">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="0fa6b50a-25bc-42d0-9fb1-d3865f60d1fa"/>
+				</reportElement>
+				<text><![CDATA[Previous history of disease]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="1981" y="0" width="137" height="30" uuid="9c048884-70da-448f-8312-e4aba9c70aad">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="94ec0092-a4bd-40c5-9336-8309047c2772"/>
+				</reportElement>
+				<text><![CDATA[Height]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="2118" y="0" width="137" height="30" uuid="29b05d3d-776b-4635-a762-fbbdc20a91dc">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="1a5b1da0-2177-466c-ab65-8806fad04ed7"/>
+				</reportElement>
+				<text><![CDATA[Weight]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="2255" y="0" width="137" height="30" uuid="45f897ce-7a70-4e22-84d2-2febf955b554">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ba26650e-22f0-45c3-9708-26529db7b882"/>
+				</reportElement>
+				<text><![CDATA[BMI]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="2392" y="0" width="137" height="30" uuid="63c05b7a-3db6-456b-b532-d84977845ac2">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="a6bcee99-e4af-4d28-aacb-e8e9f0631d51"/>
+				</reportElement>
+				<text><![CDATA[MUAC (in cms)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="2529" y="0" width="137" height="30" uuid="5c330c4b-5fbf-4e1c-936f-c654885d38a6">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="df6594d1-6232-41aa-86e9-d8834cdf88f4"/>
+				</reportElement>
+				<text><![CDATA[B.P - Systolic]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="2666" y="0" width="137" height="30" uuid="94a04864-9757-484d-8fcc-174baa7391ab">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="1f6799dd-5a57-4384-9893-b3b1ae22bd84"/>
+				</reportElement>
+				<text><![CDATA[B.P - Diastolic]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="2803" y="0" width="137" height="30" uuid="fcaa265f-a3f8-433b-96bc-805c7c71cba9">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="3685c497-4b30-4c37-a1cc-e7fafcb88c65"/>
+				</reportElement>
+				<text><![CDATA[H.B]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="2940" y="0" width="137" height="30" uuid="f2bd2eab-1b2c-4ed2-bb8f-bdce9f5b80a7">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ffad47ee-0823-4502-928f-3c50500b990d"/>
+				</reportElement>
+				<text><![CDATA[Sickle cell disease]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="3077" y="0" width="137" height="30" uuid="9c754a10-8122-4493-abbd-9c032dd8f7f4">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="f57bae40-1d1d-488b-9636-1465096478bc"/>
+				</reportElement>
+				<text><![CDATA[TD 1]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="3214" y="0" width="137" height="30" uuid="a1525065-d620-4dd1-ba29-eb5c1bc9cb06">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="fa6386a9-3693-425d-9480-bb89d170d774"/>
+				</reportElement>
+				<text><![CDATA[TD 2]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="3351" y="0" width="137" height="30" uuid="0d5bbf79-511f-4a2f-a5f8-55e1312b205a">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="c3a410cf-ec13-4686-9fc3-e0ce16c61acf"/>
+				</reportElement>
+				<text><![CDATA[TD Booster]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="3488" y="0" width="137" height="30" uuid="01f43b76-da94-42f2-8fce-3d20f6725c22">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="98f9c6ab-d03a-4d1d-9d63-141644c01c55"/>
+				</reportElement>
+				<text><![CDATA[Any risk occurred in current pregnancy]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="3625" y="0" width="137" height="30" uuid="10f43b76-da94-42f2-8fce-3d20f6725c22">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="89f9c6ab-d03a-4d1d-9d63-141644c01c55"/>
+				</reportElement>
+				<text><![CDATA[Complete hospital checkup done]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="3762" y="0" width="137" height="30" uuid="6f95029b-cb71-4e50-9e14-188bf2461a9c">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="3548bd73-ae06-4792-bc20-d6a9ed575221"/>
+				</reportElement>
+				<text><![CDATA[Calcium tablet consumed]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="3899" y="0" width="157" height="30" uuid="1c4e9373-f2dc-4a82-9b57-45fcf78f8ed8">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="7c7cd1ef-d678-4b4a-a2c5-da224492b710"/>
+				</reportElement>
+				<text><![CDATA[Iron Tablet consumed]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="30" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.spreadsheet.SpreadsheetLayout"/>
+			<textField isBlankWhenNull="true" textAdjust="StretchHeight">
+				<reportElement style="DataRowElement" stretchType="RelativeToTallestObject" x="0" y="0" width="63" height="30" uuid="6ef6e538-6f1a-4c24-9ee8-4766e83c6352">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ef7d2f8f-82d4-4759-ac2d-b871d3a2a47b"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{Sr.no}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true" textAdjust="StretchHeight" hyperlinkType="Reference" hyperlinkTarget="Blank">
+				<reportElement style="DataRowElement" stretchType="RelativeToTallestObject" x="63" y="0" width="137" height="30" uuid="2540e211-bd1b-4f2e-a37b-6c4deb913de4">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="4422b4c2-a880-45ca-8e74-ae84fd8621eb"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{Name}]]></textFieldExpression>
+				<hyperlinkReferenceExpression><![CDATA[$F{url}]]></hyperlinkReferenceExpression>
+				<hyperlinkTooltipExpression><![CDATA["Click to view dashboard"]]></hyperlinkTooltipExpression>
+			</textField>
+			<textField isBlankWhenNull="true" textAdjust="StretchHeight">
+				<reportElement style="DataRowElement" stretchType="RelativeToTallestObject" x="200" y="0" width="137" height="30" uuid="fb5de416-d610-4fd7-9a3b-a46add7eb328">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="92195097-7c56-431f-8fee-4c0303bb27be"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{Block}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true" textAdjust="StretchHeight">
+				<reportElement style="DataRowElement" stretchType="RelativeToTallestObject" x="337" y="0" width="137" height="30" uuid="e6b9e28f-3758-40aa-bcc4-c208cb862754">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="8d53fd41-1f4a-4dc2-9cbb-17835994c244"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{PHC}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true" textAdjust="StretchHeight">
+				<reportElement style="DataRowElement" stretchType="RelativeToTallestObject" x="474" y="0" width="137" height="30" uuid="34825b9f-110f-456d-a268-67eb1b875afe">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="428acd49-121d-4b33-816e-c776dfebbceb"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{Subcenter}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true" textAdjust="StretchHeight">
+				<reportElement style="DataRowElement" stretchType="RelativeToTallestObject" x="611" y="0" width="137" height="30" uuid="294f7e27-4852-400b-bd75-32e1fdb3ac88">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="b99a2123-d577-4b26-8f84-e13a508424ec"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{Village}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true" textAdjust="StretchHeight">
+				<reportElement style="DataRowElement" stretchType="RelativeToTallestObject" x="748" y="0" width="137" height="30" uuid="a703b6a7-2320-485a-ad88-04223c909e28">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="8874f512-853d-4ea6-b64f-28432eb81ec1"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{Age}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true" textAdjust="StretchHeight">
+				<reportElement style="DataRowElement" stretchType="RelativeToTallestObject" x="885" y="0" width="137" height="30" uuid="d5caee35-3b93-48cf-b333-863db13993a8">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="e4f58cf2-cd9d-431c-b294-32e529c75bc5"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{Date of enrolment}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true" textAdjust="StretchHeight">
+				<reportElement style="DataRowElement" stretchType="RelativeToTallestObject" x="1022" y="0" width="137" height="30" uuid="563bdb13-b340-4e31-a338-dfd293b3a59c">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="18c1cbdb-355b-4eb0-8be9-a03816721416"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{Registered in trimester}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true" textAdjust="StretchHeight">
+				<reportElement style="DataRowElement" stretchType="RelativeToTallestObject" x="1159" y="0" width="137" height="30" uuid="0d11e053-b9c0-4a3d-a619-db4746eb54f4">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="a10ba0dc-ba48-488c-b69f-258526b2ddac"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{LMP}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true" textAdjust="StretchHeight">
+				<reportElement style="DataRowElement" stretchType="RelativeToTallestObject" x="1296" y="0" width="137" height="30" uuid="8b53cc36-d345-47cc-801a-63fceae3b428">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="975141c2-a6ad-453a-a9c1-156b4022306b"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{EDD}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true" textAdjust="StretchHeight">
+				<reportElement style="DataRowElement" stretchType="RelativeToTallestObject" x="1433" y="0" width="137" height="30" uuid="413e3220-2b5f-45f4-a3f0-1f1e2e28c9ef">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="19144160-9942-4baa-902e-7dee164cd88e"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{EDD as per USG}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true" textAdjust="StretchHeight">
+				<reportElement style="DataRowElement" stretchType="RelativeToTallestObject" x="1570" y="0" width="137" height="30" uuid="7478ec34-d629-4cce-8e5e-85b22fa12c86">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="e00f3d73-ff73-4c8d-8ec8-b6f584423a78"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{Gravida}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true" textAdjust="StretchHeight">
+				<reportElement style="DataRowElement" stretchType="RelativeToTallestObject" x="1707" y="0" width="137" height="30" uuid="c39d2470-d612-4040-a7b8-d1f15bb34737">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="5dcd6637-51ee-4333-b0be-945694e4822e"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{Result of last delivery}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true" textAdjust="StretchHeight">
+				<reportElement style="DataRowElement" stretchType="RelativeToTallestObject" x="1844" y="0" width="137" height="30" uuid="94362eae-3ca0-4617-82bd-3b97b2cac7e6">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="0fa6b50a-25bc-42d0-9fb1-d3865f60d1fa"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{Previous history of disease}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true" textAdjust="StretchHeight">
+				<reportElement style="DataRowElement" stretchType="RelativeToTallestObject" x="1981" y="0" width="137" height="30" uuid="fffe3896-46a6-4e26-8d4e-70355de16788">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="94ec0092-a4bd-40c5-9336-8309047c2772"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{Height}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true" textAdjust="StretchHeight">
+				<reportElement style="DataRowElement" stretchType="RelativeToTallestObject" x="2118" y="0" width="137" height="30" uuid="68754cae-4678-457c-a65f-34598400cd23">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="1a5b1da0-2177-466c-ab65-8806fad04ed7"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{Weight}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true" textAdjust="StretchHeight">
+				<reportElement style="DataRowElement" stretchType="RelativeToTallestObject" x="2255" y="0" width="137" height="30" uuid="a2e78054-0b74-4124-8279-1e0ce9076b58">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ba26650e-22f0-45c3-9708-26529db7b882"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{BMI}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true" textAdjust="StretchHeight">
+				<reportElement style="DataRowElement" stretchType="RelativeToTallestObject" x="2392" y="0" width="137" height="30" uuid="270826d6-a423-4894-b7e3-cb42765a5f46">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="a6bcee99-e4af-4d28-aacb-e8e9f0631d51"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{MUAC (in cms)}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true" textAdjust="StretchHeight">
+				<reportElement style="DataRowElement" stretchType="RelativeToTallestObject" x="2529" y="0" width="137" height="30" uuid="ab50d7fd-83cb-43fd-b8d4-dc1bebe6ec8d">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="df6594d1-6232-41aa-86e9-d8834cdf88f4"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{B.P - Systolic}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true" textAdjust="StretchHeight">
+				<reportElement style="DataRowElement" stretchType="RelativeToTallestObject" x="2666" y="0" width="137" height="30" uuid="b13a6a67-640f-4bb7-b8bf-9f4707f33ec8">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="1f6799dd-5a57-4384-9893-b3b1ae22bd84"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{B.P - Diastolic}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true" textAdjust="StretchHeight">
+				<reportElement style="DataRowElement" stretchType="RelativeToTallestObject" x="2803" y="0" width="137" height="30" uuid="4ae4e2a3-e5b4-41b9-9a30-3c17d518b2fe">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="3685c497-4b30-4c37-a1cc-e7fafcb88c65"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{H.B}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true" textAdjust="StretchHeight">
+				<reportElement style="DataRowElement" stretchType="RelativeToTallestObject" x="2940" y="0" width="137" height="30" uuid="35846872-9704-49f5-b307-a0205c63e9e7">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ffad47ee-0823-4502-928f-3c50500b990d"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{Sickle cell disease}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true" textAdjust="StretchHeight">
+				<reportElement style="DataRowElement" stretchType="RelativeToTallestObject" x="3077" y="0" width="137" height="30" uuid="3437a4a4-f264-4dd7-a34c-7e2b464ab6fb">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="f57bae40-1d1d-488b-9636-1465096478bc"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{TD 1}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true" textAdjust="StretchHeight">
+				<reportElement style="DataRowElement" stretchType="RelativeToTallestObject" x="3214" y="0" width="137" height="30" uuid="6a3220cb-cf1d-41fc-828c-d470602bd34a">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="fa6386a9-3693-425d-9480-bb89d170d774"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{TD 2}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true" textAdjust="StretchHeight">
+				<reportElement style="DataRowElement" stretchType="RelativeToTallestObject" x="3351" y="0" width="137" height="30" uuid="a9469843-b9fb-421c-b840-6802913d7b2b">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="c3a410cf-ec13-4686-9fc3-e0ce16c61acf"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{TD Booster}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true" textAdjust="StretchHeight">
+				<reportElement style="DataRowElement" stretchType="RelativeToTallestObject" x="3488" y="0" width="137" height="30" uuid="a2eeb2a8-499f-4481-a63c-ed59a74703f6">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="98f9c6ab-d03a-4d1d-9d63-141644c01c55"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{Any risk occurred in current pregnancy}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true" textAdjust="StretchHeight">
+				<reportElement style="DataRowElement" stretchType="RelativeToTallestObject" x="3625" y="0" width="137" height="30" uuid="a2ebe2a8-499f-4481-a63c-ed59a74703f6">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="89f9c6ab-d03a-4d1d-9d63-141644c01c55"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{Complete hospital checkup done}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true" textAdjust="StretchHeight">
+				<reportElement style="DataRowElement" stretchType="RelativeToTallestObject" x="3762" y="0" width="137" height="30" uuid="6770e850-d59a-42a6-af00-f9f92fb09f7f">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="3548bd73-ae06-4792-bc20-d6a9ed575221"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{Calcium tablet consumed}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true" textAdjust="StretchHeight">
+				<reportElement style="DataRowElement" stretchType="RelativeToTallestObject" x="3899" y="0" width="157" height="30" uuid="38cd6133-67a6-4807-9db6-5e3bcdee0053">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="7c7cd1ef-d678-4b4a-a2c5-da224492b710"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{Iron Tablet consumed}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

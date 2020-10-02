@@ -1,0 +1,448 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.13.0.final using JasperReports Library version 6.11.0  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="main" pageWidth="1684" pageHeight="720" orientation="Landscape" columnWidth="1080" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="05cc1aaf-5713-4062-a0f6-7bab099e5fb6">
+	<property name="ireport.jasperserver.url" value="https://reporting-jasper.avniproject.org/jasperserver/"/>
+	<property name="com.jaspersoft.studio.report.description" value=""/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="jnpct_uat"/>
+	<property name="ireport.jasperserver.user" value="hirent"/>
+	<property name="ireport.jasperserver.report.resource" value="/JNPCT/Reports/Aggregates/Newborn_care_files/main_jrxml"/>
+	<property name="ireport.jasperserver.reportUnit" value="/JNPCT/Reports/Aggregates/Newborn_care"/>
+	<template><![CDATA["repo:/Templates/Styles/Linelist.jrtx"]]></template>
+	<parameter name="PARAM_DATE_START" class="java.sql.Timestamp"/>
+	<parameter name="PARAM_DATE_END" class="java.sql.Timestamp"/>
+	<parameter name="PARAM_PHC_NAME" class="java.util.List" nestedType="java.lang.String"/>
+	<parameter name="PARAM_SUBCENTRE_NAME" class="java.util.List" nestedType="java.lang.String"/>
+	<parameter name="PARAM_VILLAGE_NAME" class="java.util.List" nestedType="java.lang.String"/>
+	<parameter name="Exited" class="java.util.List" nestedType="java.lang.String"/>
+	<queryString language="SQL">
+		<![CDATA[select "PHC",
+       live_births,
+       (nb1_severe + nb2_severe + nb3_severe) as severely_underweight,
+       (nb1_male_moderate + nb2_male_moderate + nb3_male_moderate + nb1_female_moderate + nb2_female_moderate + nb3_female_moderate) as moderately_underweight,
+       (nb1_male_normal + nb2_male_normal + nb3_male_normal + nb1_female_normal + nb2_female_normal + nb3_female_normal) as normal,
+       (nb1_gt_or_eq_2_point_5 + nb2_gt_or_eq_2_point_5 + nb3_gt_or_eq_2_point_5) as gt_or_eq_2_point_5,
+       (nb1_between_2_and_2_point_49 + nb2_between_2_and_2_point_49 + nb3_between_2_and_2_point_49) as between_2_and_2_point_5,
+       (nb1_lt_or_eq_1_point_5_gm + nb2_lt_or_eq_1_point_5_gm + nb3_lt_or_eq_1_point_5_gm) as lt_or_eq_1_point_5_gm
+from (select coalesce(a.title, 'Total')                               "PHC",
+       count(*) filter ( where delivery_outcome = 'Live Birth') live_births,
+       count(*) filter ( where "Enc.Weight of Newborn1"::numeric <= 2 ) nb1_severe,
+       count(*) filter ( where "Enc.Weight of Newborn2"::numeric <= 2 ) nb2_severe,
+       count(*) filter ( where "Enc.Weight of Newborn3"::numeric <= 2 ) nb3_severe,
+       count(*) filter ( where "Enc.Gender of Newborn1" = 'Male' and "Enc.Weight of Newborn1"::numeric between 2.1 and 2.4) nb1_male_moderate,
+       count(*) filter ( where "Enc.Gender of Newborn2" = 'Male' and "Enc.Weight of Newborn2"::numeric between 2.1 and 2.4) nb2_male_moderate,
+       count(*) filter ( where "Enc.Gender of Newborn3" = 'Male' and "Enc.Weight of Newborn3"::numeric between 2.1 and 2.4) nb3_male_moderate,
+       count(*) filter ( where "Enc.Gender of Newborn1" = 'Female' and "Enc.Weight of Newborn1"::numeric between 2.1 and 2.3) nb1_female_moderate,
+       count(*) filter ( where "Enc.Gender of Newborn2" = 'Female' and "Enc.Weight of Newborn2"::numeric between 2.1 and 2.3) nb2_female_moderate,
+       count(*) filter ( where "Enc.Gender of Newborn3" = 'Female' and "Enc.Weight of Newborn3"::numeric between 2.1 and 2.3) nb3_female_moderate,
+       count(*) filter ( where "Enc.Gender of Newborn1" = 'Male' and "Enc.Weight of Newborn1"::numeric > 2.4 ) nb1_male_normal,
+       count(*) filter ( where "Enc.Gender of Newborn2" = 'Male' and "Enc.Weight of Newborn2"::numeric > 2.4 ) nb2_male_normal,
+       count(*) filter ( where "Enc.Gender of Newborn3" = 'Male' and "Enc.Weight of Newborn3"::numeric > 2.4 ) nb3_male_normal,
+       count(*) filter ( where "Enc.Gender of Newborn1" = 'Female' and "Enc.Weight of Newborn1"::numeric > 2.3 ) nb1_female_normal,
+       count(*) filter ( where "Enc.Gender of Newborn2" = 'Female' and "Enc.Weight of Newborn2"::numeric > 2.3 ) nb2_female_normal,
+       count(*) filter ( where "Enc.Gender of Newborn3" = 'Female' and "Enc.Weight of Newborn3"::numeric > 2.3 ) nb3_female_normal,
+
+       count(*) filter ( where "Enc.Weight of Newborn1"::numeric >= 2.5 ) nb1_gt_or_eq_2_point_5,
+       count(*) filter ( where "Enc.Weight of Newborn1"::numeric between 2 and 2.49) nb1_between_2_and_2_point_49,
+       count(*) filter ( where "Enc.Weight of Newborn1"::numeric <= 1.5 ) nb1_lt_or_eq_1_point_5_gm,
+
+       count(*) filter ( where "Enc.Weight of Newborn2"::numeric >= 2.5 ) nb2_gt_or_eq_2_point_5,
+       count(*) filter ( where "Enc.Weight of Newborn2"::numeric between 2 and 2.49) nb2_between_2_and_2_point_49,
+       count(*) filter ( where "Enc.Weight of Newborn2"::numeric <= 1.5 ) nb2_lt_or_eq_1_point_5_gm,
+
+       count(*) filter ( where "Enc.Weight of Newborn3"::numeric >= 2.5 ) nb3_gt_or_eq_2_point_5,
+       count(*) filter ( where "Enc.Weight of Newborn3"::numeric between 2 and 2.49) nb3_between_2_and_2_point_49,
+       count(*) filter ( where "Enc.Weight of Newborn3"::numeric <= 1.5 ) nb3_lt_or_eq_1_point_5_gm
+from address_level a
+       left join address_level_type at on at.id = a.type_id
+       left join (select "Enc.Delivery outcome"                                                      delivery_outcome,
+                         "Ind.phc"                                                                   phc,
+                         "Enc.Gender of Newborn1",
+                         "Enc.Gender of Newborn2",
+                         "Enc.Gender of Newborn3",
+                         "Enc.Weight of Newborn1",
+                         "Enc.Weight of Newborn2",
+                         "Enc.Weight of Newborn3",
+                         case when "Enl.program_exit_date_time" is null then 'No'
+                  			else 'Yes' end                                                                     isExited
+                  from jnpct_delivery_view
+                  where 1 = 1
+                  	and $X{IN,"Ind.phc",PARAM_PHC_NAME}
+        			and $X{IN,"Ind.subcenter", PARAM_SUBCENTRE_NAME}
+        			and $X{IN,"Ind.village",PARAM_VILLAGE_NAME}
+        			and $X{BETWEEN,"Enc.Date of delivery",PARAM_DATE_START,PARAM_DATE_END}
+                  ) partitioned_data on phc = a.title and $X{IN,isExited,Exited}
+where at.name = 'Phc'
+  and not a.is_voided
+group by rollup (a.title)) foo;]]>
+	</queryString>
+	<field name="PHC" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="PHC"/>
+	</field>
+	<field name="live_births" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.label" value="live_births"/>
+	</field>
+	<field name="moderately_underweight" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.label" value="moderately_underweight"/>
+	</field>
+	<field name="severely_underweight" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.label" value="severely_underweight"/>
+	</field>
+	<field name="normal" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.label" value="normal"/>
+	</field>
+	<field name="gt_or_eq_2_point_5" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.label" value="gt_or_eq_2_point_5"/>
+	</field>
+	<field name="between_2_and_2_point_5" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.label" value="between_2_and_2_point_5"/>
+	</field>
+	<field name="lt_or_eq_1_point_5_gm" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.label" value="lt_or_eq_1_point_5_gm"/>
+	</field>
+	<variable name="LIVE_BIRTH_DYNAMIC_WHERE" class="java.lang.String">
+		<variableExpression><![CDATA[$F{PHC}.equals("Total") ? "and \"Delivery outcome\" = 'Live Birth'" :
+"and \"PHC\" = '" + $F{PHC} + "' and \"Delivery outcome\" = 'Live Birth'"]]></variableExpression>
+	</variable>
+	<variable name="SEVERE_DYNAMIC_WHERE" class="java.lang.String">
+		<variableExpression><![CDATA[$F{PHC}.equals("Total") ? "and total_severe > 0" :
+"and \"PHC\" = '" + $F{PHC} + "' and total_severe > 0"]]></variableExpression>
+	</variable>
+	<variable name="MODERATE_DYNAMIC_WHERE" class="java.lang.String">
+		<variableExpression><![CDATA[$F{PHC}.equals("Total") ? "and total_moderate > 0" :
+"and \"PHC\" = '" + $F{PHC} + "' and total_moderate > 0"]]></variableExpression>
+	</variable>
+	<variable name="NORMAL_DYNAMIC_WHERE" class="java.lang.String">
+		<variableExpression><![CDATA[$F{PHC}.equals("Total") ? "and total_normal > 0" :
+"and \"PHC\" = '" + $F{PHC} + "' and total_normal > 0"]]></variableExpression>
+	</variable>
+	<variable name="GT_2500_DYNAMIC_WHERE" class="java.lang.String">
+		<variableExpression><![CDATA[$F{PHC}.equals("Total") ? "and gt_or_eq_2_point_5 > 0" :
+"and \"PHC\" = '" + $F{PHC} + "' and gt_or_eq_2_point_5 > 0"]]></variableExpression>
+	</variable>
+	<variable name="LT_2500_DYNAMIC_WHERE" class="java.lang.String">
+		<variableExpression><![CDATA[$F{PHC}.equals("Total") ? "and between_2_and_2_point_5 > 0" :
+"and \"PHC\" = '" + $F{PHC} + "' and between_2_and_2_point_5 > 0"]]></variableExpression>
+	</variable>
+	<variable name="LT_1500_DYNAMIC_WHERE" class="java.lang.String">
+		<variableExpression><![CDATA[$F{PHC}.equals("Total") ? "and lt_or_eq_1_point_5_gm > 0" :
+"and \"PHC\" = '" + $F{PHC} + "' and lt_or_eq_1_point_5_gm > 0"]]></variableExpression>
+	</variable>
+	<background>
+		<band height="100" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+		</band>
+	</background>
+	<title>
+		<band height="50" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<staticText>
+				<reportElement style="ReportTitle" x="0" y="0" width="1520" height="50" uuid="ccc013a8-2e32-4c97-acca-cfac4c04bef7"/>
+				<box>
+					<pen lineColor="#000000"/>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<text><![CDATA[Newborn care]]></text>
+			</staticText>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="60" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.FreeLayout"/>
+			<staticText>
+				<reportElement style="ColumnHeader" x="0" y="0" width="130" height="60" uuid="caf7e9ed-7acf-4f28-8785-5a0032d939e4">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="cefb0517-dc4e-4f0b-91db-4375b281e694"/>
+				</reportElement>
+				<text><![CDATA[PHC]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="130" y="0" width="160" height="60" uuid="ef21797c-76ce-4156-b6eb-e4156e1c7a13">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="5e577134-5223-4ad3-ada9-721ed429e174"/>
+				</reportElement>
+				<text><![CDATA[Total Live Birth]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="290" y="0" width="615" height="30" uuid="dd71ed66-0f34-44f3-88c2-516c30316180">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="8f4b2103-f9de-4593-b0e3-8a3a23acd604"/>
+				</reportElement>
+				<text><![CDATA[Grade according to WHO growth chart of birth weight]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="495" y="30" width="205" height="30" uuid="5d1f30c1-61cc-46ce-8205-6171d89b001e">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="58b8a779-9bbc-4058-b96b-51be6e100d4d"/>
+				</reportElement>
+				<text><![CDATA[Moderately underweight]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="700" y="30" width="205" height="30" uuid="a580d76c-24a5-4d1d-8f60-dce362f0870d">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="79c9f5cd-26f9-49bf-887c-07ce5605ac26"/>
+				</reportElement>
+				<text><![CDATA[Normal]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="905" y="0" width="205" height="60" uuid="8228a8b1-bd2a-4fa4-8363-c5439b00b8f3">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ccfcf6e1-9580-4ca4-acd4-1be69e37e565"/>
+				</reportElement>
+				<text><![CDATA[Newborn with ≥2500gm birth weight ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="1110" y="0" width="205" height="60" uuid="8f10bf84-5177-4e5f-81e4-d93f6d6227a6">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="c22cbe7d-daa2-48d7-9da2-ced23e9c7832"/>
+				</reportElement>
+				<text><![CDATA[Newborn with 2001gm -2499gm birth weight ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="1315" y="0" width="205" height="60" uuid="f6543dcf-6ed7-49b2-bb15-f12d611fa120">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="5bea8f57-b2aa-4c7c-8f24-781b95c877cf"/>
+				</reportElement>
+				<text><![CDATA[Newborn with ≤1500gm birth weight ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="290" y="30" width="205" height="30" uuid="b84cd9ce-6074-43ca-889e-f053c5dc3715">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="8f4b2103-f9de-4593-b0e3-8a3a23acd604"/>
+				</reportElement>
+				<text><![CDATA[Severely underweight]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="30" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.spreadsheet.SpreadsheetLayout"/>
+			<textField textAdjust="StretchHeight">
+				<reportElement style="DataRowElement" stretchType="RelativeToTallestObject" x="0" y="0" width="130" height="30" uuid="4f0944dc-1bdf-4ecd-9b9f-2bce09520e41">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="cefb0517-dc4e-4f0b-91db-4375b281e694"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{PHC}]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight" hyperlinkType="ReportExecution">
+				<reportElement style="DataRowElement" stretchType="RelativeToTallestObject" x="130" y="0" width="160" height="30" uuid="fcc7c0be-e9fd-4b14-a954-f51c155e4825">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="5e577134-5223-4ad3-ada9-721ed429e174"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{live_births}]]></textFieldExpression>
+				<hyperlinkWhenExpression><![CDATA[$F{live_births} > 0]]></hyperlinkWhenExpression>
+				<hyperlinkTooltipExpression><![CDATA["Click for the line list"]]></hyperlinkTooltipExpression>
+				<hyperlinkParameter name="_report">
+					<hyperlinkParameterExpression><![CDATA["/JNPCT/Reports/Linelists/Linelist_for_Newborn_care"]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DATE_START">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_START}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DATE_END">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_END}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_PHC_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_PHC_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_SUBCENTRE_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_SUBCENTRE_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_VILLAGE_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_VILLAGE_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="Exited">
+					<hyperlinkParameterExpression><![CDATA[$P{Exited}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DYNAMIC_WHERE">
+					<hyperlinkParameterExpression><![CDATA[$V{LIVE_BIRTH_DYNAMIC_WHERE}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+			</textField>
+			<textField textAdjust="StretchHeight" hyperlinkType="ReportExecution">
+				<reportElement style="DataRowElement" stretchType="RelativeToTallestObject" x="290" y="0" width="205" height="30" uuid="bb72cfe8-7f26-41c3-aeb8-72d59e7e6630">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="8f4b2103-f9de-4593-b0e3-8a3a23acd604"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{severely_underweight}]]></textFieldExpression>
+				<hyperlinkWhenExpression><![CDATA[$F{severely_underweight} > 0]]></hyperlinkWhenExpression>
+				<hyperlinkTooltipExpression><![CDATA["Click for the line list"]]></hyperlinkTooltipExpression>
+				<hyperlinkParameter name="_report">
+					<hyperlinkParameterExpression><![CDATA["/JNPCT/Reports/Linelists/Linelist_for_Newborn_care"]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DATE_START">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_START}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DATE_END">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_END}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_PHC_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_PHC_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_SUBCENTRE_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_SUBCENTRE_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_VILLAGE_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_VILLAGE_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="Exited">
+					<hyperlinkParameterExpression><![CDATA[$P{Exited}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DYNAMIC_WHERE">
+					<hyperlinkParameterExpression><![CDATA[$V{SEVERE_DYNAMIC_WHERE}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+			</textField>
+			<textField textAdjust="StretchHeight" hyperlinkType="ReportExecution">
+				<reportElement style="DataRowElement" stretchType="RelativeToTallestObject" x="495" y="0" width="205" height="30" uuid="3afe6cee-93ad-4a2f-9cb9-a37142458f4c">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="58b8a779-9bbc-4058-b96b-51be6e100d4d"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{moderately_underweight}]]></textFieldExpression>
+				<hyperlinkWhenExpression><![CDATA[$F{moderately_underweight} > 0]]></hyperlinkWhenExpression>
+				<hyperlinkTooltipExpression><![CDATA["Click for the line list"]]></hyperlinkTooltipExpression>
+				<hyperlinkParameter name="_report">
+					<hyperlinkParameterExpression><![CDATA["/JNPCT/Reports/Linelists/Linelist_for_Newborn_care"]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DATE_START">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_START}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DATE_END">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_END}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_PHC_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_PHC_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_SUBCENTRE_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_SUBCENTRE_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_VILLAGE_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_VILLAGE_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="Exited">
+					<hyperlinkParameterExpression><![CDATA[$P{Exited}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DYNAMIC_WHERE">
+					<hyperlinkParameterExpression><![CDATA[$V{MODERATE_DYNAMIC_WHERE}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+			</textField>
+			<textField textAdjust="StretchHeight" hyperlinkType="ReportExecution">
+				<reportElement style="DataRowElement" stretchType="RelativeToTallestObject" x="700" y="0" width="205" height="30" uuid="8dc5b18a-b1e5-43e7-a58e-894b74ab1c2c">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="79c9f5cd-26f9-49bf-887c-07ce5605ac26"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{normal}]]></textFieldExpression>
+				<hyperlinkWhenExpression><![CDATA[$F{normal} > 0]]></hyperlinkWhenExpression>
+				<hyperlinkTooltipExpression><![CDATA["Click for the line list"]]></hyperlinkTooltipExpression>
+				<hyperlinkParameter name="_report">
+					<hyperlinkParameterExpression><![CDATA["/JNPCT/Reports/Linelists/Linelist_for_Newborn_care"]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DATE_START">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_START}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DATE_END">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_END}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_PHC_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_PHC_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_SUBCENTRE_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_SUBCENTRE_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_VILLAGE_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_VILLAGE_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="Exited">
+					<hyperlinkParameterExpression><![CDATA[$P{Exited}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DYNAMIC_WHERE">
+					<hyperlinkParameterExpression><![CDATA[$V{NORMAL_DYNAMIC_WHERE}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+			</textField>
+			<textField textAdjust="StretchHeight" hyperlinkType="ReportExecution">
+				<reportElement style="DataRowElement" stretchType="RelativeToTallestObject" x="905" y="0" width="205" height="30" uuid="841a9bd6-2423-4c89-8222-3bd331d98cd7">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ccfcf6e1-9580-4ca4-acd4-1be69e37e565"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{gt_or_eq_2_point_5}]]></textFieldExpression>
+				<hyperlinkWhenExpression><![CDATA[$F{gt_or_eq_2_point_5} > 0]]></hyperlinkWhenExpression>
+				<hyperlinkTooltipExpression><![CDATA["Click for the line list"]]></hyperlinkTooltipExpression>
+				<hyperlinkParameter name="_report">
+					<hyperlinkParameterExpression><![CDATA["/JNPCT/Reports/Linelists/Linelist_for_Newborn_care"]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DATE_START">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_START}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DATE_END">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_END}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_PHC_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_PHC_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_SUBCENTRE_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_SUBCENTRE_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_VILLAGE_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_VILLAGE_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="Exited">
+					<hyperlinkParameterExpression><![CDATA[$P{Exited}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DYNAMIC_WHERE">
+					<hyperlinkParameterExpression><![CDATA[$V{GT_2500_DYNAMIC_WHERE}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+			</textField>
+			<textField textAdjust="StretchHeight" hyperlinkType="ReportExecution">
+				<reportElement style="DataRowElement" stretchType="RelativeToTallestObject" x="1110" y="0" width="205" height="30" uuid="4f686c7e-d00b-4a44-bb3b-b7289f00bd04">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="c22cbe7d-daa2-48d7-9da2-ced23e9c7832"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{between_2_and_2_point_5}]]></textFieldExpression>
+				<hyperlinkWhenExpression><![CDATA[$F{between_2_and_2_point_5} > 0]]></hyperlinkWhenExpression>
+				<hyperlinkTooltipExpression><![CDATA["Click for the line list"]]></hyperlinkTooltipExpression>
+				<hyperlinkParameter name="_report">
+					<hyperlinkParameterExpression><![CDATA["/JNPCT/Reports/Linelists/Linelist_for_Newborn_care"]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DATE_START">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_START}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DATE_END">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_END}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_PHC_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_PHC_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_SUBCENTRE_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_SUBCENTRE_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_VILLAGE_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_VILLAGE_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="Exited">
+					<hyperlinkParameterExpression><![CDATA[$P{Exited}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DYNAMIC_WHERE">
+					<hyperlinkParameterExpression><![CDATA[$V{LT_2500_DYNAMIC_WHERE}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+			</textField>
+			<textField textAdjust="StretchHeight" hyperlinkType="ReportExecution">
+				<reportElement style="DataRowElement" stretchType="RelativeToTallestObject" x="1315" y="0" width="205" height="30" uuid="b129c348-b90c-4a68-9c53-6ba46b245b6b">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="5bea8f57-b2aa-4c7c-8f24-781b95c877cf"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{lt_or_eq_1_point_5_gm}]]></textFieldExpression>
+				<hyperlinkWhenExpression><![CDATA[$F{lt_or_eq_1_point_5_gm} > 0]]></hyperlinkWhenExpression>
+				<hyperlinkTooltipExpression><![CDATA["Click for the line list"]]></hyperlinkTooltipExpression>
+				<hyperlinkParameter name="_report">
+					<hyperlinkParameterExpression><![CDATA["/JNPCT/Reports/Linelists/Linelist_for_Newborn_care"]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DATE_START">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_START}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DATE_END">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_END}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_PHC_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_PHC_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_SUBCENTRE_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_SUBCENTRE_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_VILLAGE_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_VILLAGE_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="Exited">
+					<hyperlinkParameterExpression><![CDATA[$P{Exited}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DYNAMIC_WHERE">
+					<hyperlinkParameterExpression><![CDATA[$V{LT_1500_DYNAMIC_WHERE}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

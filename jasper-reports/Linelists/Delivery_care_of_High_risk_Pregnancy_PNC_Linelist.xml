@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<reportUnit exportedWithPermissions="true">
+    <folder>/JNPCT/Reports/Linelists</folder>
+    <name>Delivery_care_of_High_risk_Pregnancy_PNC_Linelist</name>
+    <version>10</version>
+    <label>Delivery care of High risk Pregnancy PNC Linelist</label>
+    <description></description>
+    <creationDate>2020-09-16T15:37:32.404+05:30</creationDate>
+    <updateDate>2020-09-29T12:32:19.443+05:30</updateDate>
+    <mainReport>
+        <localResource
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            exportedWithPermissions="false" dataFile="main_jrxml.data" xsi:type="fileResource">
+            <folder>/JNPCT/Reports/Linelists/Delivery_care_of_High_risk_Pregnancy_PNC_Linelist_files</folder>
+            <name>main_jrxml</name>
+            <version>1</version>
+            <label>Main jrxml</label>
+            <creationDate>2020-09-16T15:37:32.404+05:30</creationDate>
+            <updateDate>2020-08-20T09:18:31.042+05:30</updateDate>
+            <fileType>jrxml</fileType>
+        </localResource>
+    </mainReport>
+    <dataSource>
+        <uri>/JNPCT/Data_Sources/jnpct</uri>
+    </dataSource>
+    <inputControl>
+        <uri>/JNPCT/Input_Controls/PARAM_DATE_START</uri>
+    </inputControl>
+    <inputControl>
+        <uri>/JNPCT/Input_Controls/PARAM_DATE_END</uri>
+    </inputControl>
+    <inputControl>
+        <uri>/JNPCT/Input_Controls/PARAM_PHC_NAME</uri>
+    </inputControl>
+    <inputControl>
+        <uri>/JNPCT/Input_Controls/PARAM_SUBCENTRE_NAME</uri>
+    </inputControl>
+    <inputControl>
+        <uri>/JNPCT/Input_Controls/PARAM_VILLAGE_NAME</uri>
+    </inputControl>
+    <inputControl>
+        <uri>/JNPCT/Input_Controls/Exited</uri>
+    </inputControl>
+    <inputControl>
+        <localResource
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            exportedWithPermissions="false" xsi:type="inputControl">
+            <folder>/JNPCT/Reports/Linelists/Delivery_care_of_High_risk_Pregnancy_PNC_Linelist_files</folder>
+            <name>PARAM_DYNAMIC_WHERE</name>
+            <version>2</version>
+            <label>PARAM_DYNAMIC_WHERE</label>
+            <description></description>
+            <creationDate>2020-09-16T15:37:32.404+05:30</creationDate>
+            <updateDate>2020-08-20T09:18:32.279+05:30</updateDate>
+            <type>2</type>
+            <mandatory>false</mandatory>
+            <readOnly>false</readOnly>
+            <visible>false</visible>
+            <dataType>
+                <localResource exportedWithPermissions="false" xsi:type="dataType">
+                    <folder>/JNPCT/Reports/Linelists/Delivery_care_of_High_risk_Pregnancy_PNC_Linelist_files/PARAM_DYNAMIC_WHERE_files</folder>
+                    <name>myDatatype</name>
+                    <version>0</version>
+                    <label>myDatatype</label>
+                    <description></description>
+                    <creationDate>2020-09-16T15:37:32.404+05:30</creationDate>
+                    <updateDate>2020-08-20T09:18:32.279+05:30</updateDate>
+                    <type>1</type>
+                    <regularExpr></regularExpr>
+                    <strictMin>false</strictMin>
+                    <strictMax>false</strictMax>
+                </localResource>
+            </dataType>
+        </localResource>
+    </inputControl>
+    <resource>
+        <localResource
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            exportedWithPermissions="false"
+            dataFile="Linelist.jrtx.data" xsi:type="fileResource">
+            <folder>/JNPCT/Reports/Linelists/Delivery_care_of_High_risk_Pregnancy_PNC_Linelist_files</folder>
+            <name>Linelist.jrtx</name>
+            <version>1</version>
+            <label>Linelist.jrtx</label>
+            <creationDate>2020-09-16T15:37:32.404+05:30</creationDate>
+            <updateDate>2020-08-17T12:00:55.845+05:30</updateDate>
+            <fileType>jrtx</fileType>
+        </localResource>
+    </resource>
+    <inputControlRenderingView></inputControlRenderingView>
+    <alwaysPromptControls>false</alwaysPromptControls>
+    <controlsLayout>4</controlsLayout>
+</reportUnit>

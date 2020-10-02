@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<reportUnit exportedWithPermissions="true">
+    <folder>/JNPCT/Reports/Aggregates</folder>
+    <name>Growth_Monitoring_nutritional_status</name>
+    <version>19</version>
+    <label>Growth Monitoring(nutritional status)</label>
+    <description></description>
+    <creationDate>2020-08-21T17:22:19.365+05:30</creationDate>
+    <updateDate>2020-09-29T12:21:48.464+05:30</updateDate>
+    <mainReport>
+        <localResource
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            exportedWithPermissions="false" dataFile="main_jrxml.data" xsi:type="fileResource">
+            <folder>/JNPCT/Reports/Aggregates/Growth_Monitoring_nutritional_status_files</folder>
+            <name>main_jrxml</name>
+            <version>34</version>
+            <label>Main jrxml</label>
+            <creationDate>2020-08-21T17:22:19.365+05:30</creationDate>
+            <updateDate>2020-08-28T13:27:11.363+05:30</updateDate>
+            <fileType>jrxml</fileType>
+        </localResource>
+    </mainReport>
+    <dataSource>
+        <uri>/JNPCT/Data_Sources/jnpct</uri>
+    </dataSource>
+    <inputControl>
+        <uri>/JNPCT/Input_Controls/PARAM_DATE_START</uri>
+    </inputControl>
+    <inputControl>
+        <uri>/JNPCT/Input_Controls/PARAM_DATE_END</uri>
+    </inputControl>
+    <inputControl>
+        <uri>/JNPCT/Input_Controls/PARAM_PHC_NAME</uri>
+    </inputControl>
+    <inputControl>
+        <uri>/JNPCT/Input_Controls/PARAM_SUBCENTRE_NAME</uri>
+    </inputControl>
+    <inputControl>
+        <uri>/JNPCT/Input_Controls/PARAM_VILLAGE_NAME</uri>
+    </inputControl>
+    <inputControl>
+        <uri>/JNPCT/Input_Controls/Exited</uri>
+    </inputControl>
+    <resource>
+        <localResource
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            exportedWithPermissions="false"
+            dataFile="AggregateReportStyles.jrtx.data" xsi:type="fileResource">
+            <folder>/JNPCT/Reports/Aggregates/Growth_Monitoring_nutritional_status_files</folder>
+            <name>AggregateReportStyles.jrtx</name>
+            <version>17</version>
+            <label>AggregateReportStyles.jrtx</label>
+            <creationDate>2020-08-21T17:22:19.365+05:30</creationDate>
+            <updateDate>2020-08-21T17:22:19.365+05:30</updateDate>
+            <fileType>jrtx</fileType>
+        </localResource>
+    </resource>
+    <inputControlRenderingView></inputControlRenderingView>
+    <alwaysPromptControls>false</alwaysPromptControls>
+    <controlsLayout>4</controlsLayout>
+</reportUnit>

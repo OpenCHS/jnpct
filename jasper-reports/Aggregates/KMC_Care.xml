@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<reportUnit exportedWithPermissions="true">
+    <folder>/JNPCT/Reports/Aggregates</folder>
+    <name>KMC_Care</name>
+    <version>37</version>
+    <label>KMC Care</label>
+    <description></description>
+    <creationDate>2020-08-21T14:13:02.505+05:30</creationDate>
+    <updateDate>2020-09-29T12:22:23.710+05:30</updateDate>
+    <mainReport>
+        <localResource
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            exportedWithPermissions="false" dataFile="main_jrxml.data" xsi:type="fileResource">
+            <folder>/JNPCT/Reports/Aggregates/KMC_Care_files</folder>
+            <name>main_jrxml</name>
+            <version>1</version>
+            <label>Main jrxml</label>
+            <creationDate>2020-09-04T18:08:40.639+05:30</creationDate>
+            <updateDate>2020-09-04T18:08:40.639+05:30</updateDate>
+            <fileType>jrxml</fileType>
+        </localResource>
+    </mainReport>
+    <dataSource>
+        <uri>/JNPCT/Data_Sources/jnpct</uri>
+    </dataSource>
+    <inputControl>
+        <uri>/JNPCT/Input_Controls/PARAM_MANDATORY_START_DATE</uri>
+    </inputControl>
+    <inputControl>
+        <uri>/JNPCT/Input_Controls/PARAM_MANDATORY_DATE_END</uri>
+    </inputControl>
+    <inputControl>
+        <uri>/JNPCT/Input_Controls/PARAM_PHC_NAME</uri>
+    </inputControl>
+    <inputControl>
+        <uri>/JNPCT/Input_Controls/PARAM_SUBCENTRE_NAME</uri>
+    </inputControl>
+    <inputControl>
+        <uri>/JNPCT/Input_Controls/PARAM_VILLAGE_NAME</uri>
+    </inputControl>
+    <inputControl>
+        <uri>/JNPCT/Input_Controls/Exited</uri>
+    </inputControl>
+    <resource>
+        <localResource
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            exportedWithPermissions="false"
+            dataFile="AggregateReportStyles.jrtx.data" xsi:type="fileResource">
+            <folder>/JNPCT/Reports/Aggregates/KMC_Care_files</folder>
+            <name>AggregateReportStyles.jrtx</name>
+            <version>11</version>
+            <label>AggregateReportStyles.jrtx</label>
+            <creationDate>2020-09-04T13:40:35.599+05:30</creationDate>
+            <updateDate>2020-09-04T13:40:35.599+05:30</updateDate>
+            <fileType>jrtx</fileType>
+        </localResource>
+    </resource>
+    <resource>
+        <localResource
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            exportedWithPermissions="false"
+            dataFile="Linelist.jrtx.data" xsi:type="fileResource">
+            <folder>/JNPCT/Reports/Aggregates/KMC_Care_files</folder>
+            <name>Linelist.jrtx</name>
+            <version>32</version>
+            <label>Linelist.jrtx</label>
+            <creationDate>2020-08-21T14:13:02.505+05:30</creationDate>
+            <updateDate>2020-08-21T14:13:02.505+05:30</updateDate>
+            <fileType>jrtx</fileType>
+        </localResource>
+    </resource>
+    <inputControlRenderingView></inputControlRenderingView>
+    <alwaysPromptControls>false</alwaysPromptControls>
+    <controlsLayout>4</controlsLayout>
+</reportUnit>

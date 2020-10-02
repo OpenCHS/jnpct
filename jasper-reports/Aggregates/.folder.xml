@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<folder exportedWithPermissions="true">
+    <parent>/JNPCT/Reports</parent>
+    <name>Aggregates</name>
+    <label>Aggregates</label>
+    <description></description>
+    <creationDate>2020-07-16T15:15:23.677+05:30</creationDate>
+    <updateDate>2020-07-16T15:15:23.677+05:30</updateDate>
+    <resource>Child___Morbidity_Status_Within_0_59_Days</resource>
+    <resource>Child_and_Maternal_Death</resource>
+    <resource>Child_growth_monitoring</resource>
+    <resource>Child_growth_monitoring_7_month_to_5_year_</resource>
+    <resource>Child_PNC___Not_Visited_Within_60_Days_of_Birth</resource>
+    <resource>Current_ANC___Actionable</resource>
+    <resource>Delivered_Women___Achievement</resource>
+    <resource>Delivery_care</resource>
+    <resource>Delivery_care_of_High_risk_Pregnancy</resource>
+    <resource>Expectant_Mothers_with_no_of_risk</resource>
+    <resource>Growth_Monitoring_nutritional_status</resource>
+    <resource>High_Risk_Delivery_Care</resource>
+    <resource>KMC_Care</resource>
+    <resource>Newborn_care</resource>
+    <resource>Registration_of_pregnant_women</resource>
+    <resource>Status_of_anemia_among_registered_ANC__and_PNC</resource>
+    <resource>Task_generated_and_task_completed</resource>
+</folder>

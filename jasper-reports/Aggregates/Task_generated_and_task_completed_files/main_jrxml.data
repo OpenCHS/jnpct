@@ -1,0 +1,1472 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.12.2.final using JasperReports Library version 6.11.0  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Task generated and task completed" pageWidth="1684" pageHeight="720" orientation="Landscape" columnWidth="1080" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="05cc1aaf-5713-4062-a0f6-7bab099e5fb6">
+	<property name="ireport.jasperserver.url" value="https://reporting-jasper.avniproject.org/jasperserver/"/>
+	<property name="com.jaspersoft.studio.report.description" value=""/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="prod DB"/>
+	<property name="ireport.jasperserver.user" value="sachink"/>
+	<property name="ireport.jasperserver.report.resource" value="/JNPCT/Reports/Aggregates/Task_generated_and_task_completed_files/main_jrxml"/>
+	<property name="ireport.jasperserver.reportUnit" value="/JNPCT/Reports/Aggregates/Task_generated_and_task_completed"/>
+	<template><![CDATA["repo:Linelist.jrtx"]]></template>
+	<style name="Table_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<leftPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+			<rightPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="Table_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<leftPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+			<rightPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="Table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<leftPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+			<rightPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="Table 1_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<leftPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+			<rightPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="Table 1_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<leftPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+			<rightPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="Table 1_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<leftPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+			<rightPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="Table 2_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<leftPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+			<rightPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="Table 2_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<leftPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+			<rightPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="Table 2_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<leftPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+			<rightPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<subDataset name="anc_pnc" uuid="b1bbe7b5-6122-4191-bf51-93b59654859a">
+		<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="prod DB"/>
+		<parameter name="PARAM_DATE_START" class="java.sql.Timestamp"/>
+		<parameter name="PARAM_DATE_END" class="java.sql.Timestamp"/>
+		<parameter name="PARAM_PHC_NAME" class="java.util.List" nestedType="java.lang.String"/>
+		<parameter name="PARAM_SUBCENTRE_NAME" class="java.util.List" nestedType="java.lang.String"/>
+		<parameter name="PARAM_VILLAGE_NAME" class="java.util.List" nestedType="java.lang.String"/>
+		<parameter name="Exited" class="java.util.List" nestedType="java.lang.String"/>
+		<queryString language="SQL">
+			<![CDATA[with merged_data as (
+    select enl.id                                                                                      enl_id,
+           enl.individual_id                                                                           individual_id,
+           enl.enrolment_date_time                                                                     enrolment_date_time,
+           enl.program_exit_date_time                                                                  program_exit_date_time,
+            case when enl.program_exit_date_time is null then 'No' else 'Yes' end exit_status,
+                      enc.earliest_visit_date_time                                                                earliest_date,
+           
+           row_number()
+           OVER (PARTITION BY enl.id ORDER BY coalesce(encounter_date_time, enrolment_date_time) desc) visit_number,
+           enc.id                                                                                      enc_id,
+           enc.encounter_date_time                                                                     enc_date,
+           et.name                                                                                     enc_name,
+           ind.first_name                                                                              fname,
+            (EXTRACT(year FROM age(ind.date_of_birth)) * 12 +
+            EXTRACT(month FROM age(ind.date_of_birth)))      age_in_months,
+           enc.observations                                                                            all_obs
+
+    from program_enrolment enl
+             left join program_encounter enc on enl.id = enc.program_enrolment_id
+             left join individual ind on ind.id = enl.individual_id
+             left join encounter_type et on enc.encounter_type_id = et.id and et.name in
+                                                                              ('ANC',
+                                                                               'PNC',
+                                                                               'ANC Cluster Incharge')
+             join program p on enl.program_id = p.id
+
+    where p.name = 'Pregnancy'
+),
+    filtered_data as (
+
+        select enc_id,
+               enl_id,
+               enc_name,
+               phc.title phc,
+               enc_date,
+               earliest_date
+
+
+        from merged_data data
+                 LEFT JOIN individual individual ON data.individual_id = individual.id
+                 LEFT JOIN gender g ON g.id = individual.gender_id
+                 LEFT JOIN address_level village ON individual.address_id = village.id
+                 LEFT JOIN address_level subcenter ON village.parent_id = subcenter.id
+                 LEFT JOIN address_level phc ON subcenter.parent_id = phc.id
+                 LEFT JOIN address_level block ON phc.parent_id = block.id
+                 
+                 where $X{IN,phc.title,PARAM_PHC_NAME}
+           and $X{IN,subcenter.title,PARAM_SUBCENTRE_NAME}
+            and $X{IN,village.title,PARAM_VILLAGE_NAME}
+            and $X{BETWEEN,earliest_date,PARAM_DATE_START, PARAM_DATE_END}
+              and $X{IN,exit_status,Exited}
+     )
+     
+select coalesce(phc, 'Total')                                                       "PHC",
+       count(distinct enc_id) filter ( where enc_name = 'ANC Cluster Incharge' ) +
+       count(distinct enc_id) filter ( where enc_name = 'ANC' )                     anc,
+       count(distinct enc_complete_id) filter ( where enc_date notnull and enc_name = 'ANC Cluster Incharge' ) +
+       count(distinct enc_complete_id) filter ( where enc_date notnull and enc_name = 'ANC') anc_completed,
+       count(distinct enc_id) filter ( where enc_name = 'PNC' )                     pnc,
+       count(distinct enc_complete_id) filter ( where enc_date notnull and enc_name = 'PNC') pnc_completed
+
+from (
+        select data.enc_id,data.enc_name,data.phc,fdata.enc_id enc_complete_id,data.enc_date
+               from filtered_data data left outer join filtered_data fdata on fdata.enc_id=data.enc_id
+     ) partitioned_data
+group by rollup (phc)
+order by phc
+;]]>
+		</queryString>
+		<field name="PHC" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.label" value="PHC"/>
+		</field>
+		<field name="anc" class="java.lang.Long">
+			<property name="com.jaspersoft.studio.field.label" value="anc"/>
+		</field>
+		<field name="anc_completed" class="java.lang.Long">
+			<property name="com.jaspersoft.studio.field.label" value="anc_completed"/>
+		</field>
+		<field name="pnc" class="java.lang.Long">
+			<property name="com.jaspersoft.studio.field.label" value="pnc"/>
+		</field>
+		<field name="pnc_completed" class="java.lang.Long">
+			<property name="com.jaspersoft.studio.field.label" value="pnc_completed"/>
+		</field>
+		<variable name="ANC" class="java.lang.String">
+			<variableExpression><![CDATA[$F{PHC}.equals("Total") ? " enc_name in ('ANC Cluster Incharge','ANC')" :
+" phc = '" + $F{PHC} + "' and enc_name in ('ANC Cluster Incharge','ANC')"]]></variableExpression>
+		</variable>
+		<variable name="ANC_COMPLETE" class="java.lang.String">
+			<variableExpression><![CDATA[$F{PHC}.equals("Total") ? " enc_name in ('ANC Cluster Incharge','ANC') and enc_date notnull" :
+"phc = '" + $F{PHC} + "' and enc_name in ('ANC Cluster Incharge','ANC') and enc_date notnull"]]></variableExpression>
+		</variable>
+		<variable name="PNC" class="java.lang.String">
+			<variableExpression><![CDATA[$F{PHC}.equals("Total") ? " enc_name='PNC' " :
+"phc = '" + $F{PHC} + "' and enc_name ='PNC'"]]></variableExpression>
+		</variable>
+		<variable name="PNC_COMPLETE" class="java.lang.String">
+			<variableExpression><![CDATA[$F{PHC}.equals("Total") ? " enc_name='PNC' and enc_date notnull " :
+"phc = '" + $F{PHC} + "' and enc_name ='PNC' and enc_date notnull"]]></variableExpression>
+		</variable>
+	</subDataset>
+	<subDataset name="child" uuid="59b2fa5f-ec43-414d-9fa5-d41cb41b43a4">
+		<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="prod DB"/>
+		<parameter name="PARAM_DATE_START" class="java.sql.Timestamp"/>
+		<parameter name="PARAM_DATE_END" class="java.sql.Timestamp"/>
+		<parameter name="PARAM_PHC_NAME" class="java.util.List" nestedType="java.lang.String"/>
+		<parameter name="PARAM_SUBCENTRE_NAME" class="java.util.List" nestedType="java.lang.String"/>
+		<parameter name="PARAM_VILLAGE_NAME" class="java.util.List" nestedType="java.lang.String"/>
+		<parameter name="Exited" class="java.util.List" nestedType="java.lang.String"/>
+		<queryString language="SQL">
+			<![CDATA[with merged_child_obs as (select enl.id                                                                                      enl_id,
+                                 enl.individual_id                                                                           individual_id,
+                                 enl.enrolment_date_time                                                                     enrolment_date_time,
+                                  case when  enl.program_exit_date_time  is null then 'No' else 'Yes' end exit_status,
+                                 enl.program_exit_date_time                                                                  program_exit_date_time,
+                                 row_number()
+                                 OVER (PARTITION BY enl.id ORDER BY coalesce(encounter_date_time, enrolment_date_time) desc) visit_number,
+                                 enc.id                                                                                      enc_id,
+                                 enc.encounter_date_time                                                                     enc_date,
+                                 enc.earliest_visit_date_time                                                                enc_earliest_date,
+                                 et.name                                                                                     prog_name,
+                                 ind.first_name                                                                              fname,
+                                  (EXTRACT(year FROM age(ind.date_of_birth)) * 12 +
+            EXTRACT(month FROM age(ind.date_of_birth)))      age_in_months,
+                                 enc.observations                                                                            all_obs
+
+                          from program_enrolment enl
+                                   left join program_encounter enc on enl.id = enc.program_enrolment_id
+                                   left join individual ind on ind.id = enl.individual_id
+                                   left join encounter_type et on enc.encounter_type_id = et.id and et.name in
+                                                                                                    ('Birth Form',
+                                                                                                     'Child PNC',
+                                                                                                     'Child PNC Cluster Incharge',
+                                                                                                     'Child Followup',
+                                                                                                     'Child Followup Cluster Incharge')
+                                   join program p on enl.program_id = p.id
+
+                          where p.name = 'Child')
+        ,
+     filtered_data_nutritional_status as (
+         select age_in_months,
+                all_obs ->> '3fb85722-fd53-43db-9e8b-d34767af9f7e'::text as       nutritional_status,
+                all_obs ->> '68a6a336-4a91-468b-9b7d-ff37e637f5b7'::text as       child_status,
+
+                phc.title                                                as       phc,
+                visit_number,
+                LAG(all_obs ->> '3fb85722-fd53-43db-9e8b-d34767af9f7e'::text, 1) OVER (
+                    PARTITION BY enl_id ORDER BY enc_date asc
+                    )                                                             previous_nutritional_status,
+                child.enc_id,
+                child.enl_id,
+                prog_name,
+                fname,
+                enc_date,
+                enc_earliest_date
+
+         from merged_child_obs child
+                  LEFT JOIN individual individual ON child.individual_id = individual.id
+                  LEFT JOIN gender g ON g.id = individual.gender_id
+                  LEFT JOIN address_level village ON individual.address_id = village.id
+                  LEFT JOIN address_level subcenter ON village.parent_id = subcenter.id
+                  LEFT JOIN address_level phc ON subcenter.parent_id = phc.id
+                  LEFT JOIN address_level block ON phc.parent_id = block.id
+         where age_in_months between 7 and 60
+            and $X{IN,phc.title,PARAM_PHC_NAME}
+           and $X{IN,subcenter.title,PARAM_SUBCENTRE_NAME}
+            and $X{IN,village.title,PARAM_VILLAGE_NAME}
+            and $X{BETWEEN,enc_earliest_date,PARAM_DATE_START, PARAM_DATE_END}
+              and $X{IN,exit_status,Exited}
+     )
+select
+       coalesce(phc, 'Total')                                                                    "PHC",
+count(distinct f_enc_id) filter ( where f_previous_status isnull )                            no_status,
+count(distinct m_enc_id) filter ( where f_previous_status isnull and m_enc_date notnull )     no_status_complete,
+count(distinct f_enc_id) filter ( where f_previous_status = 'SAM' )                           sam,
+count(distinct m_enc_id) filter ( where f_previous_status = 'SAM' and m_enc_date notnull )    sam_complete,
+count(distinct f_enc_id) filter ( where f_previous_status = 'MAM' )                           mam,
+count(distinct m_enc_id) filter ( where f_previous_status = 'MAM' and m_enc_date notnull )    mam_complete,
+count(distinct f_enc_id) filter ( where f_previous_status = 'Normal' )                        normal,
+count(distinct m_enc_id) filter ( where f_previous_status = 'Normal' and m_enc_date notnull ) normal_complete
+
+
+from (
+         select data.enc_id     m_enc_id,
+                previous_nutritional_status f_previous_status,
+                data.enc_date   m_enc_date,
+                fdata.enc_id    f_enc_id,
+                phc
+         from filtered_data_nutritional_status fdata
+                  left outer join merged_child_obs data on fdata.enc_id = data.enc_id
+     ) data
+group by rollup (phc) order by phc]]>
+		</queryString>
+		<field name="PHC" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.label" value="PHC"/>
+		</field>
+		<field name="sam" class="java.lang.Long">
+			<property name="com.jaspersoft.studio.field.label" value="sam"/>
+		</field>
+		<field name="sam_complete" class="java.lang.Long">
+			<property name="com.jaspersoft.studio.field.label" value="sam_complete"/>
+		</field>
+		<field name="mam" class="java.lang.Long">
+			<property name="com.jaspersoft.studio.field.label" value="mam"/>
+		</field>
+		<field name="mam_complete" class="java.lang.Long">
+			<property name="com.jaspersoft.studio.field.label" value="mam_complete"/>
+		</field>
+		<field name="normal" class="java.lang.Long">
+			<property name="com.jaspersoft.studio.field.label" value="normal"/>
+		</field>
+		<field name="normal_complete" class="java.lang.Long">
+			<property name="com.jaspersoft.studio.field.label" value="normal_complete"/>
+		</field>
+		<field name="no_status" class="java.lang.Long">
+			<property name="com.jaspersoft.studio.field.label" value="no_status"/>
+		</field>
+		<field name="no_status_complete" class="java.lang.Long">
+			<property name="com.jaspersoft.studio.field.label" value="severaly"/>
+		</field>
+		<variable name="SAM" class="java.lang.String">
+			<variableExpression><![CDATA[$F{PHC}.equals("Total") ? "f_previous_status = 'SAM' " :
+"phc  = '" + $F{PHC} + "' and f_previous_status = 'SAM'"]]></variableExpression>
+		</variable>
+		<variable name="SAM_COMPLETE" class="java.lang.String">
+			<variableExpression><![CDATA[$F{PHC}.equals("Total") ? "f_previous_status = 'SAM' and m_enc_date notnull " :
+"phc = '" + $F{PHC} + "' and f_previous_status = 'SAM' and m_enc_date notnull"]]></variableExpression>
+		</variable>
+		<variable name="MAM" class="java.lang.String">
+			<variableExpression><![CDATA[$F{PHC}.equals("Total") ? "f_previous_status = 'MAM'  " :
+"phc = '" + $F{PHC} + "' and f_previous_status = 'MAM' "]]></variableExpression>
+		</variable>
+		<variable name="MAM_COMPLETE" class="java.lang.String">
+			<variableExpression><![CDATA[$F{PHC}.equals("Total") ? "f_previous_status = 'MAM' and m_enc_date notnull " :
+"phc = '" + $F{PHC} + "' and f_previous_status = 'MAM' and m_enc_date notnull"]]></variableExpression>
+		</variable>
+		<variable name="NORMAL" class="java.lang.String">
+			<variableExpression><![CDATA[$F{PHC}.equals("Total") ? "f_previous_status = 'Normal'  " :
+"phc = '" + $F{PHC} + "' and f_previous_status = 'Normal' "]]></variableExpression>
+		</variable>
+		<variable name="NORMAL_COMPLETE" class="java.lang.String">
+			<variableExpression><![CDATA[$F{PHC}.equals("Total") ? "f_previous_status = 'Normal' and m_enc_date notnull  " :
+"phc = '" + $F{PHC} + "' and f_previous_status = 'Normal' and m_enc_date notnull "]]></variableExpression>
+		</variable>
+		<variable name="NO_STATUS" class="java.lang.String">
+			<variableExpression><![CDATA[$F{PHC}.equals("Total") ? " f_previous_status isnull   " :
+"phc = '" + $F{PHC} + "' and  f_previous_status isnull  "]]></variableExpression>
+		</variable>
+		<variable name="NO_STATUS_COMPLETE" class="java.lang.String">
+			<variableExpression><![CDATA[$F{PHC}.equals("Total") ? " f_previous_status isnull and m_enc_date notnull  " :
+"phc = '" + $F{PHC} + "' and  f_previous_status isnull and m_enc_date notnull  "]]></variableExpression>
+		</variable>
+	</subDataset>
+	<subDataset name="child_grade" uuid="b91bb53b-5f08-4407-8848-3823aa095415">
+		<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="prod DB"/>
+		<parameter name="PARAM_DATE_START" class="java.sql.Timestamp"/>
+		<parameter name="PARAM_DATE_END" class="java.sql.Timestamp"/>
+		<parameter name="PARAM_PHC_NAME" class="java.util.List" nestedType="java.lang.String"/>
+		<parameter name="PARAM_SUBCENTRE_NAME" class="java.util.List" nestedType="java.lang.String"/>
+		<parameter name="PARAM_VILLAGE_NAME" class="java.util.List" nestedType="java.lang.String"/>
+		<parameter name="Exited" class="java.util.List" nestedType="java.lang.String"/>
+		<queryString language="SQL">
+			<![CDATA[with merged_child_obs as (select enl.id                                                                                      enl_id,
+                                 enl.individual_id                                                                           individual_id,
+                                 enl.enrolment_date_time                                                                     enrolment_date_time,
+                                 enl.program_exit_date_time                                                                  program_exit_date_time,
+                                  case when   enl.program_exit_date_time   is null then 'No' else 'Yes' end exit_status,
+                                 row_number()
+                                 OVER (PARTITION BY enl.id ORDER BY coalesce(encounter_date_time, enrolment_date_time) desc) visit_number,
+                                 enc.id                                                                                      enc_id,
+                                 enc.encounter_date_time                                                                     enc_date,
+                                 enc.earliest_visit_date_time                                                                enc_earliest_date,
+                                 et.name                                                                                     prog_name,
+                                 ind.first_name                                                                              fname,
+                                 (EXTRACT(year FROM age(ind.date_of_birth)) * 12 +
+            EXTRACT(month FROM age(ind.date_of_birth)))      age_in_months,
+                                 enc.observations                                                                            all_obs
+
+                          from program_enrolment enl
+                                   left join program_encounter enc on enl.id = enc.program_enrolment_id
+                                   left join individual ind on ind.id = enl.individual_id
+                                   left join encounter_type et on enc.encounter_type_id = et.id and et.name in
+                                                                                                    ('Birth Form',
+                                                                                                     'Child PNC',
+                                                                                                     'Child PNC Cluster Incharge',
+                                                                                                     'Child Followup',
+                                                                                                     'Child Followup Cluster Incharge')
+                                   join program p on enl.program_id = p.id
+
+                          where p.name = 'Child')      ,
+     filtered_data_nutritional_grade as (
+         select age_in_months,
+                all_obs ->> '3fb85722-fd53-43db-9e8b-d34767af9f7e'::text as       nutritional_status,
+                all_obs ->> '68a6a336-4a91-468b-9b7d-ff37e637f5b7'::text as       child_status,
+
+                phc.title                                                as       phc,
+                visit_number,
+                LAG(all_obs ->> '68a6a336-4a91-468b-9b7d-ff37e637f5b7'::text, 1) OVER (
+                    PARTITION BY enl_id ORDER BY enc_date asc
+                    )                                                             previous_status,
+                child.enc_id,
+                child.enl_id,
+                prog_name,
+                fname,
+                enc_date,
+                enc_earliest_date
+
+         from merged_child_obs child
+                  LEFT JOIN individual individual ON child.individual_id = individual.id
+                  LEFT JOIN gender g ON g.id = individual.gender_id
+                  LEFT JOIN address_level village ON individual.address_id = village.id
+                  LEFT JOIN address_level subcenter ON village.parent_id = subcenter.id
+                  LEFT JOIN address_level phc ON subcenter.parent_id = phc.id
+                  LEFT JOIN address_level block ON phc.parent_id = block.id
+         where age_in_months between 0 and 6
+                 and $X{IN,phc.title,PARAM_PHC_NAME}
+           and $X{IN,subcenter.title,PARAM_SUBCENTRE_NAME}
+            and $X{IN,village.title,PARAM_VILLAGE_NAME}
+            and $X{BETWEEN,enc_earliest_date,PARAM_DATE_START, PARAM_DATE_END}
+              and $X{IN,exit_status,Exited}
+
+     )
+
+select
+    coalesce(phc, 'Total')                                                                    "PHC",
+    count(distinct f_enc_id) filter ( where f_previous_status isnull )                            no_status,
+    count(distinct m_enc_id) filter ( where f_previous_status isnull and m_enc_date notnull )     no_status_complete,
+    count(distinct f_enc_id) filter ( where f_previous_status = 'Severely Underweight' )                           severely,
+    count(distinct m_enc_id) filter ( where f_previous_status = 'Severely Underweight' and m_enc_date notnull )    severely_complete,
+    count(distinct f_enc_id) filter ( where f_previous_status = 'Moderately Underweight' )                           moderate,
+    count(distinct m_enc_id) filter ( where f_previous_status = 'Moderately Underweight' and m_enc_date notnull )    moderate_complete,
+    count(distinct f_enc_id) filter ( where f_previous_status = 'Normal' )                        normal,
+    count(distinct m_enc_id) filter ( where f_previous_status = 'Normal' and m_enc_date notnull ) normal_complete
+
+
+from (
+         select data.enc_id     m_enc_id,
+                previous_status f_previous_status,
+                data.enc_date   m_enc_date,
+                fdata.enc_id    f_enc_id,
+                phc
+         from filtered_data_nutritional_grade fdata
+                  left outer join merged_child_obs data on fdata.enc_id = data.enc_id
+     ) data
+group by rollup (phc) order by phc]]>
+		</queryString>
+		<field name="severely" class="java.lang.Long">
+			<property name="com.jaspersoft.studio.field.label" value="severely"/>
+		</field>
+		<field name="severely_complete" class="java.lang.Long">
+			<property name="com.jaspersoft.studio.field.label" value="severely_complete"/>
+		</field>
+		<field name="moderate" class="java.lang.Long">
+			<property name="com.jaspersoft.studio.field.label" value="moderate"/>
+		</field>
+		<field name="moderate_complete" class="java.lang.Long">
+			<property name="com.jaspersoft.studio.field.label" value="moderate_complete"/>
+		</field>
+		<field name="normal" class="java.lang.Long">
+			<property name="com.jaspersoft.studio.field.label" value="normal"/>
+		</field>
+		<field name="normal_complete" class="java.lang.Long">
+			<property name="com.jaspersoft.studio.field.label" value="normal_complete"/>
+		</field>
+		<field name="no_status" class="java.lang.Long">
+			<property name="com.jaspersoft.studio.field.label" value="no_status"/>
+		</field>
+		<field name="no_status_complete" class="java.lang.Long">
+			<property name="com.jaspersoft.studio.field.label" value="no_status_complete"/>
+		</field>
+		<field name="PHC" class="java.lang.String"/>
+		<variable name="SEVERELY" class="java.lang.String">
+			<variableExpression><![CDATA[$F{PHC}.equals("Total") ? "f_previous_status = 'Severely Underweight' " :
+"phc  = '" + $F{PHC} + "' and f_previous_status = 'Severely Underweight'"]]></variableExpression>
+		</variable>
+		<variable name="SEVERELY_COMPLETE" class="java.lang.String">
+			<variableExpression><![CDATA[$F{PHC}.equals("Total") ? " f_previous_status = 'Severely Underweight'  and m_enc_date notnull " :
+"phc = '" + $F{PHC} + "' and  f_previous_status = 'Severely Underweight' and m_enc_date notnull "]]></variableExpression>
+		</variable>
+		<variable name="MODERATE" class="java.lang.String">
+			<variableExpression><![CDATA[$F{PHC}.equals("Total") ? " f_previous_status = 'Moderately Underweight'" :
+"phc = '" + $F{PHC} + "' and  f_previous_status = 'Moderately Underweight' "]]></variableExpression>
+		</variable>
+		<variable name="MODERATE_COMPLETE" class="java.lang.String">
+			<variableExpression><![CDATA[$F{PHC}.equals("Total") ? " f_previous_status = 'Moderately Underweight'  and m_enc_date notnull " :
+"phc = '" + $F{PHC} + "' and  f_previous_status = 'Moderately Underweight' and m_enc_date notnull "]]></variableExpression>
+		</variable>
+		<variable name="NORMAL" class="java.lang.String">
+			<variableExpression><![CDATA[$F{PHC}.equals("Total") ? " f_previous_status = 'Normal'" :
+"phc = '" + $F{PHC} + "' and  f_previous_status = 'Normal' "]]></variableExpression>
+		</variable>
+		<variable name="NORMAL_COMPLETE" class="java.lang.String">
+			<variableExpression><![CDATA[$F{PHC}.equals("Total") ? " f_previous_status = 'Normal'  and m_enc_date notnull " :
+"phc = '" + $F{PHC} + "' and  f_previous_status = 'Normal' and m_enc_date notnull "]]></variableExpression>
+		</variable>
+		<variable name="NO_STATUS" class="java.lang.String">
+			<variableExpression><![CDATA[$F{PHC}.equals("Total") ? "f_previous_status isnull" :
+"phc = '" + $F{PHC} + "' and f_previous_status isnull"]]></variableExpression>
+		</variable>
+		<variable name="NO_STATUS_COMPLETE" class="java.lang.String">
+			<variableExpression><![CDATA[$F{PHC}.equals("Total") ? " f_previous_status isnull  and m_enc_date notnull " :
+"phc = '" + $F{PHC} + "' and  f_previous_status isnull and m_enc_date notnull "]]></variableExpression>
+		</variable>
+	</subDataset>
+	<parameter name="PARAM_DATE_START" class="java.sql.Timestamp"/>
+	<parameter name="PARAM_DATE_END" class="java.sql.Timestamp"/>
+	<parameter name="PARAM_PHC_NAME" class="java.util.List" nestedType="java.lang.String"/>
+	<parameter name="PARAM_SUBCENTRE_NAME" class="java.util.List" nestedType="java.lang.String"/>
+	<parameter name="PARAM_VILLAGE_NAME" class="java.util.List" nestedType="java.lang.String"/>
+	<parameter name="Exited" class="java.util.List" nestedType="java.lang.String"/>
+	<queryString language="SQL">
+		<![CDATA[select 1]]>
+	</queryString>
+	<background>
+		<band height="100" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+		</band>
+	</background>
+	<title>
+		<band height="50" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="94" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<staticText>
+				<reportElement style="ColumnHeader" x="0" y="34" width="100" height="60" uuid="5c16d376-89f1-4c89-9403-787bb0aa2211"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<text><![CDATA[PHC]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="100" y="64" width="70" height="30" uuid="a22a997e-17c5-4771-bdd5-01ebc33c07ab"/>
+				<text><![CDATA[Task generated]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="170" y="64" width="70" height="30" uuid="647cc359-a1a3-42f1-8055-080c9e8074a5"/>
+				<text><![CDATA[Task completed]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="240" y="64" width="70" height="30" uuid="fef1e62f-147b-46ac-aece-237021d5f79f"/>
+				<text><![CDATA[Task generated]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="310" y="64" width="70" height="30" uuid="fa805679-2c8f-4360-9d87-917f4e7a943b"/>
+				<text><![CDATA[Task completed]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="100" y="34" width="140" height="30" uuid="29aa35da-ecba-4b03-a5ac-dcd9dbcefdc5"/>
+				<text><![CDATA[ANC]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="240" y="34" width="140" height="30" uuid="f9078285-c37d-4b49-8dc5-28bd2e63e579"/>
+				<text><![CDATA[PNC]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="380" y="64" width="70" height="30" uuid="73066ca2-6e0a-4315-8243-3b982474e798"/>
+				<text><![CDATA[Task generated]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="450" y="64" width="70" height="30" uuid="318ed8db-5692-492e-9946-605540bc782d"/>
+				<text><![CDATA[Task completed]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="380" y="34" width="140" height="30" uuid="b48355c7-8bd7-4aa8-81ac-31f9de24394e"/>
+				<text><![CDATA[SAM CHILDRENS 
+(7 months - 5 years)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="520" y="34" width="140" height="30" uuid="d07b2399-050a-40d7-ace4-ddc700b8cf9d"/>
+				<text><![CDATA[MAM CHILDRENS 
+(7 months - 5 years)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="520" y="64" width="70" height="30" uuid="0eb06461-23d1-44fe-840c-eb0e225da018"/>
+				<text><![CDATA[Task generated]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="590" y="64" width="70" height="30" uuid="8935c19f-3d26-4a66-b587-c38529930018"/>
+				<text><![CDATA[Task completed]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="1080" y="34" width="140" height="30" uuid="d8818138-7696-4756-a9c1-da0769916d3c"/>
+				<text><![CDATA[Moderate Childrens]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="1220" y="34" width="140" height="30" uuid="35d40491-5c48-464a-8ec5-69a2d6e7d520"/>
+				<text><![CDATA[Normal Grade Childrens]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="1360" y="64" width="70" height="30" uuid="fe1af06e-fad1-45be-87bf-dc239d9b3756"/>
+				<text><![CDATA[Task generated]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="1430" y="64" width="70" height="30" uuid="631f3835-75e9-45b9-b91c-49d67f5b3818"/>
+				<text><![CDATA[Task completed]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="1150" y="64" width="70" height="30" uuid="396e5a9e-cf30-4865-badb-55e31d950009"/>
+				<text><![CDATA[Task completed]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="1080" y="64" width="70" height="30" uuid="bc5b00bf-60f8-4a22-8e0e-4e318ccb724b"/>
+				<text><![CDATA[Task generated]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="1010" y="64" width="70" height="30" uuid="5858b33f-737f-490e-bf9f-e9df94935300"/>
+				<text><![CDATA[Task completed]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="940" y="64" width="70" height="30" uuid="e87ba264-e5a1-4d52-b2d7-6bc1565ea6f3"/>
+				<text><![CDATA[Task generated]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="730" y="64" width="70" height="30" uuid="09435df9-6e0a-4a81-a79f-c82df4a390b2"/>
+				<text><![CDATA[Task completed]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="660" y="64" width="70" height="30" uuid="54318416-3ca9-46bd-9bb4-ca7e1b35c7dd"/>
+				<text><![CDATA[Task generated]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="660" y="34" width="140" height="30" uuid="f44e834a-3a18-40b5-940c-32355659409d"/>
+				<text><![CDATA[NORMAL CHILDRENS 
+(7 months - 5 years)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="940" y="34" width="140" height="30" uuid="1a24dd98-f20c-41ef-b0dc-eb7fdec8d615"/>
+				<text><![CDATA[Severely  Malnurished Childrens]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="1360" y="34" width="140" height="30" uuid="fdf1bea0-5779-417e-a9b1-fee447af450c"/>
+				<text><![CDATA[No Status]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ReportTitle" x="0" y="-16" width="1500" height="50" uuid="ccc013a8-2e32-4c97-acca-cfac4c04bef7"/>
+				<text><![CDATA[Task generated and task completed ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="1290" y="64" width="70" height="30" uuid="c7dd2737-849f-4d46-9330-0b32d3dfe2ea"/>
+				<text><![CDATA[Task completed]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="1220" y="64" width="70" height="30" uuid="5f062831-b92f-4217-88a0-268cd89d9cee"/>
+				<text><![CDATA[Task generated]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="870" y="64" width="70" height="30" uuid="8391a9c3-68f6-4833-8056-c202a1989947"/>
+				<text><![CDATA[Task completed]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="800" y="34" width="140" height="30" uuid="0a9458f7-09ea-4f37-831b-0237a16cc327"/>
+				<text><![CDATA[No Status]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="800" y="64" width="70" height="30" uuid="1d83e98c-7364-4dbb-bc88-f2682ec7156d"/>
+				<text><![CDATA[Task generated]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="274" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.spreadsheet.SpreadsheetLayout"/>
+			<componentElement>
+				<reportElement positionType="Float" x="0" y="0" width="380" height="274" uuid="6e9549b5-bd12-4736-af7a-86fc3e87acb2">
+					<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.FreeLayout"/>
+					<property name="com.jaspersoft.studio.table.style.table_header" value="Table_TH"/>
+					<property name="com.jaspersoft.studio.table.style.column_header" value="Table_CH"/>
+					<property name="com.jaspersoft.studio.table.style.detail" value="Table_TD"/>
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+				</reportElement>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="anc_pnc" uuid="25be5016-04d4-439b-837d-bb5c65cffd46">
+						<datasetParameter name="PARAM_DATE_START">
+							<datasetParameterExpression><![CDATA[$P{PARAM_DATE_START}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="PARAM_DATE_END">
+							<datasetParameterExpression><![CDATA[$P{PARAM_DATE_END}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="PARAM_PHC_NAME">
+							<datasetParameterExpression><![CDATA[$P{PARAM_PHC_NAME}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="PARAM_SUBCENTRE_NAME">
+							<datasetParameterExpression><![CDATA[$P{PARAM_SUBCENTRE_NAME}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="PARAM_VILLAGE_NAME">
+							<datasetParameterExpression><![CDATA[$P{PARAM_VILLAGE_NAME}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="Exited">
+							<datasetParameterExpression><![CDATA[$P{Exited}]]></datasetParameterExpression>
+						</datasetParameter>
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					</datasetRun>
+					<jr:column width="100" uuid="0f747a8e-b7a9-4541-8e8c-a6f6b15186fe">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column1"/>
+						<jr:detailCell style="Table_TD" height="30">
+							<textField>
+								<reportElement style="DataRowTextElement" x="0" y="0" width="100" height="30" uuid="1c437bf1-111c-40e6-9534-93d2e59f60a5"/>
+								<textFieldExpression><![CDATA[$F{PHC}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="70" uuid="b64f7074-6e08-44e4-9afa-4ebbf9db349a">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column2"/>
+						<jr:detailCell style="Table_TD" height="30">
+							<textField hyperlinkType="ReportExecution">
+								<reportElement style="DataRowNumericElement" x="0" y="0" width="70" height="30" uuid="f63600ae-da35-4017-a2f9-70f8537a951a"/>
+								<textFieldExpression><![CDATA[$F{anc}]]></textFieldExpression>
+								<hyperlinkWhenExpression><![CDATA[$F{anc} > 0]]></hyperlinkWhenExpression>
+								<hyperlinkTooltipExpression><![CDATA["Click for the line list"]]></hyperlinkTooltipExpression>
+								<hyperlinkParameter name="_report">
+									<hyperlinkParameterExpression><![CDATA["/JNPCT/Reports/Linelists/Task_generated_ANC_PNC"]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_DATE_END">
+									<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_END}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_DATE_START">
+									<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_START}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_PHC_NAME">
+									<hyperlinkParameterExpression><![CDATA[$P{PARAM_PHC_NAME}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_SUBCENTRE_NAME">
+									<hyperlinkParameterExpression><![CDATA[$P{PARAM_SUBCENTRE_NAME}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_VILLAGE_NAME">
+									<hyperlinkParameterExpression><![CDATA[$P{PARAM_VILLAGE_NAME}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_DYNAMIC_WHERE">
+									<hyperlinkParameterExpression><![CDATA[$V{ANC}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="Exited">
+									<hyperlinkParameterExpression><![CDATA[$P{Exited}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="70" uuid="870e7b44-b352-42af-8747-007f2380c24e">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column3"/>
+						<jr:detailCell style="Table_TD" height="30">
+							<textField hyperlinkType="ReportExecution">
+								<reportElement style="DataRowNumericElement" x="0" y="0" width="70" height="30" uuid="cb62c2db-a991-4e88-a573-1b6a6f3457d5"/>
+								<textFieldExpression><![CDATA[$F{anc_completed}]]></textFieldExpression>
+								<hyperlinkWhenExpression><![CDATA[$F{anc_completed} > 0]]></hyperlinkWhenExpression>
+								<hyperlinkTooltipExpression><![CDATA["Click for the line list"]]></hyperlinkTooltipExpression>
+								<hyperlinkParameter name="_report">
+									<hyperlinkParameterExpression><![CDATA["/JNPCT/Reports/Linelists/Task_generated_ANC_PNC"]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_DATE_END">
+									<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_END}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_DATE_START">
+									<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_START}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_PHC_NAME">
+									<hyperlinkParameterExpression><![CDATA[$P{PARAM_PHC_NAME}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_SUBCENTRE_NAME">
+									<hyperlinkParameterExpression><![CDATA[$P{PARAM_SUBCENTRE_NAME}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_VILLAGE_NAME">
+									<hyperlinkParameterExpression><![CDATA[$P{PARAM_VILLAGE_NAME}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_DYNAMIC_WHERE">
+									<hyperlinkParameterExpression><![CDATA[$V{ANC_COMPLETE}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="Exited">
+									<hyperlinkParameterExpression><![CDATA[$P{Exited}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="70" uuid="3eae5e28-d16e-4ae1-ae37-e08734d2e820">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column4"/>
+						<jr:detailCell style="Table_TD" height="30">
+							<textField hyperlinkType="ReportExecution">
+								<reportElement style="DataRowNumericElement" x="0" y="0" width="70" height="30" uuid="0fb79b75-bf05-412c-8651-aa0e06e07aa0"/>
+								<textFieldExpression><![CDATA[$F{pnc}]]></textFieldExpression>
+								<hyperlinkWhenExpression><![CDATA[$F{pnc} > 0]]></hyperlinkWhenExpression>
+								<hyperlinkTooltipExpression><![CDATA["Click for the line list"]]></hyperlinkTooltipExpression>
+								<hyperlinkParameter name="_report">
+									<hyperlinkParameterExpression><![CDATA["/JNPCT/Reports/Linelists/Task_generated_ANC_PNC"]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_DATE_END">
+									<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_END}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_DATE_START">
+									<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_START}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_PHC_NAME">
+									<hyperlinkParameterExpression><![CDATA[$P{PARAM_PHC_NAME}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_SUBCENTRE_NAME">
+									<hyperlinkParameterExpression><![CDATA[$P{PARAM_SUBCENTRE_NAME}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_VILLAGE_NAME">
+									<hyperlinkParameterExpression><![CDATA[$P{PARAM_VILLAGE_NAME}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_DYNAMIC_WHERE">
+									<hyperlinkParameterExpression><![CDATA[$V{PNC}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="Exited">
+									<hyperlinkParameterExpression><![CDATA[$P{Exited}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="70" uuid="805ff91e-c565-4b7c-86b2-de184ac2cdb3">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column5"/>
+						<jr:detailCell style="Table_TD" height="30">
+							<textField hyperlinkType="ReportExecution">
+								<reportElement style="DataRowNumericElement" x="0" y="0" width="70" height="30" uuid="87e932a4-adee-4747-9ee2-70af73432182"/>
+								<textFieldExpression><![CDATA[$F{pnc_completed}]]></textFieldExpression>
+								<hyperlinkWhenExpression><![CDATA[$F{pnc_completed} > 0]]></hyperlinkWhenExpression>
+								<hyperlinkTooltipExpression><![CDATA["Click for the line list"]]></hyperlinkTooltipExpression>
+								<hyperlinkParameter name="_report">
+									<hyperlinkParameterExpression><![CDATA["/JNPCT/Reports/Linelists/Task_generated_ANC_PNC"]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_DATE_END">
+									<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_END}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_DATE_START">
+									<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_START}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_PHC_NAME">
+									<hyperlinkParameterExpression><![CDATA[$P{PARAM_PHC_NAME}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_SUBCENTRE_NAME">
+									<hyperlinkParameterExpression><![CDATA[$P{PARAM_SUBCENTRE_NAME}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_VILLAGE_NAME">
+									<hyperlinkParameterExpression><![CDATA[$P{PARAM_VILLAGE_NAME}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_DYNAMIC_WHERE">
+									<hyperlinkParameterExpression><![CDATA[$V{PNC_COMPLETE}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="Exited">
+									<hyperlinkParameterExpression><![CDATA[$P{Exited}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+				</jr:table>
+			</componentElement>
+			<componentElement>
+				<reportElement x="380" y="0" width="560" height="274" uuid="df6b2896-00f2-45cf-bf1e-14f7c8b745ff">
+					<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.VerticalRowLayout"/>
+					<property name="com.jaspersoft.studio.table.style.table_header" value="Table 1_TH"/>
+					<property name="com.jaspersoft.studio.table.style.column_header" value="Table 1_CH"/>
+					<property name="com.jaspersoft.studio.table.style.detail" value="Table 1_TD"/>
+				</reportElement>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="child" uuid="1e79c74d-fa82-46e5-983e-89ee180b03e1">
+						<datasetParameter name="PARAM_DATE_START">
+							<datasetParameterExpression><![CDATA[$P{PARAM_DATE_START}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="PARAM_DATE_END">
+							<datasetParameterExpression><![CDATA[$P{PARAM_DATE_END}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="PARAM_PHC_NAME">
+							<datasetParameterExpression><![CDATA[$P{PARAM_PHC_NAME}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="PARAM_SUBCENTRE_NAME">
+							<datasetParameterExpression><![CDATA[$P{PARAM_SUBCENTRE_NAME}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="PARAM_VILLAGE_NAME">
+							<datasetParameterExpression><![CDATA[$P{PARAM_VILLAGE_NAME}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="Exited">
+							<datasetParameterExpression><![CDATA[$P{Exited}]]></datasetParameterExpression>
+						</datasetParameter>
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					</datasetRun>
+					<jr:column width="70" uuid="296ba9b9-e5d9-409c-93d0-bd4e77894cc0">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column1"/>
+						<jr:detailCell style="Table 1_TD" height="30">
+							<textField hyperlinkType="ReportExecution">
+								<reportElement style="DataRowNumericElement" x="0" y="0" width="70" height="30" uuid="43ba799a-cfb6-4c7a-80c0-97a6b2450932"/>
+								<textFieldExpression><![CDATA[$F{sam}]]></textFieldExpression>
+								<hyperlinkWhenExpression><![CDATA[$F{sam} > 0]]></hyperlinkWhenExpression>
+								<hyperlinkTooltipExpression><![CDATA["Click for the line list"]]></hyperlinkTooltipExpression>
+								<hyperlinkParameter name="_report">
+									<hyperlinkParameterExpression><![CDATA["/JNPCT/Reports/Linelists/Task_generated_child_nutrition"]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_DATE_END">
+									<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_END}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_DATE_START">
+									<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_START}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_PHC_NAME">
+									<hyperlinkParameterExpression><![CDATA[$P{PARAM_PHC_NAME}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_SUBCENTRE_NAME">
+									<hyperlinkParameterExpression><![CDATA[$P{PARAM_SUBCENTRE_NAME}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_VILLAGE_NAME">
+									<hyperlinkParameterExpression><![CDATA[$P{PARAM_VILLAGE_NAME}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_DYNAMIC_WHERE">
+									<hyperlinkParameterExpression><![CDATA[$V{SAM}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="Exited">
+									<hyperlinkParameterExpression><![CDATA[$P{Exited}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="70" uuid="c94b69b7-a911-4c72-ab01-0f008f8c30ff">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column2"/>
+						<jr:detailCell style="Table 1_TD" height="30">
+							<textField hyperlinkType="ReportExecution">
+								<reportElement style="DataRowNumericElement" x="0" y="0" width="70" height="30" uuid="adc78994-41a3-4704-9a17-df51f30b05b8"/>
+								<textFieldExpression><![CDATA[$F{sam_complete}]]></textFieldExpression>
+								<hyperlinkWhenExpression><![CDATA[$F{sam_complete} > 0]]></hyperlinkWhenExpression>
+								<hyperlinkTooltipExpression><![CDATA["Click for the line list"]]></hyperlinkTooltipExpression>
+								<hyperlinkParameter name="_report">
+									<hyperlinkParameterExpression><![CDATA["/JNPCT/Reports/Linelists/Task_generated_child_nutrition"]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_DATE_END">
+									<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_END}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_DATE_START">
+									<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_START}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_PHC_NAME">
+									<hyperlinkParameterExpression><![CDATA[$P{PARAM_PHC_NAME}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_SUBCENTRE_NAME">
+									<hyperlinkParameterExpression><![CDATA[$P{PARAM_SUBCENTRE_NAME}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_VILLAGE_NAME">
+									<hyperlinkParameterExpression><![CDATA[$P{PARAM_VILLAGE_NAME}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_DYNAMIC_WHERE">
+									<hyperlinkParameterExpression><![CDATA[$V{SAM_COMPLETE}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="Exited">
+									<hyperlinkParameterExpression><![CDATA[$P{Exited}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="70" uuid="bb62653b-5731-4ca8-b65b-e0a0ea003716">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column3"/>
+						<jr:detailCell style="Table 1_TD" height="30">
+							<textField hyperlinkType="ReportExecution">
+								<reportElement style="DataRowNumericElement" x="0" y="0" width="70" height="30" uuid="1dddebae-3264-4507-8146-815bfc2e4ba7"/>
+								<textFieldExpression><![CDATA[$F{mam}]]></textFieldExpression>
+								<hyperlinkWhenExpression><![CDATA[$F{mam} > 0]]></hyperlinkWhenExpression>
+								<hyperlinkTooltipExpression><![CDATA["Click for the line list"]]></hyperlinkTooltipExpression>
+								<hyperlinkParameter name="_report">
+									<hyperlinkParameterExpression><![CDATA["/JNPCT/Reports/Linelists/Task_generated_child_nutrition"]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_DATE_END">
+									<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_END}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_DATE_START">
+									<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_START}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_PHC_NAME">
+									<hyperlinkParameterExpression><![CDATA[$P{PARAM_PHC_NAME}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_SUBCENTRE_NAME">
+									<hyperlinkParameterExpression><![CDATA[$P{PARAM_SUBCENTRE_NAME}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_VILLAGE_NAME">
+									<hyperlinkParameterExpression><![CDATA[$P{PARAM_VILLAGE_NAME}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_DYNAMIC_WHERE">
+									<hyperlinkParameterExpression><![CDATA[$V{MAM}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="Exited">
+									<hyperlinkParameterExpression><![CDATA[$P{Exited}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="70" uuid="f32f4577-0371-4782-b884-fc1bcd5a259e">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column4"/>
+						<jr:detailCell style="Table 1_TD" height="30">
+							<textField hyperlinkType="ReportExecution">
+								<reportElement style="DataRowNumericElement" x="0" y="0" width="70" height="30" uuid="0b04ae98-cdcd-4f75-a32d-8b84caaf9715"/>
+								<textFieldExpression><![CDATA[$F{mam_complete}]]></textFieldExpression>
+								<hyperlinkWhenExpression><![CDATA[$F{mam_complete} > 0]]></hyperlinkWhenExpression>
+								<hyperlinkTooltipExpression><![CDATA["Click for the line list"]]></hyperlinkTooltipExpression>
+								<hyperlinkParameter name="_report">
+									<hyperlinkParameterExpression><![CDATA["/JNPCT/Reports/Linelists/Task_generated_child_nutrition"]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_DATE_END">
+									<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_END}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_DATE_START">
+									<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_START}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_PHC_NAME">
+									<hyperlinkParameterExpression><![CDATA[$P{PARAM_PHC_NAME}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_SUBCENTRE_NAME">
+									<hyperlinkParameterExpression><![CDATA[$P{PARAM_SUBCENTRE_NAME}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_VILLAGE_NAME">
+									<hyperlinkParameterExpression><![CDATA[$P{PARAM_VILLAGE_NAME}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_DYNAMIC_WHERE">
+									<hyperlinkParameterExpression><![CDATA[$V{MAM_COMPLETE}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="Exited">
+									<hyperlinkParameterExpression><![CDATA[$P{Exited}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="70" uuid="0baadb9c-639e-4971-98cb-ea273f75296a">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column5"/>
+						<jr:detailCell style="Table 1_TD" height="30">
+							<textField hyperlinkType="ReportExecution">
+								<reportElement style="DataRowNumericElement" x="0" y="0" width="70" height="30" uuid="11197a33-0a1e-4ffb-a185-034396bb7f6e"/>
+								<textFieldExpression><![CDATA[$F{normal}]]></textFieldExpression>
+								<hyperlinkWhenExpression><![CDATA[$F{normal} > 0]]></hyperlinkWhenExpression>
+								<hyperlinkTooltipExpression><![CDATA["Click for the line list"]]></hyperlinkTooltipExpression>
+								<hyperlinkParameter name="_report">
+									<hyperlinkParameterExpression><![CDATA["/JNPCT/Reports/Linelists/Task_generated_child_nutrition"]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_DATE_END">
+									<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_END}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_DATE_START">
+									<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_START}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_PHC_NAME">
+									<hyperlinkParameterExpression><![CDATA[$P{PARAM_PHC_NAME}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_SUBCENTRE_NAME">
+									<hyperlinkParameterExpression><![CDATA[$P{PARAM_SUBCENTRE_NAME}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_VILLAGE_NAME">
+									<hyperlinkParameterExpression><![CDATA[$P{PARAM_VILLAGE_NAME}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_DYNAMIC_WHERE">
+									<hyperlinkParameterExpression><![CDATA[$V{NORMAL}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="Exited">
+									<hyperlinkParameterExpression><![CDATA[$P{Exited}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="70" uuid="91550f9a-82e5-4c9d-a8f9-341776acc72b">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column6"/>
+						<jr:detailCell style="Table 1_TD" height="30">
+							<textField hyperlinkType="ReportExecution">
+								<reportElement style="DataRowNumericElement" x="0" y="0" width="70" height="30" uuid="96d969c9-446b-4f33-b6d8-08ddc5963906"/>
+								<textFieldExpression><![CDATA[$F{normal_complete}]]></textFieldExpression>
+								<hyperlinkWhenExpression><![CDATA[$F{normal_complete} > 0]]></hyperlinkWhenExpression>
+								<hyperlinkTooltipExpression><![CDATA["Click for the line list"]]></hyperlinkTooltipExpression>
+								<hyperlinkParameter name="_report">
+									<hyperlinkParameterExpression><![CDATA["/JNPCT/Reports/Linelists/Task_generated_child_nutrition"]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_DATE_END">
+									<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_END}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_DATE_START">
+									<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_START}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_PHC_NAME">
+									<hyperlinkParameterExpression><![CDATA[$P{PARAM_PHC_NAME}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_SUBCENTRE_NAME">
+									<hyperlinkParameterExpression><![CDATA[$P{PARAM_SUBCENTRE_NAME}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_VILLAGE_NAME">
+									<hyperlinkParameterExpression><![CDATA[$P{PARAM_VILLAGE_NAME}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_DYNAMIC_WHERE">
+									<hyperlinkParameterExpression><![CDATA[$V{NORMAL_COMPLETE}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="Exited">
+									<hyperlinkParameterExpression><![CDATA[$P{Exited}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="70" uuid="b497f4fa-87aa-4083-8db7-303c70840ec8">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column7"/>
+						<jr:detailCell style="Table 1_TD" height="30">
+							<textField hyperlinkType="ReportExecution">
+								<reportElement style="DataRowNumericElement" x="0" y="0" width="70" height="30" uuid="5e7b3a98-5a84-4783-b8f4-b4f01edc60eb"/>
+								<textFieldExpression><![CDATA[$F{no_status}]]></textFieldExpression>
+								<hyperlinkWhenExpression><![CDATA[$F{no_status} > 0]]></hyperlinkWhenExpression>
+								<hyperlinkTooltipExpression><![CDATA["Click for the line list"]]></hyperlinkTooltipExpression>
+								<hyperlinkParameter name="_report">
+									<hyperlinkParameterExpression><![CDATA["/JNPCT/Reports/Linelists/Task_generated_child_nutrition"]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_DATE_END">
+									<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_END}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_DATE_START">
+									<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_START}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_PHC_NAME">
+									<hyperlinkParameterExpression><![CDATA[$P{PARAM_PHC_NAME}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_SUBCENTRE_NAME">
+									<hyperlinkParameterExpression><![CDATA[$P{PARAM_SUBCENTRE_NAME}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_VILLAGE_NAME">
+									<hyperlinkParameterExpression><![CDATA[$P{PARAM_VILLAGE_NAME}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_DYNAMIC_WHERE">
+									<hyperlinkParameterExpression><![CDATA[$V{NO_STATUS}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="Exited">
+									<hyperlinkParameterExpression><![CDATA[$P{Exited}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="70" uuid="1ee0175c-1f22-403a-9a70-5e5f7ec42bdd">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column8"/>
+						<jr:detailCell style="Table 1_TD" height="30">
+							<textField hyperlinkType="ReportExecution">
+								<reportElement style="DataRowNumericElement" x="0" y="0" width="70" height="30" uuid="5302a2e6-eb3f-4487-a47e-5bca233b9f9f"/>
+								<textFieldExpression><![CDATA[$F{no_status_complete}]]></textFieldExpression>
+								<hyperlinkWhenExpression><![CDATA[$F{no_status_complete} > 0]]></hyperlinkWhenExpression>
+								<hyperlinkTooltipExpression><![CDATA["Click for the line list"]]></hyperlinkTooltipExpression>
+								<hyperlinkParameter name="_report">
+									<hyperlinkParameterExpression><![CDATA["/JNPCT/Reports/Linelists/Task_generated_child_nutrition"]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_DATE_END">
+									<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_END}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_DATE_START">
+									<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_START}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_PHC_NAME">
+									<hyperlinkParameterExpression><![CDATA[$P{PARAM_PHC_NAME}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_SUBCENTRE_NAME">
+									<hyperlinkParameterExpression><![CDATA[$P{PARAM_SUBCENTRE_NAME}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_VILLAGE_NAME">
+									<hyperlinkParameterExpression><![CDATA[$P{PARAM_VILLAGE_NAME}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_DYNAMIC_WHERE">
+									<hyperlinkParameterExpression><![CDATA[$V{NO_STATUS_COMPLETE}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="Exited">
+									<hyperlinkParameterExpression><![CDATA[$P{Exited}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+				</jr:table>
+			</componentElement>
+			<componentElement>
+				<reportElement x="940" y="0" width="600" height="274" uuid="d9fc8032-bd6d-4e97-9008-4b72efe61b19">
+					<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.VerticalRowLayout"/>
+					<property name="com.jaspersoft.studio.table.style.table_header" value="Table 2_TH"/>
+					<property name="com.jaspersoft.studio.table.style.column_header" value="Table 2_CH"/>
+					<property name="com.jaspersoft.studio.table.style.detail" value="Table 2_TD"/>
+				</reportElement>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="child_grade" uuid="d4fde801-e9b3-4194-9cb1-b2d38f77c3f7">
+						<datasetParameter name="PARAM_DATE_START">
+							<datasetParameterExpression><![CDATA[$P{PARAM_DATE_START}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="PARAM_DATE_END">
+							<datasetParameterExpression><![CDATA[$P{PARAM_DATE_END}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="PARAM_PHC_NAME">
+							<datasetParameterExpression><![CDATA[$P{PARAM_PHC_NAME}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="PARAM_SUBCENTRE_NAME">
+							<datasetParameterExpression><![CDATA[$P{PARAM_SUBCENTRE_NAME}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="PARAM_VILLAGE_NAME">
+							<datasetParameterExpression><![CDATA[$P{PARAM_VILLAGE_NAME}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="Exited">
+							<datasetParameterExpression><![CDATA[$P{Exited}]]></datasetParameterExpression>
+						</datasetParameter>
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					</datasetRun>
+					<jr:column width="70" uuid="faebb39e-105b-4934-ae92-e23fa21771cd">
+						<jr:detailCell style="Table 2_TD" height="30">
+							<textField hyperlinkType="ReportExecution">
+								<reportElement style="DataRowNumericElement" x="0" y="0" width="70" height="30" uuid="52bb8db0-93c5-4f8b-80be-eb5be266a1e0"/>
+								<textFieldExpression><![CDATA[$F{severely}]]></textFieldExpression>
+								<hyperlinkWhenExpression><![CDATA[$F{severely} > 0]]></hyperlinkWhenExpression>
+								<hyperlinkTooltipExpression><![CDATA["Click for the line list"]]></hyperlinkTooltipExpression>
+								<hyperlinkParameter name="_report">
+									<hyperlinkParameterExpression><![CDATA["/JNPCT/Reports/Linelists/Task_generated_child_grade"]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_DATE_END">
+									<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_END}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_DATE_START">
+									<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_START}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_PHC_NAME">
+									<hyperlinkParameterExpression><![CDATA[$P{PARAM_PHC_NAME}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_SUBCENTRE_NAME">
+									<hyperlinkParameterExpression><![CDATA[$P{PARAM_SUBCENTRE_NAME}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_VILLAGE_NAME">
+									<hyperlinkParameterExpression><![CDATA[$P{PARAM_VILLAGE_NAME}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_DYNAMIC_WHERE">
+									<hyperlinkParameterExpression><![CDATA[$V{SEVERELY}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="Exited">
+									<hyperlinkParameterExpression><![CDATA[$P{Exited}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="70" uuid="6648b61b-b81d-435c-a253-83e5d3ecce8a">
+						<jr:detailCell style="Table 2_TD" height="30">
+							<textField hyperlinkType="ReportExecution">
+								<reportElement style="DataRowNumericElement" x="0" y="0" width="70" height="30" uuid="f7f3c928-532b-451f-8d2b-26203656f978"/>
+								<textFieldExpression><![CDATA[$F{severely_complete}]]></textFieldExpression>
+								<hyperlinkWhenExpression><![CDATA[$F{severely_complete} > 0]]></hyperlinkWhenExpression>
+								<hyperlinkTooltipExpression><![CDATA["Click for the line list"]]></hyperlinkTooltipExpression>
+								<hyperlinkParameter name="_report">
+									<hyperlinkParameterExpression><![CDATA["/JNPCT/Reports/Linelists/Task_generated_child_grade"]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_DATE_END">
+									<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_END}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_DATE_START">
+									<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_START}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_PHC_NAME">
+									<hyperlinkParameterExpression><![CDATA[$P{PARAM_PHC_NAME}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_SUBCENTRE_NAME">
+									<hyperlinkParameterExpression><![CDATA[$P{PARAM_SUBCENTRE_NAME}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_VILLAGE_NAME">
+									<hyperlinkParameterExpression><![CDATA[$P{PARAM_VILLAGE_NAME}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_DYNAMIC_WHERE">
+									<hyperlinkParameterExpression><![CDATA[$V{SEVERELY_COMPLETE}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="Exited">
+									<hyperlinkParameterExpression><![CDATA[$P{Exited}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="70" uuid="a61cb4cd-968f-4d22-97b6-122e6a53f22d">
+						<jr:detailCell style="Table 2_TD" height="30">
+							<textField hyperlinkType="ReportExecution">
+								<reportElement style="DataRowNumericElement" x="0" y="0" width="70" height="30" uuid="02248480-8eed-41ba-beaa-b30c5f2e65bf"/>
+								<textFieldExpression><![CDATA[$F{moderate}]]></textFieldExpression>
+								<hyperlinkWhenExpression><![CDATA[$F{moderate} > 0]]></hyperlinkWhenExpression>
+								<hyperlinkTooltipExpression><![CDATA["Click for the line list"]]></hyperlinkTooltipExpression>
+								<hyperlinkParameter name="_report">
+									<hyperlinkParameterExpression><![CDATA["/JNPCT/Reports/Linelists/Task_generated_child_grade"]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_DATE_END">
+									<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_END}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_DATE_START">
+									<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_START}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_PHC_NAME">
+									<hyperlinkParameterExpression><![CDATA[$P{PARAM_PHC_NAME}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_SUBCENTRE_NAME">
+									<hyperlinkParameterExpression><![CDATA[$P{PARAM_SUBCENTRE_NAME}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_VILLAGE_NAME">
+									<hyperlinkParameterExpression><![CDATA[$P{PARAM_VILLAGE_NAME}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_DYNAMIC_WHERE">
+									<hyperlinkParameterExpression><![CDATA[$V{MODERATE}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="Exited">
+									<hyperlinkParameterExpression><![CDATA[$P{Exited}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="70" uuid="9f377a8b-10a8-40ee-8c53-26cbdb6eaad3">
+						<jr:detailCell style="Table 2_TD" height="30">
+							<textField hyperlinkType="ReportExecution">
+								<reportElement style="DataRowNumericElement" x="0" y="0" width="70" height="30" uuid="4eac65a6-e3af-4d8b-8868-a7b808ff2526"/>
+								<textFieldExpression><![CDATA[$F{moderate_complete}]]></textFieldExpression>
+								<hyperlinkWhenExpression><![CDATA[$F{moderate_complete} > 0]]></hyperlinkWhenExpression>
+								<hyperlinkTooltipExpression><![CDATA["Click for the line list"]]></hyperlinkTooltipExpression>
+								<hyperlinkParameter name="_report">
+									<hyperlinkParameterExpression><![CDATA["/JNPCT/Reports/Linelists/Task_generated_child_grade"]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_DATE_END">
+									<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_END}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_DATE_START">
+									<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_START}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_PHC_NAME">
+									<hyperlinkParameterExpression><![CDATA[$P{PARAM_PHC_NAME}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_SUBCENTRE_NAME">
+									<hyperlinkParameterExpression><![CDATA[$P{PARAM_SUBCENTRE_NAME}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_VILLAGE_NAME">
+									<hyperlinkParameterExpression><![CDATA[$P{PARAM_VILLAGE_NAME}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_DYNAMIC_WHERE">
+									<hyperlinkParameterExpression><![CDATA[$V{MODERATE_COMPLETE}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="Exited">
+									<hyperlinkParameterExpression><![CDATA[$P{Exited}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="70" uuid="e0f3de1d-a269-4aa3-bac5-415628177e75">
+						<jr:detailCell style="Table 2_TD" height="30">
+							<textField hyperlinkType="ReportExecution">
+								<reportElement style="DataRowNumericElement" x="0" y="0" width="70" height="30" uuid="9b9571cb-e2d8-4726-8080-e90506de5164"/>
+								<textFieldExpression><![CDATA[$F{normal}]]></textFieldExpression>
+								<hyperlinkWhenExpression><![CDATA[$F{normal} > 0]]></hyperlinkWhenExpression>
+								<hyperlinkTooltipExpression><![CDATA["Click for the line list"]]></hyperlinkTooltipExpression>
+								<hyperlinkParameter name="_report">
+									<hyperlinkParameterExpression><![CDATA["/JNPCT/Reports/Linelists/Task_generated_child_grade"]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_DATE_END">
+									<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_END}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_DATE_START">
+									<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_START}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_PHC_NAME">
+									<hyperlinkParameterExpression><![CDATA[$P{PARAM_PHC_NAME}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_SUBCENTRE_NAME">
+									<hyperlinkParameterExpression><![CDATA[$P{PARAM_SUBCENTRE_NAME}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_VILLAGE_NAME">
+									<hyperlinkParameterExpression><![CDATA[$P{PARAM_VILLAGE_NAME}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_DYNAMIC_WHERE">
+									<hyperlinkParameterExpression><![CDATA[$V{NORMAL}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="Exited">
+									<hyperlinkParameterExpression><![CDATA[$P{Exited}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="70" uuid="37bbafb1-620b-43ae-baac-7c473ba99920">
+						<jr:detailCell style="Table 2_TD" height="30">
+							<textField hyperlinkType="ReportExecution">
+								<reportElement style="DataRowNumericElement" x="0" y="0" width="70" height="30" uuid="92d711b6-8d83-4dcd-a989-884cbb4d69da"/>
+								<textFieldExpression><![CDATA[$F{normal_complete}]]></textFieldExpression>
+								<hyperlinkWhenExpression><![CDATA[$F{normal_complete} > 0]]></hyperlinkWhenExpression>
+								<hyperlinkTooltipExpression><![CDATA["Click for the line list"]]></hyperlinkTooltipExpression>
+								<hyperlinkParameter name="_report">
+									<hyperlinkParameterExpression><![CDATA["/JNPCT/Reports/Linelists/Task_generated_child_grade"]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_DATE_END">
+									<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_END}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_DATE_START">
+									<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_START}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_PHC_NAME">
+									<hyperlinkParameterExpression><![CDATA[$P{PARAM_PHC_NAME}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_SUBCENTRE_NAME">
+									<hyperlinkParameterExpression><![CDATA[$P{PARAM_SUBCENTRE_NAME}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_VILLAGE_NAME">
+									<hyperlinkParameterExpression><![CDATA[$P{PARAM_VILLAGE_NAME}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_DYNAMIC_WHERE">
+									<hyperlinkParameterExpression><![CDATA[$V{NORMAL_COMPLETE}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="Exited">
+									<hyperlinkParameterExpression><![CDATA[$P{Exited}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="70" uuid="d1c32467-7b56-48da-a94d-ebb24c84d182">
+						<jr:detailCell style="Table 2_TD" height="30">
+							<textField hyperlinkType="ReportExecution">
+								<reportElement style="DataRowNumericElement" x="0" y="0" width="70" height="30" uuid="a57ec978-c44f-4713-bbcf-74518318e4dc"/>
+								<textFieldExpression><![CDATA[$F{no_status}]]></textFieldExpression>
+								<hyperlinkWhenExpression><![CDATA[$F{no_status} > 0]]></hyperlinkWhenExpression>
+								<hyperlinkTooltipExpression><![CDATA["Click for the line list"]]></hyperlinkTooltipExpression>
+								<hyperlinkParameter name="_report">
+									<hyperlinkParameterExpression><![CDATA["/JNPCT/Reports/Linelists/Task_generated_child_grade"]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_DATE_END">
+									<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_END}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_DATE_START">
+									<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_START}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_PHC_NAME">
+									<hyperlinkParameterExpression><![CDATA[$P{PARAM_PHC_NAME}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_SUBCENTRE_NAME">
+									<hyperlinkParameterExpression><![CDATA[$P{PARAM_SUBCENTRE_NAME}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_VILLAGE_NAME">
+									<hyperlinkParameterExpression><![CDATA[$P{PARAM_VILLAGE_NAME}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_DYNAMIC_WHERE">
+									<hyperlinkParameterExpression><![CDATA[$V{NO_STATUS}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="Exited">
+									<hyperlinkParameterExpression><![CDATA[$P{Exited}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="70" uuid="33af5fc8-eb8a-4f50-893f-1a7c703610df">
+						<jr:detailCell style="Table 2_TD" height="30">
+							<textField hyperlinkType="ReportExecution">
+								<reportElement style="DataRowNumericElement" x="0" y="0" width="70" height="30" uuid="b2a09c08-48e9-4223-adef-74ef0517d101"/>
+								<textFieldExpression><![CDATA[$F{no_status_complete}]]></textFieldExpression>
+								<hyperlinkWhenExpression><![CDATA[$F{no_status_complete} > 0]]></hyperlinkWhenExpression>
+								<hyperlinkTooltipExpression><![CDATA["Click for the line list"]]></hyperlinkTooltipExpression>
+								<hyperlinkParameter name="_report">
+									<hyperlinkParameterExpression><![CDATA["/JNPCT/Reports/Linelists/Task_generated_child_grade"]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_DATE_END">
+									<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_END}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_DATE_START">
+									<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_START}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_PHC_NAME">
+									<hyperlinkParameterExpression><![CDATA[$P{PARAM_PHC_NAME}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_SUBCENTRE_NAME">
+									<hyperlinkParameterExpression><![CDATA[$P{PARAM_SUBCENTRE_NAME}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_VILLAGE_NAME">
+									<hyperlinkParameterExpression><![CDATA[$P{PARAM_VILLAGE_NAME}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="PARAM_DYNAMIC_WHERE">
+									<hyperlinkParameterExpression><![CDATA[$V{NO_STATUS_COMPLETE}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+								<hyperlinkParameter name="Exited">
+									<hyperlinkParameterExpression><![CDATA[$P{Exited}]]></hyperlinkParameterExpression>
+								</hyperlinkParameter>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+				</jr:table>
+			</componentElement>
+		</band>
+	</detail>
+</jasperReport>

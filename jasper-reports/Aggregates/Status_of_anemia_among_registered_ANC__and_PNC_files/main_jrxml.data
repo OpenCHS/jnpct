@@ -1,0 +1,477 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.12.2.final using JasperReports Library version 6.11.0  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Aggregate_3Groups_anemia" pageWidth="1684" pageHeight="720" columnWidth="1080" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="fa1a9231-754c-4c0f-8a57-3e034206cd5a">
+	<property name="ireport.jasperserver.url" value="https://reporting-jasper.avniproject.org/jasperserver/"/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="JNPCT Data Adapter"/>
+	<template><![CDATA["repo:/Templates/Styles/AggregateReportStyles.jrtx"]]></template>
+	<parameter name="PARAM_DATE_START" class="java.sql.Timestamp"/>
+	<parameter name="PARAM_DATE_END" class="java.sql.Timestamp"/>
+	<parameter name="PARAM_PHC_NAME" class="java.util.List" nestedType="java.lang.String"/>
+	<parameter name="PARAM_SUBCENTRE_NAME" class="java.util.List" nestedType="java.lang.String"/>
+	<parameter name="PARAM_VILLAGE_NAME" class="java.util.List" nestedType="java.lang.String"/>
+	<parameter name="Exited" class="java.util.List" nestedType="java.lang.String"/>
+	<queryString language="SQL">
+		<![CDATA[with merged_anc_obs as (
+select enl.id enl_id,
+       enl.individual_id individual_id,
+       enl.enrolment_date_time enrolment_date_time,
+       enl.program_exit_date_time  program_exit_date_time,
+     
+jsonb_merge(jsonb_agg(jsonb_strip_nulls(enc.observations) order by encounter_date_time desc)) all_obs
+from program_enrolment enl
+join program_encounter enc on enl.id = enc.program_enrolment_id
+join encounter_type et on enc.encounter_type_id = et.id
+join program p on enl.program_id = p.id
+
+where et.name in ('ANC', 'ANC Cluster Incharge')
+and p.name = 'Pregnancy'
+group by enl.id
+),
+
+merged_pnc_obs as (
+select enl.id enl_id,
+jsonb_merge(jsonb_agg(jsonb_strip_nulls(enc.observations) order by encounter_date_time desc)) all_obs
+from program_enrolment enl
+join program_encounter enc on enl.id = enc.program_enrolment_id
+join encounter_type et on enc.encounter_type_id = et.id
+join program p on enl.program_id = p.id
+
+where et.name in ('PNC')
+and p.name = 'Pregnancy'
+group by enl.id)
+
+select coalesce("PHC",'Total')                                      "PHC",
+       count(*) filter (where anc_high_risk like '%Severe Anemia%' and delivery_reported is null) severe_anemia_anc,
+       count(*) filter (where pnc_high_risk like '%Severe Anemia%') severe_anemia_pnc,
+       
+       count(*) filter (where anc_high_risk like '%Moderate Anemia%' and delivery_reported is null) moderate_anemia_anc,
+       count(*) filter (where pnc_high_risk like '%Moderate Anemia%') moderate_anemia_pnc,
+       
+       count(*) filter (where anc_high_risk like '%Mild Anemia%' and delivery_reported is null) mild_anemia_anc,
+       count(*) filter (where pnc_high_risk like '%Mild Anemia%') mild_anemia_pnc
+from (
+select multi_select_coded(anc.all_obs->'0ca1c6a2-001b-475a-9813-1d905df9e81b') as anc_high_risk,
+multi_select_coded(pnc.all_obs->'7c958617-ad77-41ac-b125-d9f33569e202') as pnc_high_risk,
+phc.title as "PHC",
+case when program_exit_date_time is null then 'No'
+else 'Yes' end                                                                     isExited,
+delivery."Enc.encounter_date_time"                                                 delivery_reported
+
+
+from merged_anc_obs anc
+LEFT OUTER JOIN merged_pnc_obs pnc ON pnc.enl_id = anc.enl_id
+LEFT JOIN jnpct_delivery_view delivery on delivery."Ind.Id" = anc.individual_id
+LEFT OUTER JOIN individual individual ON anc.individual_id = individual.id  
+LEFT OUTER JOIN gender g ON g.id = individual.gender_id 
+LEFT JOIN address_level village ON individual.address_id = village.id
+LEFT JOIN address_level subcenter ON village.parent_id = subcenter.id
+LEFT JOIN address_level phc ON subcenter.parent_id = phc.id
+LEFT JOIN address_level block ON phc.parent_id = block.id 
+
+where 1=1 and $X{IN,phc.title,PARAM_PHC_NAME}
+          and $X{IN,subcenter.title,PARAM_SUBCENTRE_NAME}
+          and $X{IN,village.title,PARAM_VILLAGE_NAME}
+          and $X{BETWEEN,anc.enrolment_date_time,PARAM_DATE_START, PARAM_DATE_END}
+          )
+data where $X{IN,isExited,Exited} 
+group by rollup("PHC")]]>
+	</queryString>
+	<field name="PHC" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="PHC"/>
+	</field>
+	<field name="severe_anemia_anc" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.label" value="severe_anemia_anc"/>
+	</field>
+	<field name="severe_anemia_pnc" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.label" value="severe_anemia_pnc"/>
+	</field>
+	<field name="moderate_anemia_anc" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.label" value="moderate_anemia_anc"/>
+	</field>
+	<field name="moderate_anemia_pnc" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.label" value="moderate_anemia_pnc"/>
+	</field>
+	<field name="mild_anemia_anc" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.label" value="mild_anemia_anc"/>
+	</field>
+	<field name="mild_anemia_pnc" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.label" value="mild_anemia_pnc"/>
+	</field>
+	<variable name="ANC_SEVERE_ANEMIA_DYNAMIC_WHERE" class="java.lang.String">
+		<variableExpression><![CDATA[$F{PHC}.equals("Total") ? "and \"H.B\"::Numeric < 7 and delivery_reported is null" :
+"and \"PHC\" = '" + $F{PHC} + "' and \"H.B\"::Numeric < 7 and delivery_reported is null"]]></variableExpression>
+	</variable>
+	<variable name="ANC_MODERATE_ANEMIA_DYNAMIC_WHERE" class="java.lang.String">
+		<variableExpression><![CDATA[$F{PHC}.equals("Total") ? "and \"H.B\"::Numeric between 7 and 9.9 and delivery_reported is null" :
+"and \"PHC\" = '" + $F{PHC} + "' and \"H.B\"::Numeric between 7 and 9.9 and delivery_reported is null"]]></variableExpression>
+	</variable>
+	<variable name="ANC_MILD_ANEMIA_DYNAMIC_WHERE" class="java.lang.String">
+		<variableExpression><![CDATA[$F{PHC}.equals("Total") ? "and \"H.B\"::Numeric between 10 and 10.9 and delivery_reported is null" :
+"and \"PHC\" = '" + $F{PHC} + "' and \"H.B\"::Numeric between 10 and 10.9 and delivery_reported is null"]]></variableExpression>
+	</variable>
+	<variable name="PNC_SEVERE_ANEMIA_DYNAMIC_WHERE" class="java.lang.String">
+		<variableExpression><![CDATA[$F{PHC}.equals("Total") ? "and \"H.B\"::Numeric < 7" :
+"and \"PHC\" = '" + $F{PHC} + "' and \"H.B\"::Numeric < 7"]]></variableExpression>
+	</variable>
+	<variable name="PNC_MODERATE_ANEMIA_DYNAMIC_WHERE" class="java.lang.String">
+		<variableExpression><![CDATA[$F{PHC}.equals("Total") ? "and \"H.B\"::Numeric between 7 and 9.9" :
+"and \"PHC\" = '" + $F{PHC} + "' and \"H.B\"::Numeric between 7 and 9.9"]]></variableExpression>
+	</variable>
+	<variable name="PNC_MILD_ANEMIA_DYNAMIC_WHERE" class="java.lang.String">
+		<variableExpression><![CDATA[$F{PHC}.equals("Total") ? "and \"H.B\"::Numeric between 10 and 10.9" :
+"and \"PHC\" = '" + $F{PHC} + "' and \"H.B\"::Numeric between 10 and 10.9"]]></variableExpression>
+	</variable>
+	<background>
+		<band height="100" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+		</band>
+	</background>
+	<title>
+		<band height="50" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<staticText>
+				<reportElement style="ReportTitle" x="0" y="0" width="1644" height="50" uuid="b41c1dbc-657e-4f9f-93da-2951563f95d4"/>
+				<text><![CDATA[Status of anemia among registered ANC and PNC]]></text>
+			</staticText>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="60" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<staticText>
+				<reportElement style="ColumnHeader" x="0" y="0" width="234" height="60" uuid="a6d45986-ceea-4fb9-9cda-a471fb593124">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="9d924e82-f901-47e1-b892-817ab4f526a2"/>
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+				</box>
+				<text><![CDATA[PHC]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="234" y="30" width="234" height="30" uuid="a16f5052-2380-4324-8493-bf827807dc1b">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="f59121c7-d1f2-460f-9c58-db51674d57b6"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+				</box>
+				<text><![CDATA[ANC]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="468" y="30" width="234" height="30" uuid="10f665f9-3c67-4543-943d-d0672b76237e">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="1bfaa313-7a5d-4f41-b1e4-29771b831847"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+				</box>
+				<text><![CDATA[PNC]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="702" y="30" width="234" height="30" uuid="f053e39b-ed6a-4b84-a17a-9c2645680de8">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="24fdfea8-e37e-42de-ae56-26143659b663"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+				</box>
+				<text><![CDATA[ANC]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="936" y="30" width="234" height="30" uuid="efa36e1b-f0d5-4d59-b3ae-223396c678ac">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="c3c50a4a-29a2-4070-9691-f1d08a11c5ed"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+				</box>
+				<text><![CDATA[PNC]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="1170" y="30" width="234" height="30" uuid="9c07f1f8-72da-4cb2-b835-9798a298163b">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="bc1eb13e-dc5b-4c49-beba-8289e04d1865"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+				</box>
+				<text><![CDATA[ANC]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="1404" y="30" width="234" height="30" uuid="f4fd4650-909a-4b46-9f58-ac79eb51055d">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="6a7b0f4f-d8f2-43a5-911f-042e8096a3b5"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+				</box>
+				<text><![CDATA[PNC]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="234" y="0" width="468" height="30" uuid="b97d2b32-fea2-4c23-b43b-1526f87251be">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="8d7f8578-9a4e-4ef0-9f2c-78b13aa5ee9a"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+				</box>
+				<text><![CDATA[Severe anemia]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="702" y="0" width="468" height="30" uuid="2393ecdc-1f01-410e-9090-8c7973ffe4ad">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="8d7f8578-9a4e-4ef0-9f2c-78b13aa5ee9a"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+				</box>
+				<text><![CDATA[Moderate anemia]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="1170" y="0" width="468" height="30" uuid="23d626d5-802d-4326-bd6c-a17e6728f0fd">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="8d7f8578-9a4e-4ef0-9f2c-78b13aa5ee9a"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+				</box>
+				<text><![CDATA[Mild anemia]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="30" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<textField textAdjust="StretchHeight">
+				<reportElement style="DataRowElement" stretchType="RelativeToTallestObject" x="0" y="0" width="234" height="30" uuid="2d5e1207-c43c-4916-897f-437b69f377a5">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="9d924e82-f901-47e1-b892-817ab4f526a2"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{PHC}]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight" hyperlinkType="ReportExecution">
+				<reportElement style="DataRowElement" stretchType="RelativeToTallestObject" x="234" y="0" width="234" height="30" uuid="a212b915-2188-4bb4-8768-23fd2a0e1f76">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="f59121c7-d1f2-460f-9c58-db51674d57b6"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{severe_anemia_anc}]]></textFieldExpression>
+				<hyperlinkWhenExpression><![CDATA[$F{severe_anemia_anc} > 0]]></hyperlinkWhenExpression>
+				<hyperlinkTooltipExpression><![CDATA["Click for the line list"]]></hyperlinkTooltipExpression>
+				<hyperlinkParameter name="_report">
+					<hyperlinkParameterExpression><![CDATA["/JNPCT/Reports/Linelists/Linelist_for_ANC"]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DATE_END">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_END}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DATE_START">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_START}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_PHC_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_PHC_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_SUBCENTRE_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_SUBCENTRE_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_VILLAGE_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_VILLAGE_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="Exited">
+					<hyperlinkParameterExpression><![CDATA[$P{Exited}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DYNAMIC_WHERE">
+					<hyperlinkParameterExpression><![CDATA[$V{ANC_SEVERE_ANEMIA_DYNAMIC_WHERE}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+			</textField>
+			<textField textAdjust="StretchHeight" hyperlinkType="ReportExecution">
+				<reportElement style="DataRowElement" stretchType="RelativeToTallestObject" x="468" y="0" width="234" height="30" uuid="44802bd9-6f63-4875-ad3c-4052b0cd0345">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="1bfaa313-7a5d-4f41-b1e4-29771b831847"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{severe_anemia_pnc}]]></textFieldExpression>
+				<hyperlinkWhenExpression><![CDATA[$F{severe_anemia_pnc} > 0]]></hyperlinkWhenExpression>
+				<hyperlinkTooltipExpression><![CDATA["Click for the line list"]]></hyperlinkTooltipExpression>
+				<hyperlinkParameter name="_report">
+					<hyperlinkParameterExpression><![CDATA["/JNPCT/Reports/Linelists/Linelist_for_Mother_PNC"]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DATE_END">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_END}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DATE_START">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_START}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_PHC_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_PHC_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_SUBCENTRE_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_SUBCENTRE_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_VILLAGE_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_VILLAGE_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="Exited">
+					<hyperlinkParameterExpression><![CDATA[$P{Exited}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DYNAMIC_WHERE">
+					<hyperlinkParameterExpression><![CDATA[$V{PNC_SEVERE_ANEMIA_DYNAMIC_WHERE}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+			</textField>
+			<textField textAdjust="StretchHeight" hyperlinkType="ReportExecution">
+				<reportElement style="DataRowElement" stretchType="RelativeToTallestObject" x="702" y="0" width="234" height="30" uuid="7fb9653d-c84b-4c6b-b2cf-252c7b5ef910">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="24fdfea8-e37e-42de-ae56-26143659b663"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{moderate_anemia_anc}]]></textFieldExpression>
+				<hyperlinkWhenExpression><![CDATA[$F{moderate_anemia_anc} > 0]]></hyperlinkWhenExpression>
+				<hyperlinkTooltipExpression><![CDATA["Click for the line list"]]></hyperlinkTooltipExpression>
+				<hyperlinkParameter name="_report">
+					<hyperlinkParameterExpression><![CDATA["/JNPCT/Reports/Linelists/Linelist_for_ANC"]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DATE_END">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_END}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DATE_START">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_START}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_PHC_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_PHC_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_SUBCENTRE_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_SUBCENTRE_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_VILLAGE_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_VILLAGE_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="Exited">
+					<hyperlinkParameterExpression><![CDATA[$P{Exited}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DYNAMIC_WHERE">
+					<hyperlinkParameterExpression><![CDATA[$V{ANC_MODERATE_ANEMIA_DYNAMIC_WHERE}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+			</textField>
+			<textField textAdjust="StretchHeight" hyperlinkType="ReportExecution">
+				<reportElement style="DataRowElement" stretchType="RelativeToTallestObject" x="936" y="0" width="234" height="30" uuid="6d2b8c9a-e62c-44bc-9bd2-f71100a21a5a">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="c3c50a4a-29a2-4070-9691-f1d08a11c5ed"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{moderate_anemia_pnc}]]></textFieldExpression>
+				<hyperlinkWhenExpression><![CDATA[$F{moderate_anemia_pnc} > 0]]></hyperlinkWhenExpression>
+				<hyperlinkTooltipExpression><![CDATA["Click for the line list"]]></hyperlinkTooltipExpression>
+				<hyperlinkParameter name="_report">
+					<hyperlinkParameterExpression><![CDATA["/JNPCT/Reports/Linelists/Linelist_for_Mother_PNC"]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DATE_END">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_END}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DATE_START">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_START}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_PHC_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_PHC_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_SUBCENTRE_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_SUBCENTRE_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_VILLAGE_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_VILLAGE_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="Exited">
+					<hyperlinkParameterExpression><![CDATA[$P{Exited}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DYNAMIC_WHERE">
+					<hyperlinkParameterExpression><![CDATA[$V{PNC_MODERATE_ANEMIA_DYNAMIC_WHERE}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+			</textField>
+			<textField textAdjust="StretchHeight" hyperlinkType="ReportExecution">
+				<reportElement style="DataRowElement" stretchType="RelativeToTallestObject" x="1170" y="0" width="234" height="30" uuid="6dc85a14-9965-48fb-885c-e7d27714baee">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="bc1eb13e-dc5b-4c49-beba-8289e04d1865"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{mild_anemia_anc}]]></textFieldExpression>
+				<hyperlinkWhenExpression><![CDATA[$F{mild_anemia_anc} > 0]]></hyperlinkWhenExpression>
+				<hyperlinkTooltipExpression><![CDATA["Click for the line list"]]></hyperlinkTooltipExpression>
+				<hyperlinkParameter name="_report">
+					<hyperlinkParameterExpression><![CDATA["/JNPCT/Reports/Linelists/Linelist_for_ANC"]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DATE_END">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_END}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DATE_START">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_START}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_PHC_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_PHC_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_SUBCENTRE_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_SUBCENTRE_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_VILLAGE_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_VILLAGE_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="Exited">
+					<hyperlinkParameterExpression><![CDATA[$P{Exited}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DYNAMIC_WHERE">
+					<hyperlinkParameterExpression><![CDATA[$V{ANC_MILD_ANEMIA_DYNAMIC_WHERE}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+			</textField>
+			<textField textAdjust="StretchHeight" hyperlinkType="ReportExecution">
+				<reportElement style="DataRowElement" stretchType="RelativeToTallestObject" x="1404" y="0" width="234" height="30" uuid="f3c9fdb3-1ba5-45b9-8824-61d7599be95a">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="6a7b0f4f-d8f2-43a5-911f-042e8096a3b5"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{mild_anemia_pnc}]]></textFieldExpression>
+				<hyperlinkWhenExpression><![CDATA[$F{mild_anemia_pnc} > 0]]></hyperlinkWhenExpression>
+				<hyperlinkTooltipExpression><![CDATA["Click for the line list"]]></hyperlinkTooltipExpression>
+				<hyperlinkParameter name="_report">
+					<hyperlinkParameterExpression><![CDATA["/JNPCT/Reports/Linelists/Linelist_for_Mother_PNC"]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DATE_END">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_END}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DATE_START">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_START}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_PHC_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_PHC_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_SUBCENTRE_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_SUBCENTRE_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_VILLAGE_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_VILLAGE_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="Exited">
+					<hyperlinkParameterExpression><![CDATA[$P{Exited}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DYNAMIC_WHERE">
+					<hyperlinkParameterExpression><![CDATA[$V{PNC_MILD_ANEMIA_DYNAMIC_WHERE}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

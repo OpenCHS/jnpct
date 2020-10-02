@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.12.2.final using JasperReports Library version 6.11.0  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Child PNC - Not Visited Within 60 Days of Birth" pageWidth="1684" pageHeight="720" orientation="Landscape" columnWidth="1080" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="05cc1aaf-5713-4062-a0f6-7bab099e5fb6">
+	<property name="ireport.jasperserver.url" value="https://reporting-jasper.avniproject.org/jasperserver/"/>
+	<property name="com.jaspersoft.studio.report.description" value=""/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="jnpct_uat@prod"/>
+	<property name="ireport.jasperserver.user" value="joya"/>
+	<property name="ireport.jasperserver.report.resource" value="/JNPCT/Reports/Aggregates/Child_PNC___Not_Visited_Within_60_Days_of_Birth_files/main_jrxml"/>
+	<property name="ireport.jasperserver.reportUnit" value="/JNPCT/Reports/Aggregates/Child_PNC___Not_Visited_Within_60_Days_of_Birth"/>
+	<template><![CDATA["repo:/Templates/Styles/Linelist.jrtx"]]></template>
+	<parameter name="PARAM_DATE_END" class="java.sql.Timestamp">
+		<defaultValueExpression><![CDATA[new java.sql.Timestamp(Calendar.getInstance().getTime().getTime())]]></defaultValueExpression>
+	</parameter>
+	<parameter name="PARAM_DATE_START" class="java.sql.Timestamp">
+		<defaultValueExpression><![CDATA[new java.sql.Timestamp($P{PARAM_DATE_END}.getTime() - new Long("5097600000").longValue())]]></defaultValueExpression>
+	</parameter>
+	<parameter name="PARAM_PHC_NAME" class="java.util.List" nestedType="java.lang.String"/>
+	<parameter name="PARAM_SUBCENTRE_NAME" class="java.util.List" nestedType="java.lang.String"/>
+	<parameter name="PARAM_VILLAGE_NAME" class="java.util.List" nestedType="java.lang.String"/>
+	<queryString language="SQL">
+		<![CDATA[select coalesce(a.title, 'Total') PHC
+     , count(*) as total_births
+     , count(*) filter ( where (first_visit is null or first_visit > date_of_birth + INTERVAL '59 days') ) total_unvisited_within_60_days
+from address_level a
+         left join address_level_type at on at.id = a.type_id
+         right join
+     (
+         select enrolment_id
+              , phc
+              , date_of_birth
+              , first_visit
+         from (
+                  select enrolment."Enl.Id"                                                                         as enrolment_id
+                       , enrolment."Ind.phc"                                                                        as phc
+                       , enrolment."Ind.date_of_birth"                                                              as date_of_birth
+                       , pnc."Enc.encounter_date_time"                                                              as first_visit
+                       , row_number()
+                         over (partition by enrolment."Enl.Id" order by pnc."Enc.encounter_date_time")              as visit_number
+                  from jnpct_child_enrolment_view enrolment
+                           left join jnpct_child_pnc_view pnc on pnc."Enl.Id" = enrolment."Enl.Id"
+                  where 1 = 1
+                  and $X{IN, enrolment."Ind.phc",PARAM_PHC_NAME}
+                  and $X{IN, enrolment."Ind.subcenter",PARAM_SUBCENTRE_NAME}
+                  and $X{IN, enrolment."Ind.village",PARAM_VILLAGE_NAME}
+				  and $X{BETWEEN, enrolment."Ind.date_of_birth", PARAM_DATE_START, PARAM_DATE_END}
+                  
+              ) encounters
+         where visit_number = 1
+     ) filtered_encounters on a.title = phc
+where at.name = 'Phc'
+  and not a.is_voided
+group by rollup (a.title)
+;]]>
+	</queryString>
+	<field name="phc" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="phc"/>
+	</field>
+	<field name="total_births" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.label" value="total_births"/>
+	</field>
+	<field name="total_unvisited_within_60_days" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.label" value="total_unvisited_within_60_days"/>
+	</field>
+	<background>
+		<band height="100" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+		</band>
+	</background>
+	<title>
+		<band height="50" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<staticText>
+				<reportElement style="ReportTitle" x="0" y="0" width="1644" height="50" uuid="ccc013a8-2e32-4c97-acca-cfac4c04bef7"/>
+				<text><![CDATA[Child PNC - Not Visited Within 60 Days of Birth]]></text>
+			</staticText>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="30" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<staticText>
+				<reportElement style="ColumnHeader" x="0" y="0" width="548" height="30" uuid="6c13a95c-17b8-4b50-8339-d3070bc8e989">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="3827e9d4-e1c5-4799-9740-4b36f7b6e3ac"/>
+				</reportElement>
+				<text><![CDATA[PHC]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="548" y="0" width="548" height="30" uuid="3b391336-f8fc-4ec2-a99b-6256bd985671">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="d27d5160-511d-4f75-9463-3eef819d3147"/>
+				</reportElement>
+				<text><![CDATA[Total Births]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="1096" y="0" width="548" height="30" uuid="d6b212f8-52fa-4389-9e65-608b1148676d">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="3669ff4e-3599-4d2d-9362-f09e9018a96a"/>
+				</reportElement>
+				<text><![CDATA[Total Unvisited Within 60 Days]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="30" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.spreadsheet.SpreadsheetLayout"/>
+			<textField textAdjust="StretchHeight">
+				<reportElement style="DataRowElement" stretchType="RelativeToTallestObject" x="0" y="0" width="548" height="30" uuid="bd21ae77-b338-4db8-b184-dff39a720e82">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="3827e9d4-e1c5-4799-9740-4b36f7b6e3ac"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{phc}]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight" hyperlinkType="ReportExecution">
+				<reportElement style="DataRowElement" stretchType="RelativeToTallestObject" x="548" y="0" width="548" height="30" uuid="295e927c-26a6-4fdd-b239-d693d8eac215">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="d27d5160-511d-4f75-9463-3eef819d3147"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{total_births}]]></textFieldExpression>
+				<hyperlinkWhenExpression><![CDATA[$F{total_births} > 0]]></hyperlinkWhenExpression>
+				<hyperlinkParameter name="_report">
+					<hyperlinkParameterExpression><![CDATA["/JNPCT/Reports/Linelists/Child_PNC_Linelist"]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DATE_START">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_START}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DATE_END">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_END}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_PHC_NAME">
+					<hyperlinkParameterExpression><![CDATA[$F{phc}.equals("Total") ? $P{PARAM_PHC_NAME} : $F{phc}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_SUBCENTRE_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_SUBCENTRE_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_VILLAGE_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_VILLAGE_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="Exited">
+					<hyperlinkParameterExpression><![CDATA[""]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DYNAMIC_WHERE">
+					<hyperlinkParameterExpression><![CDATA[""]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+			</textField>
+			<textField textAdjust="StretchHeight" hyperlinkType="ReportExecution">
+				<reportElement style="DataRowElement" stretchType="RelativeToTallestObject" x="1096" y="0" width="548" height="30" uuid="25bc243b-0a94-45b9-8dbf-6923987431fc">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="3669ff4e-3599-4d2d-9362-f09e9018a96a"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{total_unvisited_within_60_days}]]></textFieldExpression>
+				<hyperlinkWhenExpression><![CDATA[$F{total_unvisited_within_60_days} > 0]]></hyperlinkWhenExpression>
+				<hyperlinkParameter name="_report">
+					<hyperlinkParameterExpression><![CDATA["/JNPCT/Reports/Linelists/Child_PNC_Linelist"]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DATE_START">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_START}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DATE_END">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_END}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_PHC_NAME">
+					<hyperlinkParameterExpression><![CDATA[$F{phc}.equals("Total") ? $P{PARAM_PHC_NAME} : $F{phc}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_SUBCENTRE_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_SUBCENTRE_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_VILLAGE_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_VILLAGE_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="Exited">
+					<hyperlinkParameterExpression><![CDATA[""]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DYNAMIC_WHERE">
+					<hyperlinkParameterExpression><![CDATA["  and (\"Enc.encounter_date_time\" is null or \"Enc.encounter_date_time\" > dob + INTERVAL '59 days')"]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DYNAMIC_INNER_WHERE">
+					<hyperlinkParameterExpression><![CDATA[""]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

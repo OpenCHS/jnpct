@@ -1,0 +1,358 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.12.2.final using JasperReports Library version 6.11.0  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Aggregate_3Groups" pageWidth="1684" pageHeight="720" columnWidth="1080" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="fa1a9231-754c-4c0f-8a57-3e034206cd5a">
+	<property name="ireport.jasperserver.url" value="https://reporting-jasper.avniproject.org/jasperserver/"/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="JNPCT Data Adapter"/>
+	<property name="ireport.jasperserver.user" value="NupoorK"/>
+	<property name="ireport.jasperserver.reportUnit" value="/JNPCT/Reports/Aggregates/KMC_Care"/>
+	<template><![CDATA["repo:/Templates/Styles/AggregateReportStyles.jrtx"]]></template>
+	<parameter name="PARAM_MANDATORY_START_DATE" class="java.sql.Timestamp">
+		<defaultValueExpression><![CDATA[new java.sql.Timestamp(Calendar.getInstance().getTime().getTime() - new Long("5097600000").longValue())]]></defaultValueExpression>
+	</parameter>
+	<parameter name="PARAM_MANDATORY_DATE_END" class="java.sql.Timestamp">
+		<defaultValueExpression><![CDATA[new java.sql.Timestamp(Calendar.getInstance().getTime().getTime())]]></defaultValueExpression>
+	</parameter>
+	<parameter name="PARAM_PHC_NAME" class="java.util.List" nestedType="java.lang.String"/>
+	<parameter name="PARAM_SUBCENTRE_NAME" class="java.util.List" nestedType="java.lang.String"/>
+	<parameter name="PARAM_VILLAGE_NAME" class="java.util.List" nestedType="java.lang.String"/>
+	<parameter name="Exited" class="java.util.List" nestedType="java.lang.String"/>
+	<queryString language="SQL">
+		<![CDATA[with agg_data as (
+  select "Ind.phc",
+         sum(case when kmc_answer_yes > 0 and kmc_answer_no = 0 then 1 else 0 end) as kmc_given,
+         sum(case when kmc_answer_no > 0 then 1 else 0 end) as left_wo_kmc
+  from (
+         select enc."Enl.Id",
+                enc."Ind.phc",
+                count(*) filter ( where "Enc.Weight"::numeric < 2.5 and "Enc.If infant's weight is less than 2.5kg then did KMC?" = 'Yes') kmc_answer_yes,
+                count(*) filter ( where "Enc.Weight"::numeric < 2.5 and "Enc.If infant's weight is less than 2.5kg then did KMC?" = 'No') kmc_answer_no   
+         from  jnpct_child_pnc_view enc 
+         left join jnpct_child_enrolment_view enrolment on enrolment."Enl.Id" = enc."Enl.Id" 
+         where enc."Enc.earliest_visit_date_time" is not null
+         and enrolment."Ind.date_of_birth" + INTERVAL '59 days' > $P{PARAM_MANDATORY_DATE_END}
+	     and $X{BETWEEN, enrolment."Ind.date_of_birth", PARAM_MANDATORY_START_DATE, PARAM_MANDATORY_DATE_END}
+	     and $X{IN, enrolment."Ind.phc",PARAM_PHC_NAME}
+         and $X{IN, enrolment."Ind.subcenter",PARAM_SUBCENTRE_NAME}
+         and $X{IN, enrolment."Ind.village",PARAM_VILLAGE_NAME}  
+         
+         
+         group by enc."Enl.Id", enc."Ind.phc") foo
+  group by "Ind.phc"
+),
+enrolment_data as (select 
+              enc."Enc.Weight" enc_weight,
+              enl."Ind.phc" "PHC",
+              enl."Enl.Birth Weight" enl_weight,
+              row_number() OVER (PARTITION BY enl."Enl.Id" ORDER BY coalesce 
+              (enc."Enc.encounter_date_time",enl."Enl.enrolment_date_time") desc) visit_number
+    
+			  from jnpct_child_enrolment_view enl
+              left join jnpct_child_pnc_view enc on enl."Enl.Id" = enc."Enl.Id" 
+              where enl."Ind.date_of_birth" + INTERVAL '59 days' > $P{PARAM_MANDATORY_DATE_END}
+	     	  and $X{BETWEEN, enl."Ind.date_of_birth", PARAM_MANDATORY_START_DATE, PARAM_MANDATORY_DATE_END}
+	          and $X{IN, enl."Ind.phc",PARAM_PHC_NAME}
+              and $X{IN, enl."Ind.subcenter",PARAM_SUBCENTRE_NAME}
+              and $X{IN, enl."Ind.village",PARAM_VILLAGE_NAME}
+              )
+
+select phc,
+       kmc_given,
+       nullif(kmc_given/(nullif(children_with_lt_two_point_five_weight, 0))*100, 0)   kmc_given_proportion,
+       left_wo_kmc,
+       nullif(left_wo_kmc/(nullif(children_with_lt_two_point_five_weight, 0))*100, 0) left_wo_kmc_proportion,
+       children_with_lt_two_point_five_weight low_weight_total       
+from (
+       select coalesce(a.title, 'Total') phc,
+              sum(coalesce(kmc_given, 0)) kmc_given,
+              sum(coalesce(left_wo_kmc, 0)) left_wo_kmc,
+              (select count(*) 
+              from enrolment_data 
+              where coalesce(enc_weight,enl_weight)::numeric < 2.5 and visit_number =1
+              and ("PHC" =a.title or a.title isnull)
+           	  ) children_with_lt_two_point_five_weight
+       from address_level a
+         join address_level_type at on a.type_id=at.id and at.name='Phc'
+              left join agg_data on agg_data."Ind.phc"=a.title
+       where a.is_voided=false
+       group by rollup (a.title) order by a.title
+     ) foo;]]>
+	</queryString>
+	<field name="phc" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="phc"/>
+	</field>
+	<field name="kmc_given" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.label" value="kmc_given"/>
+	</field>
+	<field name="kmc_given_proportion" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.label" value="kmc_given_proportion"/>
+	</field>
+	<field name="left_wo_kmc" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.label" value="left_wo_kmc"/>
+	</field>
+	<field name="left_wo_kmc_proportion" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.label" value="left_wo_kmc_proportion"/>
+	</field>
+	<field name="low_weight_total" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.label" value="low_weight_total"/>
+	</field>
+	<variable name="KMC_GIVEN_DYNAMIC_WHERE" class="java.lang.String">
+		<variableExpression><![CDATA[$F{phc}.equals("Total") ? "and kmc_given = 'Yes'" :
+"and \"PHC\" = '" + $F{phc} + "' and kmc_given = 'Yes'"]]></variableExpression>
+	</variable>
+	<variable name="LEFT_WO_KMC_DYNAMIC_WHERE" class="java.lang.String">
+		<variableExpression><![CDATA[$F{phc}.equals("Total") ? "and kmc_given = 'No'" :
+"and \"PHC\" = '" + $F{phc} + "' and kmc_given = 'No'"]]></variableExpression>
+	</variable>
+	<variable name="TOTAL_DYNAMIC_WHERE" class="java.lang.String">
+		<variableExpression><![CDATA[$F{phc}.equals("Total") ? "and weight::numeric < 2.5" :
+"and \"PHC\" = '" + $F{phc} + "' and weight::numeric < 2.5 "]]></variableExpression>
+	</variable>
+	<background>
+		<band height="100" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+		</band>
+	</background>
+	<title>
+		<band height="50" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<staticText>
+				<reportElement style="ReportTitle" x="0" y="0" width="960" height="50" uuid="b41c1dbc-657e-4f9f-93da-2951563f95d4"/>
+				<box>
+					<pen lineColor="#000000"/>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<text><![CDATA[KMC Care]]></text>
+			</staticText>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="60" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<staticText>
+				<reportElement style="ColumnHeader" x="0" y="0" width="160" height="60" uuid="ee553be7-3867-40f0-86c3-8784f477fd97">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="abda6b02-5ce9-45a4-a696-4220a5d212be"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+				</box>
+				<text><![CDATA[PHC]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="160" y="30" width="160" height="30" uuid="5529a751-72ad-4746-b767-5792cae6c0bb">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="da22cb16-c6ae-4715-9285-c035d55ffdba"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+				</box>
+				<text><![CDATA[Number]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="320" y="30" width="160" height="30" uuid="9fdb1af5-48e8-4060-b771-1d1e6a93348e">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="72db5627-e709-42fb-885b-13ad9379f6ea"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+				</box>
+				<text><![CDATA[Proportion]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="480" y="30" width="160" height="30" uuid="c4d4d526-ec6a-4be1-acc4-3105b89729a0">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="7b8f591b-fa9c-4c93-8252-19444b6d9106"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+				</box>
+				<text><![CDATA[Number]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="640" y="30" width="160" height="30" uuid="d34664e2-04fb-410c-aacc-d904c418b337">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="17614dd7-9a23-444f-af26-5b18129a6800"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+				</box>
+				<text><![CDATA[Proportion]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="800" y="0" width="160" height="60" uuid="3f27e636-e205-460d-8449-9d596fd131e0">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="d6d4adae-2dce-47ce-855e-415016786b92"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+				</box>
+				<text><![CDATA[Number of children with LBW ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="480" y="0" width="320" height="30" uuid="e9f8c7ce-b608-4784-835c-49139f746eae"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+				</box>
+				<text><![CDATA[Left Without KMC]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="160" y="0" width="320" height="30" uuid="88a8260f-91cb-4889-a190-dea0907cd286"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#0D0303"/>
+				</box>
+				<text><![CDATA[KMC given]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="30" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.spreadsheet.SpreadsheetLayout"/>
+			<textField textAdjust="StretchHeight">
+				<reportElement style="DataRowElement" stretchType="RelativeToTallestObject" x="0" y="0" width="160" height="30" uuid="d33c9ccb-2e2f-4b44-84f3-edc501189da0">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="abda6b02-5ce9-45a4-a696-4220a5d212be"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{phc}]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight" hyperlinkType="ReportExecution">
+				<reportElement style="DataRowElement" stretchType="RelativeToTallestObject" x="160" y="0" width="160" height="30" uuid="ecefd7f5-e5c5-4b76-9e15-0591b531e623">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="da22cb16-c6ae-4715-9285-c035d55ffdba"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{kmc_given}]]></textFieldExpression>
+				<hyperlinkWhenExpression><![CDATA[$F{kmc_given} > 0]]></hyperlinkWhenExpression>
+				<hyperlinkTooltipExpression><![CDATA["Click for the line list"]]></hyperlinkTooltipExpression>
+				<hyperlinkParameter name="_report">
+					<hyperlinkParameterExpression><![CDATA["/JNPCT/Reports/Linelists/Linelist_for_KMC_Care"]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_MANDATORY_START_DATE">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_MANDATORY_START_DATE}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_MANDATORY_DATE_END">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_MANDATORY_DATE_END}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_PHC_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_PHC_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_SUBCENTRE_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_SUBCENTRE_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_VILLAGE_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_VILLAGE_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="Exited">
+					<hyperlinkParameterExpression><![CDATA[$P{Exited}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DYNAMIC_WHERE">
+					<hyperlinkParameterExpression><![CDATA[$V{KMC_GIVEN_DYNAMIC_WHERE}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+			</textField>
+			<textField textAdjust="StretchHeight">
+				<reportElement style="DataRowPreCalculatedPercentageElement" stretchType="RelativeToTallestObject" x="320" y="0" width="160" height="30" uuid="2a663553-10b5-4fa6-8c2e-78833c5111e4">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="72db5627-e709-42fb-885b-13ad9379f6ea"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{kmc_given_proportion} == null ? "0%" : $F{kmc_given_proportion}]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight" hyperlinkType="ReportExecution">
+				<reportElement style="DataRowElement" stretchType="RelativeToTallestObject" x="480" y="0" width="160" height="30" uuid="d4a68c9e-3b69-414e-a9c8-a4f0e7c88b9d">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="7b8f591b-fa9c-4c93-8252-19444b6d9106"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{left_wo_kmc}]]></textFieldExpression>
+				<hyperlinkWhenExpression><![CDATA[$F{left_wo_kmc} > 0]]></hyperlinkWhenExpression>
+				<hyperlinkTooltipExpression><![CDATA["Click for the line list"]]></hyperlinkTooltipExpression>
+				<hyperlinkParameter name="_report">
+					<hyperlinkParameterExpression><![CDATA["/JNPCT/Reports/Linelists/Linelist_for_KMC_Care"]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_MANDATORY_START_DATE">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_MANDATORY_START_DATE}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_MANDATORY_DATE_END">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_MANDATORY_DATE_END}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_PHC_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_PHC_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_SUBCENTRE_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_SUBCENTRE_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_VILLAGE_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_VILLAGE_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="Exited">
+					<hyperlinkParameterExpression><![CDATA[$P{Exited}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DYNAMIC_WHERE">
+					<hyperlinkParameterExpression><![CDATA[$V{LEFT_WO_KMC_DYNAMIC_WHERE}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+			</textField>
+			<textField textAdjust="StretchHeight">
+				<reportElement style="DataRowPreCalculatedPercentageElement" stretchType="RelativeToTallestObject" x="640" y="0" width="160" height="30" uuid="6c8a9323-f1ee-421f-a032-bcd8f5d7ce89">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="17614dd7-9a23-444f-af26-5b18129a6800"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{left_wo_kmc_proportion} == null ? "0%" : $F{left_wo_kmc_proportion}]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight" hyperlinkType="ReportExecution">
+				<reportElement style="DataRowElement" stretchType="RelativeToTallestObject" x="800" y="0" width="160" height="30" uuid="69d4c723-e0b4-4b8b-a05d-8ab7601012fe">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="d6d4adae-2dce-47ce-855e-415016786b92"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{low_weight_total}]]></textFieldExpression>
+				<hyperlinkWhenExpression><![CDATA[$F{low_weight_total} > 0]]></hyperlinkWhenExpression>
+				<hyperlinkTooltipExpression><![CDATA["Click for the line list"]]></hyperlinkTooltipExpression>
+				<hyperlinkParameter name="_report">
+					<hyperlinkParameterExpression><![CDATA["/JNPCT/Reports/Linelists/Linelist_for_KMC_Care"]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_MANDATORY_START_DATE">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_MANDATORY_START_DATE}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_MANDATORY_DATE_END">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_MANDATORY_DATE_END}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_PHC_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_PHC_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_SUBCENTRE_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_SUBCENTRE_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_VILLAGE_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_VILLAGE_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="Exited">
+					<hyperlinkParameterExpression><![CDATA[$P{Exited}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DYNAMIC_WHERE">
+					<hyperlinkParameterExpression><![CDATA[$V{TOTAL_DYNAMIC_WHERE}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

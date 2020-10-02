@@ -1,0 +1,353 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.12.2.final using JasperReports Library version 6.11.0  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Child - Morbidity Status Within 0-59 Days" pageWidth="1284" pageHeight="720" orientation="Landscape" columnWidth="1244" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="05cc1aaf-5713-4062-a0f6-7bab099e5fb6">
+	<property name="ireport.jasperserver.url" value="https://reporting-jasper.avniproject.org/jasperserver/"/>
+	<property name="com.jaspersoft.studio.report.description" value=""/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="jnpct_uat@prod"/>
+	<property name="ireport.jasperserver.user" value="NupoorK"/>
+	<property name="ireport.jasperserver.report.resource" value="/JNPCT/Reports/Aggregates/Child___Morbidity_Status_Within_0_59_Days_files/main_jrxml"/>
+	<property name="ireport.jasperserver.reportUnit" value="/JNPCT/Reports/Aggregates/Child___Morbidity_Status_Within_0_59_Days"/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<template><![CDATA["repo:/Templates/Styles/Linelist.jrtx"]]></template>
+	<parameter name="PARAM_MANDATORY_START_DATE" class="java.sql.Timestamp">
+		<defaultValueExpression><![CDATA[new java.sql.Timestamp(Calendar.getInstance().getTime().getTime() - new Long("5097600000").longValue())]]></defaultValueExpression>
+	</parameter>
+	<parameter name="PARAM_MANDATORY_DATE_END" class="java.sql.Timestamp">
+		<defaultValueExpression><![CDATA[new java.sql.Timestamp(Calendar.getInstance().getTime().getTime())]]></defaultValueExpression>
+	</parameter>
+	<parameter name="PARAM_PHC_NAME" class="java.util.List" nestedType="java.lang.String"/>
+	<parameter name="PARAM_SUBCENTRE_NAME" class="java.util.List" nestedType="java.lang.String"/>
+	<parameter name="PARAM_VILLAGE_NAME" class="java.util.List" nestedType="java.lang.String"/>
+	<queryString language="SQL">
+		<![CDATA[select coalesce(a.title, 'Total')                                 PHC
+     , count(*) as                                                total_children
+     , count(*) filter ( where (
+        (first_visit_date_time is null and birth_weight < 2) or
+        (first_visit_date_time is not null and pnc_weight < 2)) ) low_birth_weight_count
+     , count(*) filter ( where first_visit_date_time is not null and (
+    pnc_watery_diarrhoea = 'Yes'
+    ) )                                                           diarrhoea_count
+     , count(*) filter ( where first_visit_date_time is not null and (
+        pnc_temperature < 35.5
+        or pnc_temperature > 37.5
+        or pnc_visible_pustules >= 10
+        or pnc_respiratory_rate >= 60
+        or pnc_difficulty_breastfeeding = 'Yes'
+    ) )                                                           sepsis_count
+     , count(*) filter ( where first_visit_date_time is not null and (
+        pnc_bleeding = 'Yes'
+        or pnc_vomiting = 'Yes'
+        or pnc_gaseous_abdomen = 'Yes'
+        or pnc_icteric = 'Yes'
+        or pnc_cynosed = 'Yes'
+        or pnc_abnormal = 'Yes'
+        or pnc_cleftpallet = 'Yes'
+        or pnc_tumour = 'Yes'
+        or pnc_mouth_foaming = 'Yes'
+        or pnc_oralulcer_thrush = 'Yes'
+    ) )                                                           other_count
+from address_level a
+         left join address_level_type at on at.id = a.type_id
+         right join
+     (
+         select enrolment_id
+              , phc
+              , date_of_birth
+              , first_visit_date_time
+              , birth_weight
+              , pnc_weight
+              , pnc_watery_diarrhoea
+              , pnc_temperature
+              , pnc_visible_pustules
+              , pnc_respiratory_rate
+              , pnc_difficulty_breastfeeding
+              , pnc_bleeding
+              , pnc_vomiting
+              , pnc_gaseous_abdomen
+              , pnc_icteric
+              , pnc_cynosed
+              , pnc_abnormal
+              , pnc_cleftpallet
+              , pnc_tumour
+              , pnc_mouth_foaming
+              , pnc_oralulcer_thrush
+         from (
+                  select enrolment."Enl.Id"                                                                 as enrolment_id
+                       , enrolment."Ind.phc"                                                                as phc
+                       , enrolment."Ind.date_of_birth"                                                      as date_of_birth
+                       , pnc."Enc.encounter_date_time"                                                      as first_visit_date_time
+                       , birth."Enc.Birth Weight"::numeric                                                  as birth_weight
+                       , pnc."Enc.Weight"::numeric                                                          as pnc_weight
+                       , pnc."Enc.Does infant has watery diarrhoea?"                                        as pnc_watery_diarrhoea
+                       , pnc."Enc.Temperature of infant"::numeric                                           as pnc_temperature
+                       , pnc."Enc.If yes, then how many visible pustules are on the body"::numeric          as pnc_visible_pustules
+                       , pnc."Enc.Child Respiratory Rate"::numeric                                          as pnc_respiratory_rate
+                       , pnc."Enc.Does infant has any difficulty in breastfeeding?"                         as pnc_difficulty_breastfeeding
+                       , pnc."Enc.Is there bleeding from any part of infant's body?"                        as pnc_bleeding
+                       , pnc."Enc.Is infant vomiting?"                                                      as pnc_vomiting
+                       , pnc."Enc.Does infant's abdomen look gasious?"                                      as pnc_gaseous_abdomen
+                       , pnc."Enc.Does infant looks icteric?"                                               as pnc_icteric
+                       , pnc."Enc.Does infant looks cynosed?"                                               as pnc_cynosed
+                       , pnc."Enc.Does infant looks abnormal?"                                              as pnc_abnormal
+                       , pnc."Enc.Is the infant's mouth cleft pallet seen?"                                 as pnc_cleftpallet
+                       , pnc."Enc.Is there visible tumor on back or on head of infant?"                     as pnc_tumour
+                       , pnc."Enc.Is foam coming from infant's mouth continuously?"                         as pnc_mouth_foaming
+                       , pnc."Enc.Is oral ulcer or thrush seen in infant's mouth"                           as pnc_oralulcer_thrush
+                       , row_number()
+                         over (partition by enrolment."Enl.Id" order by pnc."Enc.encounter_date_time" desc) as visit_number
+                  from jnpct_child_enrolment_view enrolment
+                           left join jnpct_child_pnc_view pnc on pnc."Enl.Id" = enrolment."Enl.Id"
+                           left join jnpct_child_birth_form_view birth on birth."Enl.Id" = enrolment."Enl.Id"
+                  where 1=1
+                   and enrolment."Ind.date_of_birth" + INTERVAL '59 days' > $P{PARAM_MANDATORY_DATE_END}
+	               and $X{BETWEEN, enrolment."Ind.date_of_birth", PARAM_MANDATORY_START_DATE, PARAM_MANDATORY_DATE_END}
+	               and $X{IN, enrolment."Ind.phc",PARAM_PHC_NAME}
+                   and $X{IN, enrolment."Ind.subcenter",PARAM_SUBCENTRE_NAME}
+                   and $X{IN, enrolment."Ind.village",PARAM_VILLAGE_NAME}              
+              ) encounters
+         where visit_number = 1
+     ) filtered_encounters on a.title = phc
+where at.name = 'Phc'
+  and not a.is_voided
+group by rollup (a.title)
+;]]>
+	</queryString>
+	<field name="phc" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="phc"/>
+	</field>
+	<field name="total_children" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.label" value="total_children"/>
+	</field>
+	<field name="low_birth_weight_count" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.label" value="low_birth_weight_count"/>
+	</field>
+	<field name="diarrhoea_count" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.label" value="diarrhoea_count"/>
+	</field>
+	<field name="sepsis_count" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.label" value="sepsis_count"/>
+	</field>
+	<field name="other_count" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.label" value="other_count"/>
+	</field>
+	<background>
+		<band height="100" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+		</band>
+	</background>
+	<title>
+		<band height="50" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<staticText>
+				<reportElement style="ReportTitle" x="0" y="0" width="1178" height="50" uuid="ccc013a8-2e32-4c97-acca-cfac4c04bef7"/>
+				<text><![CDATA[Morbidity Status for Children Aged 0-59 Days]]></text>
+			</staticText>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="60" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<staticText>
+				<reportElement style="ColumnHeader" x="0" y="0" width="230" height="60" uuid="b6a8ee69-8620-4e4c-8e52-b31421ed4242">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="8cf7a771-98ab-4d5d-896b-f080522adfe3"/>
+				</reportElement>
+				<text><![CDATA[PHC]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="230" y="0" width="150" height="60" uuid="f1bb7a67-3dfe-4aea-b7d2-f7cf8cd99583">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="b0632a1e-412a-4e22-8a55-43cbdc73cc4a"/>
+				</reportElement>
+				<text><![CDATA[Total Children]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="380" y="30" width="199" height="30" uuid="afe2214e-f22d-44dd-87ab-b43b2fc6da45">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="60c36e08-db56-459d-ac21-60b4cd94309f"/>
+				</reportElement>
+				<text><![CDATA[Low Weight]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="579" y="30" width="199" height="30" uuid="27ea4098-923b-42bd-a5b6-1e641bc87ce6">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="495ce31b-b07e-4020-8d78-8d665465aa38"/>
+				</reportElement>
+				<text><![CDATA[Diarrhoea]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="778" y="30" width="200" height="30" uuid="47bfe25c-ef09-41bf-9673-6b5a8e676d64">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="10fced8e-64d9-4191-9e4d-88d0412929be"/>
+				</reportElement>
+				<text><![CDATA[Sepsis]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="978" y="30" width="200" height="30" uuid="16556e73-4c14-49da-8b0c-c94281b99950">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="da4c8d80-a2a8-418e-b514-4d79b8bde8aa"/>
+				</reportElement>
+				<text><![CDATA[Other]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="380" y="0" width="798" height="30" uuid="f3c26240-3d2d-4b27-9c81-5692c11f37b8"/>
+				<text><![CDATA[Type of Morbidity]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="30" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.spreadsheet.SpreadsheetLayout"/>
+			<textField textAdjust="StretchHeight">
+				<reportElement style="DataRowElement" stretchType="RelativeToTallestObject" x="0" y="0" width="230" height="30" uuid="cfb1d6ba-f208-4b86-bbff-da12a6f08088">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="8cf7a771-98ab-4d5d-896b-f080522adfe3"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{phc}]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight" hyperlinkType="ReportExecution">
+				<reportElement style="DataRowElement" stretchType="RelativeToTallestObject" x="230" y="0" width="150" height="30" uuid="1bd91247-f88c-4c33-b18f-43e50d4e3b4e">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="b0632a1e-412a-4e22-8a55-43cbdc73cc4a"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{total_children}]]></textFieldExpression>
+				<hyperlinkWhenExpression><![CDATA[$F{total_children} > 0]]></hyperlinkWhenExpression>
+				<hyperlinkParameter name="_report">
+					<hyperlinkParameterExpression><![CDATA["/JNPCT/Reports/Linelists/Child___Morbidity_Status_for_Children_0_59_days_Linelist"]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_MANDATORY_DATE_END">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_MANDATORY_DATE_END}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_MANDATORY_START_DATE">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_MANDATORY_START_DATE}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_PHC_NAME">
+					<hyperlinkParameterExpression><![CDATA[$F{phc}.equals("Total") ? $P{PARAM_PHC_NAME} : $F{phc}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_SUBCENTRE_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_SUBCENTRE_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_VILLAGE_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_VILLAGE_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DYNAMIC_WHERE">
+					<hyperlinkParameterExpression><![CDATA[" and 1=1"]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+			</textField>
+			<textField textAdjust="StretchHeight" hyperlinkType="ReportExecution">
+				<reportElement style="DataRowElement" stretchType="RelativeToTallestObject" x="380" y="0" width="199" height="30" uuid="f43067d6-99ec-4bc3-b128-e01a3715ef65">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="60c36e08-db56-459d-ac21-60b4cd94309f"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{low_birth_weight_count}]]></textFieldExpression>
+				<hyperlinkWhenExpression><![CDATA[$F{low_birth_weight_count} > 0]]></hyperlinkWhenExpression>
+				<hyperlinkParameter name="_report">
+					<hyperlinkParameterExpression><![CDATA["/JNPCT/Reports/Linelists/Child___Morbidity_Status_for_Children_0_59_days_Linelist"]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_MANDATORY_DATE_END">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_MANDATORY_DATE_END}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_MANDATORY_START_DATE">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_MANDATORY_START_DATE}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_PHC_NAME">
+					<hyperlinkParameterExpression><![CDATA[$F{phc}.equals("Total") ? $P{PARAM_PHC_NAME} : $F{phc}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_SUBCENTRE_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_SUBCENTRE_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_VILLAGE_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_VILLAGE_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DYNAMIC_WHERE">
+					<hyperlinkParameterExpression><![CDATA[" and ((first_visit_date_time is null and birth_weight < 2) or (first_visit_date_time is not null and pnc_weight < 2))"]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+			</textField>
+			<textField textAdjust="StretchHeight" hyperlinkType="ReportExecution">
+				<reportElement style="DataRowElement" stretchType="RelativeToTallestObject" x="579" y="0" width="199" height="30" uuid="00e87c52-9d72-4c35-84b7-a81139e345cf">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="495ce31b-b07e-4020-8d78-8d665465aa38"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{diarrhoea_count}]]></textFieldExpression>
+				<hyperlinkWhenExpression><![CDATA[$F{diarrhoea_count} > 0]]></hyperlinkWhenExpression>
+				<hyperlinkParameter name="_report">
+					<hyperlinkParameterExpression><![CDATA["/JNPCT/Reports/Linelists/Child___Morbidity_Status_for_Children_0_59_days_Linelist"]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_MANDATORY_DATE_END">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_MANDATORY_DATE_END}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_MANDATORY_START_DATE">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_MANDATORY_START_DATE}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_PHC_NAME">
+					<hyperlinkParameterExpression><![CDATA[$F{phc}.equals("Total") ? $P{PARAM_PHC_NAME} : $F{phc}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_SUBCENTRE_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_SUBCENTRE_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_VILLAGE_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_VILLAGE_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DYNAMIC_WHERE">
+					<hyperlinkParameterExpression><![CDATA[" and first_visit_date_time is not null and (pnc_watery_diarrhoea = 'Yes')"]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+			</textField>
+			<textField textAdjust="StretchHeight" hyperlinkType="ReportExecution">
+				<reportElement style="DataRowElement" stretchType="RelativeToTallestObject" x="778" y="0" width="200" height="30" uuid="a493534a-bf71-4433-b05b-dc507f1cce6e">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="10fced8e-64d9-4191-9e4d-88d0412929be"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{sepsis_count}]]></textFieldExpression>
+				<hyperlinkWhenExpression><![CDATA[$F{sepsis_count} > 0]]></hyperlinkWhenExpression>
+				<hyperlinkParameter name="_report">
+					<hyperlinkParameterExpression><![CDATA["/JNPCT/Reports/Linelists/Child___Morbidity_Status_for_Children_0_59_days_Linelist"]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_MANDATORY_DATE_END">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_MANDATORY_DATE_END}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_MANDATORY_START_DATE">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_MANDATORY_START_DATE}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_PHC_NAME">
+					<hyperlinkParameterExpression><![CDATA[$F{phc}.equals("Total") ? $P{PARAM_PHC_NAME} : $F{phc}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_SUBCENTRE_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_SUBCENTRE_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_VILLAGE_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_VILLAGE_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DYNAMIC_WHERE">
+					<hyperlinkParameterExpression><![CDATA[" and first_visit_date_time is not null and (pnc_temperature < 35.5 or pnc_temperature > 37.5 or pnc_visible_pustules >= 10 or pnc_respiratory_rate >= 60 or pnc_difficulty_breastfeeding = 'Yes' )"]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+			</textField>
+			<textField textAdjust="StretchHeight" hyperlinkType="ReportExecution">
+				<reportElement style="DataRowElement" stretchType="RelativeToTallestObject" x="978" y="0" width="200" height="30" uuid="16432499-3ae6-4c8d-9e59-4bf0235a4c86">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="da4c8d80-a2a8-418e-b514-4d79b8bde8aa"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{other_count}]]></textFieldExpression>
+				<hyperlinkWhenExpression><![CDATA[$F{other_count} > 0]]></hyperlinkWhenExpression>
+				<hyperlinkParameter name="_report">
+					<hyperlinkParameterExpression><![CDATA["/JNPCT/Reports/Linelists/Child___Morbidity_Status_for_Children_0_59_days_Linelist"]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_MANDATORY_DATE_END">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_MANDATORY_DATE_END}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_MANDATORY_START_DATE">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_MANDATORY_START_DATE}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_PHC_NAME">
+					<hyperlinkParameterExpression><![CDATA[$F{phc}.equals("Total") ? $P{PARAM_PHC_NAME} : $F{phc}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_SUBCENTRE_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_SUBCENTRE_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_VILLAGE_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_VILLAGE_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DYNAMIC_WHERE">
+					<hyperlinkParameterExpression><![CDATA[" and first_visit_date_time is not null and ( pnc_bleeding = 'Yes' or pnc_vomiting = 'Yes' or pnc_gaseous_abdomen = 'Yes' or pnc_icteric = 'Yes' or pnc_cynosed = 'Yes' or pnc_abnormal = 'Yes' or pnc_cleftpallet = 'Yes' or pnc_tumour = 'Yes' or pnc_mouth_foaming = 'Yes' or pnc_oralulcer_thrush = 'Yes' )"]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

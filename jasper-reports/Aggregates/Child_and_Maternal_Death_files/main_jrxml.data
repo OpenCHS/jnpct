@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.12.2.final using JasperReports Library version 6.11.0  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Child and Maternal Death" pageWidth="1684" pageHeight="720" orientation="Landscape" columnWidth="1080" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="05cc1aaf-5713-4062-a0f6-7bab099e5fb6">
+	<property name="ireport.jasperserver.url" value="https://reporting-jasper.avniproject.org/jasperserver/"/>
+	<property name="com.jaspersoft.studio.report.description" value=""/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="jnpct_uat@prod"/>
+	<property name="ireport.jasperserver.user" value="joya"/>
+	<property name="ireport.jasperserver.report.resource" value="/JNPCT/Reports/Aggregates/Child_and_Maternal_Death_files/main_jrxml"/>
+	<property name="ireport.jasperserver.reportUnit" value="/JNPCT/Reports/Aggregates/Child_and_Maternal_Death"/>
+	<template><![CDATA["repo:/Templates/Styles/Linelist.jrtx"]]></template>
+	<parameter name="PARAM_DATE_START" class="java.sql.Timestamp"/>
+	<parameter name="PARAM_DATE_END" class="java.sql.Timestamp"/>
+	<parameter name="PARAM_PHC_NAME" class="java.util.List" nestedType="java.lang.String"/>
+	<parameter name="PARAM_SUBCENTRE_NAME" class="java.util.List" nestedType="java.lang.String"/>
+	<parameter name="PARAM_VILLAGE_NAME" class="java.util.List" nestedType="java.lang.String"/>
+	<queryString language="SQL">
+		<![CDATA[select coalesce(a.title, 'Total') phc,
+       count(*) filter ( where reason_for_exit = 'Child Death' and date_part('day', date_of_death - date_of_birth) <= 28)  neonatal_death,
+       count(*) filter ( where reason_for_exit = 'Child Death' and date_part('day', date_of_death - date_of_birth) <= 365)  infant_death,
+       count(*) filter ( where reason_for_exit = 'Child Death' and (date_part('day', date_of_death - date_of_birth) > 365
+           and date_part('day', date_of_death - date_of_birth) <= 365*5))  child_death,
+       count(*) filter ( where reason_for_exit = 'Maternal Death')  maternal_death
+from address_level a
+        LEFT JOIN address_level_type at on at.id = a.type_id
+        LEFT JOIN (
+            SELECT "Ind.phc" phc, * from jnpct_program_exit_view
+            WHERE reason_for_exit in ('Maternal Death', 'Child Death')
+              and $X{IN,"Ind.phc",PARAM_PHC_NAME}
+              and $X{IN,"Ind.subcenter",PARAM_SUBCENTRE_NAME}
+              and $X{IN,"Ind.village",PARAM_VILLAGE_NAME}
+              and $X{BETWEEN,date_of_death, PARAM_DATE_START, PARAM_DATE_END}
+        ) exit_join on a.title = phc
+WHERE at.name = 'Phc' and not a.is_voided
+GROUP BY ROLLUP (a.title);]]>
+	</queryString>
+	<field name="phc" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="phc"/>
+	</field>
+	<field name="neonatal_death" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.label" value="neonatal_death"/>
+	</field>
+	<field name="infant_death" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.label" value="infant_death"/>
+	</field>
+	<field name="child_death" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.label" value="child_death"/>
+	</field>
+	<field name="maternal_death" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.label" value="maternal_death"/>
+	</field>
+	<background>
+		<band height="100" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+		</band>
+	</background>
+	<title>
+		<band height="50" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<staticText>
+				<reportElement style="ReportTitle" x="0" y="0" width="1644" height="50" uuid="ccc013a8-2e32-4c97-acca-cfac4c04bef7"/>
+				<text><![CDATA[Child / Maternal Death]]></text>
+			</staticText>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="30" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<staticText>
+				<reportElement style="ColumnHeader" x="0" y="0" width="328" height="30" uuid="edb6ad60-a783-4d49-bd00-467f15cb1737">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="5f95fd9d-dd33-4e9e-848e-29671541949c"/>
+				</reportElement>
+				<text><![CDATA[PHC]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="328" y="0" width="328" height="30" uuid="31c43b1f-7295-4900-ad2d-8b58e801e618">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="08d1cbb7-297e-491f-941e-8e67cdc2672b"/>
+				</reportElement>
+				<text><![CDATA[Neonatal Death]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="656" y="0" width="328" height="30" uuid="3218dc5f-bb1f-447b-9b7b-48d810343c33">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="d88f3662-8549-46ff-945d-852096c2fe93"/>
+				</reportElement>
+				<text><![CDATA[Infant Death]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="984" y="0" width="328" height="30" uuid="611c1310-957b-49cf-9ec1-d209d4731dc3">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="d152fb19-bf28-4d48-b956-63bd62013e8a"/>
+				</reportElement>
+				<text><![CDATA[Child Death]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="1312" y="0" width="328" height="30" uuid="a1901515-d3c1-47dc-88b2-56e033a53c26">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="3f9ce69c-00b6-42cd-b375-c66c2b5a12e4"/>
+				</reportElement>
+				<text><![CDATA[Maternal Death]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="30" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.spreadsheet.SpreadsheetLayout"/>
+			<textField textAdjust="StretchHeight">
+				<reportElement style="DataRowElement" stretchType="RelativeToTallestObject" x="0" y="0" width="328" height="30" uuid="d389171f-43a4-45ae-b28a-86e78dbaeb26">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="5f95fd9d-dd33-4e9e-848e-29671541949c"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{phc}]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight" hyperlinkType="ReportExecution">
+				<reportElement style="DataRowElement" stretchType="RelativeToTallestObject" x="328" y="0" width="328" height="30" uuid="fca81333-6a78-4651-8f1a-25894e6732d5">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="08d1cbb7-297e-491f-941e-8e67cdc2672b"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{neonatal_death}]]></textFieldExpression>
+				<hyperlinkWhenExpression><![CDATA[$F{neonatal_death} > 0]]></hyperlinkWhenExpression>
+				<hyperlinkParameter name="_report">
+					<hyperlinkParameterExpression><![CDATA["/JNPCT/Reports/Linelists/Child___Program_Exit_Linelist"]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DATE_START">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_START}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DATE_END">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_END}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_PHC_NAME">
+					<hyperlinkParameterExpression><![CDATA[$F{phc}.equals("Total") ? $P{PARAM_PHC_NAME} : $F{phc}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_SUBCENTRE_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_SUBCENTRE_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_VILLAGE_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_VILLAGE_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="Exited">
+					<hyperlinkParameterExpression><![CDATA[""]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DYNAMIC_WHERE">
+					<hyperlinkParameterExpression><![CDATA["and reason_for_exit = 'Child Death' and date_part('day', date_of_death::timestamp - to_date(\"Date of birth\", 'dd-mm-yyyy')::timestamp) <= 28"]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+			</textField>
+			<textField textAdjust="StretchHeight" hyperlinkType="ReportExecution">
+				<reportElement style="DataRowElement" stretchType="RelativeToTallestObject" x="656" y="0" width="328" height="30" uuid="eb676a62-302d-4183-b157-9fd20179d5c9">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="d88f3662-8549-46ff-945d-852096c2fe93"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{infant_death}]]></textFieldExpression>
+				<hyperlinkWhenExpression><![CDATA[$F{infant_death} > 0]]></hyperlinkWhenExpression>
+				<hyperlinkParameter name="_report">
+					<hyperlinkParameterExpression><![CDATA["/JNPCT/Reports/Linelists/Child___Program_Exit_Linelist"]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DATE_START">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_START}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DATE_END">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_END}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_PHC_NAME">
+					<hyperlinkParameterExpression><![CDATA[$F{phc}.equals("Total") ? $P{PARAM_PHC_NAME} : $F{phc}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_SUBCENTRE_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_SUBCENTRE_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_VILLAGE_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_VILLAGE_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="Exited">
+					<hyperlinkParameterExpression><![CDATA[""]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DYNAMIC_WHERE">
+					<hyperlinkParameterExpression><![CDATA["and reason_for_exit = 'Child Death' and date_part('day', date_of_death::timestamp - to_date(\"Date of birth\", 'dd-mm-yyyy')::timestamp) <= 365"]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+			</textField>
+			<textField textAdjust="StretchHeight" hyperlinkType="ReportExecution">
+				<reportElement style="DataRowElement" stretchType="RelativeToTallestObject" x="984" y="0" width="328" height="30" uuid="4d01758e-0d5c-47c2-b69a-a2427204ed7e">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="d152fb19-bf28-4d48-b956-63bd62013e8a"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{child_death}]]></textFieldExpression>
+				<hyperlinkWhenExpression><![CDATA[$F{child_death} > 0]]></hyperlinkWhenExpression>
+				<hyperlinkParameter name="_report">
+					<hyperlinkParameterExpression><![CDATA["/JNPCT/Reports/Linelists/Child___Program_Exit_Linelist"]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DATE_START">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_START}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DATE_END">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_END}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_PHC_NAME">
+					<hyperlinkParameterExpression><![CDATA[$F{phc}.equals("Total") ? $P{PARAM_PHC_NAME} : $F{phc}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_SUBCENTRE_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_SUBCENTRE_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_VILLAGE_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_VILLAGE_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="Exited">
+					<hyperlinkParameterExpression><![CDATA[""]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DYNAMIC_WHERE">
+					<hyperlinkParameterExpression><![CDATA["and reason_for_exit = 'Child Death' and (date_part('day', date_of_death::timestamp - to_date(\"Date of birth\", 'dd-mm-yyyy')::timestamp) > 365 and date_part('day', date_of_death::timestamp - to_date(\"Date of birth\", 'dd-mm-yyyy')::timestamp) <= 365*5)"]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+			</textField>
+			<textField textAdjust="StretchHeight" hyperlinkType="ReportExecution">
+				<reportElement style="DataRowElement" stretchType="RelativeToTallestObject" x="1312" y="0" width="328" height="30" uuid="b3bf2e2d-c5ef-4e30-981b-6c1b1782d5a5">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="3f9ce69c-00b6-42cd-b375-c66c2b5a12e4"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{maternal_death}]]></textFieldExpression>
+				<hyperlinkWhenExpression><![CDATA[$F{maternal_death} > 0]]></hyperlinkWhenExpression>
+				<hyperlinkParameter name="_report">
+					<hyperlinkParameterExpression><![CDATA["/JNPCT/Reports/Linelists/Pregnancy___Exit_Linelist"]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DYNAMIC_WHERE">
+					<hyperlinkParameterExpression><![CDATA[" and reason_for_exit='Maternal Death'"]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DATE_START">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_START}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DATE_END">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_END}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_PHC_NAME">
+					<hyperlinkParameterExpression><![CDATA[$F{phc}.equals("Total") ? $P{PARAM_PHC_NAME} : $F{phc}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_SUBCENTRE_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_SUBCENTRE_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_VILLAGE_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_VILLAGE_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="Exited">
+					<hyperlinkParameterExpression><![CDATA[""]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DYNAMIC_INNER_WHERE">
+					<hyperlinkParameterExpression><![CDATA[""]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

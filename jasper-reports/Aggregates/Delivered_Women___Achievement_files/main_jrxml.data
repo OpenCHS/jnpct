@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.14.0.final using JasperReports Library version 6.11.0  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Delivered - Achievement" pageWidth="1684" pageHeight="720" orientation="Landscape" columnWidth="1080" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="05cc1aaf-5713-4062-a0f6-7bab099e5fb6">
+	<property name="ireport.jasperserver.url" value="https://reporting-jasper.avniproject.org/jasperserver/"/>
+	<property name="com.jaspersoft.studio.report.description" value=""/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="jnpct_uat@prod"/>
+	<property name="ireport.jasperserver.user" value="hirent"/>
+	<property name="ireport.jasperserver.report.resource" value="/JNPCT/Reports/Aggregates/Delivered_Women___Achievement_files/main_jrxml"/>
+	<property name="ireport.jasperserver.reportUnit" value="/JNPCT/Reports/Aggregates/Delivered_Women___Achievement"/>
+	<template><![CDATA["repo:/Templates/Styles/Linelist.jrtx"]]></template>
+	<parameter name="PARAM_DATE_START" class="java.sql.Timestamp"/>
+	<parameter name="PARAM_DATE_END" class="java.sql.Timestamp"/>
+	<parameter name="PARAM_PHC_NAME" class="java.util.List" nestedType="java.lang.String"/>
+	<parameter name="PARAM_SUBCENTRE_NAME" class="java.util.List" nestedType="java.lang.String"/>
+	<parameter name="PARAM_VILLAGE_NAME" class="java.util.List" nestedType="java.lang.String"/>
+	<parameter name="Exited" class="java.util.List" nestedType="java.lang.String"/>
+	<queryString language="SQL">
+		<![CDATA[select coalesce(a.title, 'Total') phc,
+       count(*) filter ( where complete_hospital_checkup_done > 0)  complete_hospital_checkup_done,
+       count(*) filter ( where complete_hospital_checkup_done = 0 and complete_hospital_checkup_not_done > 0)  complete_hospital_checkup_not_done,
+       count(*) filter ( where td_vaccine_received > 0) td_vaccine_received
+from address_level a
+         left join address_level_type at on at.id = a.type_id
+         left join (
+    select phc,
+           individual_id,
+           count(*) filter ( where complete_hospital_checkup_done_status = 'Yes' )           complete_hospital_checkup_done,
+           count(*) filter ( where complete_hospital_checkup_done_status <> 'Yes' )          complete_hospital_checkup_not_done,
+           count(*)
+           filter (where (td_1 is not null and td_2 is not null) or td_booster is not null ) td_vaccine_received
+    from (
+             select jacv."Ind.Id"                                                                          individual_id,
+                    jacv."Ind.phc"                                                                         phc,
+                    "Enc.Complete hospital checkup done"                                                   complete_hospital_checkup_done_status,
+                    "Enc.TD 1"                                                                             td_1,
+                    "Enc.TD 2"                                                                             td_2,
+                    "Enc.TD Booster"                                                                       td_booster,
+                    row_number() over (partition by jacv."Enl.Id" order by jacv."Enc.encounter_date_time") visit_number,
+                    case
+                        when
+                            jd."Enl.program_exit_date_time" is null then 'No'
+                        else 'Yes' end                                                                     isExited
+             from jnpct_delivery_view jd
+                      join jnpct_anc_combined_visit_view jacv on jd."Ind.Id" = jacv."Ind.Id"
+                    where 1=1
+                    and $X{IN,jacv."Ind.phc",PARAM_PHC_NAME}
+        			and $X{IN,jacv."Ind.subcenter",PARAM_SUBCENTRE_NAME}
+        			and $X{IN,jacv."Ind.village",PARAM_VILLAGE_NAME}
+        			and $X{BETWEEN,jd."Enc.Date of delivery",PARAM_DATE_START, PARAM_DATE_END}                      
+         ) jnpct_anc_delivery_join
+         where 1=1 and $X{IN,isExited,Exited}
+    group by phc, individual_id
+) anc_enrolment_visits on a.title = phc
+where at.name = 'Phc' and not a.is_voided
+group by rollup (a.title);]]>
+	</queryString>
+	<field name="phc" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="phc"/>
+	</field>
+	<field name="complete_hospital_checkup_done" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.label" value="complete_hospital_checkup_done"/>
+	</field>
+	<field name="complete_hospital_checkup_not_done" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.label" value="complete_hospital_checkup_not_done"/>
+	</field>
+	<field name="td_vaccine_received" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.label" value="td_vaccine_received"/>
+	</field>
+	<background>
+		<band height="100" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+		</band>
+	</background>
+	<title>
+		<band height="50" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<staticText>
+				<reportElement style="ReportTitle" x="0" y="0" width="1644" height="50" uuid="ccc013a8-2e32-4c97-acca-cfac4c04bef7"/>
+				<text><![CDATA[Delivered Women - Achievement]]></text>
+			</staticText>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="30" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<staticText>
+				<reportElement style="ColumnHeader" x="0" y="0" width="411" height="30" uuid="1719b461-5901-4e36-92d6-4787e7bb985c">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="c5d031db-2afa-4b72-b8a8-7dbd128612a6"/>
+				</reportElement>
+				<text><![CDATA[PHC]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="411" y="0" width="411" height="30" uuid="7d33d8b3-011e-43ab-b42c-00caf29576ae">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="540aa5b4-168c-446c-9c2b-d6dd9188bd6b"/>
+				</reportElement>
+				<text><![CDATA[Complete Hospital Checkup Done]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="822" y="0" width="411" height="30" uuid="36a9af6d-8a43-4eab-aa2b-e1ca79273883">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="5f5760da-26cf-4747-8200-f7796ae0c1dc"/>
+				</reportElement>
+				<text><![CDATA[Complete Hospital Checkup Pending]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="1233" y="0" width="411" height="30" uuid="43da8764-16a0-48b2-b814-881ed9019fff">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="61474410-17f3-43c9-976c-454b384dfbd8"/>
+				</reportElement>
+				<text><![CDATA[TD Vaccine Received]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="30" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.spreadsheet.SpreadsheetLayout"/>
+			<textField textAdjust="StretchHeight">
+				<reportElement style="DataRowElement" stretchType="RelativeToTallestObject" x="0" y="0" width="411" height="30" uuid="e73b6767-e935-4021-8102-f5d4c09553da">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="c5d031db-2afa-4b72-b8a8-7dbd128612a6"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{phc}]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight" hyperlinkType="ReportExecution">
+				<reportElement style="DataRowElement" stretchType="RelativeToTallestObject" x="411" y="0" width="411" height="30" uuid="f4da179e-1cac-41e3-8e18-ac3e048cbe8f">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="540aa5b4-168c-446c-9c2b-d6dd9188bd6b"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{complete_hospital_checkup_done}]]></textFieldExpression>
+				<hyperlinkWhenExpression><![CDATA[$F{complete_hospital_checkup_done} > 0]]></hyperlinkWhenExpression>
+				<hyperlinkParameter name="_report">
+					<hyperlinkParameterExpression><![CDATA["/JNPCT/Reports/Linelists/Linelist_for_Mother_PNC"]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DYNAMIC_WHERE">
+					<hyperlinkParameterExpression><![CDATA[""]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DATE_START">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_START}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DATE_END">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_END}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_PHC_NAME">
+					<hyperlinkParameterExpression><![CDATA[$F{phc}.equals("Total") ? $P{PARAM_PHC_NAME} : $F{phc}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_SUBCENTRE_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_SUBCENTRE_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_VILLAGE_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_VILLAGE_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="Exited">
+					<hyperlinkParameterExpression><![CDATA[$P{Exited}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DYNAMIC_INNER_WHERE">
+					<hyperlinkParameterExpression><![CDATA[" and exists(select \"Enc.Complete hospital checkup done\" from jnpct_anc_combined_visit_view anc where pnc.\"Ind.Id\" = anc.\"Ind.Id\" and \"Enc.Complete hospital checkup done\" = 'Yes')"]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+			</textField>
+			<textField textAdjust="StretchHeight" hyperlinkType="ReportExecution">
+				<reportElement style="DataRowElement" stretchType="RelativeToTallestObject" x="822" y="0" width="411" height="30" uuid="6e9bc0f5-cc78-460f-9923-18f9a8a92291">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="5f5760da-26cf-4747-8200-f7796ae0c1dc"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{complete_hospital_checkup_not_done}]]></textFieldExpression>
+				<hyperlinkWhenExpression><![CDATA[$F{complete_hospital_checkup_not_done} > 0]]></hyperlinkWhenExpression>
+				<hyperlinkParameter name="_report">
+					<hyperlinkParameterExpression><![CDATA["/JNPCT/Reports/Linelists/Linelist_for_Mother_PNC"]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DYNAMIC_WHERE">
+					<hyperlinkParameterExpression><![CDATA[""]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DATE_START">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_START}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DATE_END">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_END}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_PHC_NAME">
+					<hyperlinkParameterExpression><![CDATA[$F{phc}.equals("Total") ? $P{PARAM_PHC_NAME} : $F{phc}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_SUBCENTRE_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_SUBCENTRE_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_VILLAGE_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_VILLAGE_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="Exited">
+					<hyperlinkParameterExpression><![CDATA[$P{Exited}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DYNAMIC_INNER_WHERE">
+					<hyperlinkParameterExpression><![CDATA[" and exists (select anc.\"Ind.Id\" from jnpct_anc_combined_visit_view anc where pnc.\"Ind.Id\" = anc.\"Ind.Id\") and not exists(select \"Enc.Complete hospital checkup done\" from jnpct_anc_combined_visit_view anc where pnc.\"Ind.Id\" = anc.\"Ind.Id\" and \"Enc.Complete hospital checkup done\" = 'Yes')"]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+			</textField>
+			<textField textAdjust="StretchHeight" hyperlinkType="ReportExecution">
+				<reportElement style="DataRowElement" stretchType="RelativeToTallestObject" x="1233" y="0" width="411" height="30" uuid="7a5cd174-785b-4128-9240-5ab60fbcecdc">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="61474410-17f3-43c9-976c-454b384dfbd8"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{td_vaccine_received}]]></textFieldExpression>
+				<hyperlinkWhenExpression><![CDATA[$F{td_vaccine_received} > 0]]></hyperlinkWhenExpression>
+				<hyperlinkParameter name="_report">
+					<hyperlinkParameterExpression><![CDATA["/JNPCT/Reports/Linelists/Linelist_for_Mother_PNC"]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DYNAMIC_WHERE">
+					<hyperlinkParameterExpression><![CDATA[""]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DATE_START">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_START}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DATE_END">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_DATE_END}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_PHC_NAME">
+					<hyperlinkParameterExpression><![CDATA[$F{phc}.equals("Total") ? $P{PARAM_PHC_NAME} : $F{phc}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_SUBCENTRE_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_SUBCENTRE_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_VILLAGE_NAME">
+					<hyperlinkParameterExpression><![CDATA[$P{PARAM_VILLAGE_NAME}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="Exited">
+					<hyperlinkParameterExpression><![CDATA[$P{Exited}]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="PARAM_DYNAMIC_INNER_WHERE">
+					<hyperlinkParameterExpression><![CDATA[" and exists(select \"Enc.TD 1\", \"Enc.TD 2\", \"Enc.TD Booster\"  from jnpct_anc_combined_visit_view anc where pnc.\"Ind.Id\" = anc.\"Ind.Id\" and ((\"Enc.TD 1\" is not null and \"Enc.TD 2\" is not null) or (\"Enc.TD Booster\" is not null)))"]]></hyperlinkParameterExpression>
+				</hyperlinkParameter>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>
