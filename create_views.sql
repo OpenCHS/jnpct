@@ -1482,28 +1482,34 @@ SELECT  individual.id "Ind.Id",
 
 
 drop view if exists jnpct_program_exit_view;
-create view jnpct_program_exit_view as (
-with concepts as (select hstore(array_agg(uuid), array_agg(name)) map from concept)
-   SELECT
-       pe.enrolment_date_time,
-       pe.program_exit_date_time,
-       i.date_of_birth::timestamp,
-       i.address_id,
-       village.title             "Ind.village",
-       subcenter.title           "Ind.subcenter",
-       phc.title                 "Ind.phc",
-       block.title               "Ind.block",
-       get_coded_string_value(program_exit_observations -> '29238876-fbd8-4f39-b749-edb66024e25e'::text, concepts.map)::text reason_for_exit,
-       (program_exit_observations ->> '3b269f11-ed0a-4636-8273-da0259783214')::timestamp date_of_death,
-       get_coded_string_value(program_exit_observations -> '7c88aea6-dfed-451e-a086-881e2dcfd85f'::text, concepts.map)::text reason_of_death,
-       get_coded_string_value(program_exit_observations -> 'dde645f5-0f70-45e9-a670-b7190c86c981'::text, concepts.map)::text place_of_death
-   FROM program_enrolment pe
-            CROSS JOIN concepts
-            LEFT JOIN operational_program op on op.program_id = pe.program_id
-            LEFT JOIN individual i on pe.individual_id = i.id
-            LEFT JOIN address_level village ON address_id = village.id
-            LEFT JOIN address_level subcenter ON village.parent_id = subcenter.id
-            LEFT JOIN address_level phc ON subcenter.parent_id = phc.id
-            LEFT JOIN address_level block ON phc.parent_id = block.id
-   WHERE pe.program_exit_date_time IS NOT NULL
-);
+create view jnpct_program_exit_view as
+    WITH concepts AS (
+        SELECT hstore((array_agg(concept.uuid))::text[], (array_agg(concept.name))::text[]) AS map
+        FROM concept
+    )
+    SELECT pe.enrolment_date_time,
+           pe.program_exit_date_time,
+           (i.date_of_birth)::timestamp without time zone                                AS date_of_birth,
+           i.address_id,
+           village.title                                                                 AS "Ind.village",
+           i.id                                                                          as "Ind.Id",
+           subcenter.title                                                               AS "Ind.subcenter",
+           phc.title                                                                     AS "Ind.phc",
+           block.title                                                                   AS "Ind.block",
+           (get_coded_string_value((pe.program_exit_observations -> '29238876-fbd8-4f39-b749-edb66024e25e'::text),
+                                   concepts.map))::text                                  AS reason_for_exit,
+           ((pe.program_exit_observations ->>
+             '3b269f11-ed0a-4636-8273-da0259783214'::text))::timestamp without time zone AS date_of_death,
+           (get_coded_string_value((pe.program_exit_observations -> '7c88aea6-dfed-451e-a086-881e2dcfd85f'::text),
+                                   concepts.map))::text                                  AS reason_of_death,
+           (get_coded_string_value((pe.program_exit_observations -> 'dde645f5-0f70-45e9-a670-b7190c86c981'::text),
+                                   concepts.map))::text                                  AS place_of_death
+    FROM program_enrolment pe
+        CROSS JOIN concepts
+        LEFT JOIN operational_program op ON op.program_id = pe.program_id
+        LEFT JOIN individual i ON pe.individual_id = i.id
+        LEFT JOIN address_level village ON i.address_id = village.id
+        LEFT JOIN address_level subcenter ON village.parent_id = subcenter.id
+        LEFT JOIN address_level phc ON subcenter.parent_id = phc.id
+        LEFT JOIN address_level block ON phc.parent_id = block.id
+    WHERE (pe.program_exit_date_time IS NOT NULL);
