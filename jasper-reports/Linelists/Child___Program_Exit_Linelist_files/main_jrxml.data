@@ -41,6 +41,7 @@
 
 select row_number() over (order by "Name") as "Sr.no", *
 from (
+         with concepts as (select hstore(array_agg(uuid), array_agg(name)) map from concept)
          select
                 concat(individual.first_name, ' ', individual.last_name)                         "Name",
                 block.title                                                                      "Block",
@@ -53,7 +54,7 @@ from (
                       EXTRACT(month FROM age(individual.date_of_birth)) +
                       (EXTRACT(days FROM age(individual.date_of_birth))) / 30)::numeric          "Age in months",
                 g.name                                                                        as "Gender",
-                single_select_coded(all_obs ->> 'a9002492-13f9-4778-8082-2d8d58862912')::TEXT    "Place of birth",
+                get_coded_string_value(all_obs -> 'a9002492-13f9-4778-8082-2d8d58862912', concepts.map)::TEXT    "Place of birth",
                 (all_obs -> 'c82cd1c8-d0a9-4237-b791-8d64e52b6c4a')                              "Birth weight (kg)",
                 (all_obs ->> '7d9af174-9e58-4e96-a77c-8351a5a4152d')::TEXT                    as "Height",
                 (all_obs ->> 'bab98eac-14a5-43c4-80ff-ccdb8c3ddf1b')::TEXT                    as "Weight",
@@ -63,17 +64,18 @@ from (
                          all_obs -> '3fb85722-fd53-43db-9e8b-d34767af9f7e')::text                "Current nutritional status according to weight and age",
                 (all_obs -> '4f0378c2-834d-47d1-8000-06d9048828e9')::text                     as "Current nutritional status according to weight and height",
                 (all_obs ->> '59e44308-2884-477a-96ef-701a4de23352')::TEXT                    as "MUAC of child",
-                single_select_coded(all_obs ->> '6df74fa2-036c-45c6-a6c2-de4c25d89695')::TEXT as "CMTC required",
+                get_coded_string_value(all_obs -> '6df74fa2-036c-45c6-a6c2-de4c25d89695', concepts.map)::TEXT as "CMTC required",
                 (all_obs ->> 'b0b2e912-5433-4594-8d86-2098c57d671a')::TEXT                    as "Temperature",
                 (all_obs ->> '22a24aab-b2f1-4fbd-9835-30b8d9843cf4')::TEXT                    as "Auxilary temperature",
                 (all_obs ->> '20401dea-a7ee-480a-8980-6cb419f732fe')::TEXT                    as "Child respiratory rate",
-                multi_select_coded(all_obs -> 'a6ad7816-154d-4007-8fb5-ef36ed19af95')::TEXT   as "Birth defects",
-                single_select_coded(all_obs ->> '591b7d38-343f-436f-a695-7679b27b3d24')::TEXT as "Any danger sign",
+                get_coded_string_value(all_obs -> 'a6ad7816-154d-4007-8fb5-ef36ed19af95', concepts.map)::TEXT   as "Birth defects",
+                get_coded_string_value(all_obs -> '591b7d38-343f-436f-a695-7679b27b3d24', concepts.map)::TEXT as "Any danger sign",
                 case when program_exit_date_time is null then 'No' else 'Yes' end                isExited,
                 'https://app.avniproject.org/#/app/subject?uuid=' || individual.uuid             url,
                 date_of_death,
                 reason_for_exit
          from merged_child_obs child
+                  CROSS JOIN concepts
                   LEFT OUTER JOIN individual individual ON child.individual_id = individual.id
                   LEFT OUTER JOIN gender g ON g.id = individual.gender_id
                   LEFT JOIN address_level village ON individual.address_id = village.id
