@@ -40,7 +40,6 @@
          left join jnpct_child_enrolment_view enrolment on enrolment."Enl.Id" = enc."Enl.Id" 
          where enc."Enc.earliest_visit_date_time" is not null
          and enrolment."Ind.date_of_birth" + INTERVAL '59 days' > $P{PARAM_MANDATORY_DATE_END}
-	     and $X{BETWEEN, enrolment."Ind.date_of_birth", PARAM_MANDATORY_START_DATE, PARAM_MANDATORY_DATE_END}
 	     and $X{IN, enrolment."Ind.phc",PARAM_PHC_NAME}
          and $X{IN, enrolment."Ind.subcenter",PARAM_SUBCENTRE_NAME}
          and $X{IN, enrolment."Ind.village",PARAM_VILLAGE_NAME}  
@@ -59,7 +58,6 @@ enrolment_data as (select
 			  from jnpct_child_enrolment_view enl
               left join jnpct_child_pnc_view enc on enl."Enl.Id" = enc."Enl.Id" 
               where enl."Ind.date_of_birth" + INTERVAL '59 days' > $P{PARAM_MANDATORY_DATE_END}
-	     	  and $X{BETWEEN, enl."Ind.date_of_birth", PARAM_MANDATORY_START_DATE, PARAM_MANDATORY_DATE_END}
 	          and $X{IN, enl."Ind.phc",PARAM_PHC_NAME}
               and $X{IN, enl."Ind.subcenter",PARAM_SUBCENTRE_NAME}
               and $X{IN, enl."Ind.village",PARAM_VILLAGE_NAME}
