@@ -126,7 +126,7 @@ export class PregnancyFormDecisionHandler {
 
         complicationsBuilder
             .addComplication("Underage Pregnancy")
-            .when.ageInYears.is.lessThanOrEqualTo(18);
+            .when.ageInYears.is.lessThan(18);
 
         complicationsBuilder
             .addComplication("Old age Pregnancy")

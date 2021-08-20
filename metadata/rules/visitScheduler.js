@@ -201,8 +201,8 @@ const scheduleVisitsDuringChildPNC = (programEncounter, scheduleBuilder) => {
     }
 
     if (!hasExitedProgram(programEncounter)) {
-        console.log('birthWeight', birthWeight);
-        console.log('currentWeight', currentWeight);
+        // console.log('birthWeight', birthWeight);
+        // console.log('currentWeight', currentWeight);
 
         if (birthWeight >= 2 || currentWeight >= 2) {
             scheduleChildPNCVisitsNormal(programEncounter, scheduleBuilder);
